@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">obsessionist</string>
+    <string name="app_name" translatable="false">Obsessionist</string>
+    <string name="DefaultTileName">Thing</string>
 </resources>
