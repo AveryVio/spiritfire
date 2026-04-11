@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.averyvi.obsessionist.ui.theme.ObsessionistTheme
+import com.averyvi.obsessionist.ui.MainUI
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,12 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ObsessionistTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Text(
-                        text = "Hewwo wowwd!",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                MainUI()
             }
         }
     }
