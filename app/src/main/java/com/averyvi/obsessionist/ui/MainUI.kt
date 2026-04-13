@@ -1,6 +1,5 @@
 package com.averyvi.obsessionist.ui
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -13,7 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.averyvi.obsessionist.R
-import com.averyvi.obsessionist.ui.screens.RenameTileScreen
+import com.averyvi.obsessionist.ui.screens.ChangeHabitScreen
 
 @Composable
 fun MainUI(){
@@ -28,13 +27,13 @@ fun MainUI(){
         ) {
             NavHost(
                 navController = navController,
-                startDestination = Routes.RenameTile.name
+                startDestination = Routes.ChangeHabit.name
             ) {
                 composable(route = Routes.Intro.name) {
 
                 }
-                composable(route = Routes.RenameTile.name) {
-                    RenameTileScreen()
+                composable(route = Routes.ChangeHabit.name) {
+                    ChangeHabitScreen()
                 }
             }
         }
@@ -45,7 +44,7 @@ enum class Routes(title: Int){
     Intro(
         title = R.string.IntroScreen
     ),
-    RenameTile(
-        title = R.string.RenameTileScreen
+    ChangeHabit(
+        title = R.string.ChangeHabitScreen
     ),
 }

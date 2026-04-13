@@ -2,5 +2,10 @@
     <string name="app_name" translatable="false">Obsessionist</string>
     <string name="DefaultTileName">Thing</string>
     <string name="IntroScreen">Intro</string>
-    <string name="RenameTileScreen">Rename tile</string>
+    <string name="ChangeHabitScreen">Change habit</string>
+    <string name="HabitName">name</string>
+    <string name="placeholdertext" translatable="false">foobar</string>
+    <string name="BasicHabitInfoChangeCard">Basic info</string>
+    <string name="HabitDesc">description</string>
+    <string name="HabitTimeChangeCard">Reset time and frequency</string>
 </resources>

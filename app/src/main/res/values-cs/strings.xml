@@ -2,5 +2,9 @@
 <resources>
     <string name="DefaultTileName">Obyčej</string>
     <string name="IntroScreen">Úvod</string>
-    <string name="RenameTileScreen">Přejmenování karty</string>
+    <string name="ChangeHabitScreen">Upravit zvyk</string>
+    <string name="HabitName">jméno</string>
+    <string name="BasicHabitInfoChangeCard">Základní informace</string>
+    <string name="HabitDesc">popis</string>
+    <string name="HabitTimeChangeCard">Čas obnovení a interval</string>
 </resources>
