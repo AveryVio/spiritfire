@@ -1,5 +1,6 @@
 package com.averyvi.obsessionist.ui.components
 
+import android.app.Dialog
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -16,7 +17,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun ColumnSettingCard(
@@ -27,6 +27,33 @@ fun ColumnSettingCard(
         shape = RoundedCornerShape(24.dp),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    ) {
+        Box(
+            Modifier.padding(
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 8.dp
+            )
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun DialogCard(
+    content: @Composable () -> Unit
+){
+    Card(
+        modifier = Modifier.border(2.dp, MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(24.dp)),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             contentColor = MaterialTheme.colorScheme.onSurface,
             disabledContainerColor = MaterialTheme.colorScheme.surface,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,

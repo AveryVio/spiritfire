@@ -7,4 +7,5 @@
     <string name="BasicHabitInfoChangeCard">Základní informace</string>
     <string name="HabitDesc">popis</string>
     <string name="HabitTimeChangeCard">Čas obnovení a interval</string>
+    <string name="ResetTimeDialogName">vyberte si čas obnovení</string>
 </resources>
