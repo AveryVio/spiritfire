@@ -9,4 +9,10 @@
     <string name="HabitDesc">description</string>
     <string name="HabitTimeChangeCard">Reset time and frequency</string>
     <string name="ResetTimeDialogName">pick a reset time</string>
+    <string name="IntervalValueSetName">amount</string>
+    <string name="DailyChange">daily</string>
+    <string name="WeekklyChange">weekly</string>
+    <string name="MonthlyChange">monthly</string>
+    <string name="YearlyChange">yearly</string>
+    <string name="CustomDaysChange">days</string>
 </resources>

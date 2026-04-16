@@ -1,5 +1,6 @@
 package com.averyvi.obsessionist.ui.components
 
+import android.text.style.LineHeightSpan
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -25,11 +26,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.averyvi.obsessionist.R
 import com.averyvi.obsessionist.data.definitions.ObsColor
 import com.averyvi.obsessionist.data.definitions.ObsIcon
+import com.averyvi.obsessionist.data.definitions.ResetDaysIntervalUnit
 
 @Composable
 fun IconDropdownPicker(){
@@ -60,7 +65,10 @@ fun IconDropdownPicker(){
                             tint = MaterialTheme.colorScheme.primary,
                             contentDescription = null,
                         ) },
-                        text = @Composable { Text(icon.name) },
+                        text = @Composable { Text(
+                            text = icon.name,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            ) },
                         onClick = { selectedIcon.value = icon }
                     )
                 }
@@ -98,8 +106,54 @@ fun ColorDropdownPicker(){
                             tint = color.color,
                             contentDescription = null,
                         ) },
-                        text = @Composable { Text(color.name) },
+                        text = @Composable { Text(
+                            text = color.name,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            ) },
                         onClick = { selectedColor.value = color }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ResetUnitDropdownPicker(
+    selectedUnit: ResetDaysIntervalUnit,
+    onUnitChange: (ResetDaysIntervalUnit) -> Unit,
+){
+    Box(){
+
+        val cardIsExpanded = remember { mutableStateOf(false) }
+        Card(
+            onClick = { cardIsExpanded.value = !cardIsExpanded.value },
+            shape = RoundedCornerShape(24.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxHeight(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(selectedUnit.uiText),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
+        if (cardIsExpanded.value) {
+            DropdownMenu(
+                expanded = true,
+                onDismissRequest = { cardIsExpanded.value = false },
+                shape = RoundedCornerShape(24.dp),
+            ) {
+                ResetDaysIntervalUnit.entries.forEach { unit ->
+                    DropdownMenuItem(
+                        text = @Composable { Text(
+                            text = stringResource(unit.uiText),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            ) },
+                        onClick = { onUnitChange(unit) }
                     )
                 }
             }

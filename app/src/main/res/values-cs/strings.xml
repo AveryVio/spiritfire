@@ -8,4 +8,10 @@
     <string name="HabitDesc">popis</string>
     <string name="HabitTimeChangeCard">Čas obnovení a interval</string>
     <string name="ResetTimeDialogName">vyberte si čas obnovení</string>
+    <string name="IntervalValueSetName">počet</string>
+    <string name="DailyChange">denně</string>
+    <string name="WeekklyChange">týdně</string>
+    <string name="MonthlyChange">měsíčně</string>
+    <string name="YearlyChange">ročně</string>
+    <string name="CustomDaysChange">počet dní</string>
 </resources>

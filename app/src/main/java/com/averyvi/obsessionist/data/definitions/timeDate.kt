@@ -1,14 +1,25 @@
 package com.averyvi.obsessionist.data.definitions
 
+import com.averyvi.obsessionist.R
+import java.util.Date
+
 data class ResetTime(
     val hour: Int,
     val minute: Int
 )
 
-enum class ResetDaysInterval(
-    val days: Int
+data class ResetDaysInterval(
+    val interval_unit: ResetDaysIntervalUnit,
+    val interval_value: Int,
+    val interval_date_created: Date
+)
+
+enum class ResetDaysIntervalUnit(
+    val uiText: Int
 ) {
-    daily(days = 1),
-    everyOther(days = 2),
-    weekly(days = 7)
+    DAILY(uiText = R.string.DailyChange),
+    WEEKLY(uiText = R.string.WeekklyChange),
+    MONTHLY(uiText = R.string.MonthlyChange),
+    YEARLY(uiText = R.string.YearlyChange),
+    CUSTOM_DAYS(uiText = R.string.CustomDaysChange),
 }
