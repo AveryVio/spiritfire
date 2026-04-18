@@ -1,4 +1,4 @@
-package com.averyvi.obsessionist
+package com.averyvi.spiritfire
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,15 +11,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.averyvi.obsessionist.ui.theme.ObsessionistTheme
-import com.averyvi.obsessionist.ui.MainUI
+import com.averyvi.spiritfire.ui.theme.SpiritfireTheme
+import com.averyvi.spiritfire.ui.MainUI
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ObsessionistTheme {
+            SpiritfireTheme {
                 MainUI()
             }
         }

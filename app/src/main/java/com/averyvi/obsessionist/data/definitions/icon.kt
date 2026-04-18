@@ -1,8 +1,8 @@
-package com.averyvi.obsessionist.data.definitions
+package com.averyvi.spiritfire.data.definitions
 
-import com.averyvi.obsessionist.R
+import com.averyvi.spiritfire.R
 
-enum class ObsIcon(val res: Int){
+enum class HabitIcon(val res: Int){
     moon(res = R.drawable.r_outline_dark_mode_2),
     battery(res = R.drawable.r_outline_battery_android_0_24),
     flower(res = R.drawable.r_outline_deceased_24),

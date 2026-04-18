@@ -1,4 +1,4 @@
-package com.averyvi.obsessionist.ui.fragments
+package com.averyvi.spiritfire.ui.fragments
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,18 +20,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.averyvi.obsessionist.R
-import com.averyvi.obsessionist.data.definitions.ResetDaysInterval
-import com.averyvi.obsessionist.data.definitions.ResetDaysIntervalUnit
-import com.averyvi.obsessionist.data.definitions.ResetTime
-import com.averyvi.obsessionist.ui.components.ColorDropdownPicker
-import com.averyvi.obsessionist.ui.components.ColumnSettingCard
-import com.averyvi.obsessionist.ui.components.IconDropdownPicker
-import com.averyvi.obsessionist.ui.components.ResetUnitDropdownPicker
-import com.averyvi.obsessionist.ui.components.SettingCardName
-import com.averyvi.obsessionist.ui.components.timePicker
-import com.averyvi.obsessionist.ui.components.timePickerOverlay
-import com.averyvi.obsessionist.ui.elements.ObsTextInput
+import com.averyvi.spiritfire.R
+import com.averyvi.spiritfire.data.definitions.ResetDaysInterval
+import com.averyvi.spiritfire.data.definitions.ResetDaysIntervalUnit
+import com.averyvi.spiritfire.data.definitions.ResetTime
+import com.averyvi.spiritfire.ui.components.ColorDropdownPicker
+import com.averyvi.spiritfire.ui.components.ColumnSettingCard
+import com.averyvi.spiritfire.ui.components.IconDropdownPicker
+import com.averyvi.spiritfire.ui.components.ResetUnitDropdownPicker
+import com.averyvi.spiritfire.ui.components.SettingCardName
+import com.averyvi.spiritfire.ui.components.timePicker
+import com.averyvi.spiritfire.ui.components.timePickerOverlay
+import com.averyvi.spiritfire.ui.elements.SimpleTextInput
 
 @Composable
 fun BasicChange(){
@@ -53,7 +53,7 @@ fun BasicChange(){
             ) {
                 IconDropdownPicker()
                 ColorDropdownPicker()
-                ObsTextInput(
+                SimpleTextInput(
                     label = { Text(stringResource(R.string.HabitName)) },
                     placeholder = { Text(stringResource(R.string.placeholdertext)) },
                     value = habitname.value,
@@ -68,7 +68,7 @@ fun BasicChange(){
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
             }
-            ObsTextInput(
+            SimpleTextInput(
                 label = { Text(stringResource(R.string.HabitDesc)) },
                 placeholder = { Text(stringResource(R.string.placeholdertext)) },
                 value = habitdesc.value,
@@ -119,7 +119,7 @@ fun TimeChange(){
                     onUnitChange = { selectedUnit.value = it },
                 )
                 if(selectedUnit.value == ResetDaysIntervalUnit.CUSTOM_DAYS) {
-                    ObsTextInput(
+                    SimpleTextInput(
                         label = { Text(stringResource(R.string.IntervalValueSetName)) },
                         placeholder = { Text(stringResource(R.string.placeholdertext)) },
                         value = ResetDaysValue.value,

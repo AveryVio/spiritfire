@@ -1,4 +1,4 @@
-package com.averyvi.obsessionist.ui.theme
+package com.averyvi.spiritfire.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

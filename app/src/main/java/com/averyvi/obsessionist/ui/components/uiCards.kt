@@ -1,4 +1,4 @@
-package com.averyvi.obsessionist.ui.components
+package com.averyvi.spiritfire.ui.components
 
 import android.app.Dialog
 import androidx.compose.foundation.border

@@ -1,6 +1,6 @@
-package com.averyvi.obsessionist.data.definitions
+package com.averyvi.spiritfire.data.definitions
 
-import com.averyvi.obsessionist.R
+import com.averyvi.spiritfire.R
 import java.util.Date
 
 data class ResetTime(

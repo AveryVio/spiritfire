@@ -1,4 +1,4 @@
-package com.averyvi.obsessionist
+package com.averyvi.spiritfire
 
 import org.junit.Test
 

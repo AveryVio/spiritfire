@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Obsessionist</string>
+    <string name="app_name" translatable="false">Spiritfire</string>
     <string name="DefaultTileName">Thing</string>
     <string name="IntroScreen">Intro</string>
     <string name="ChangeHabitScreen">Change habit</string>

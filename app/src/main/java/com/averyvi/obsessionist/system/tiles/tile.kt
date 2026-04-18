@@ -1,4 +1,4 @@
-package com.averyvi.obsessionist.system.tiles
+package com.averyvi.spiritfire.system.tiles
 
 import android.graphics.drawable.Icon
 import android.service.quicksettings.Tile

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "obsessionist"
+rootProject.name = "spiritfire"
 include(":app")
  

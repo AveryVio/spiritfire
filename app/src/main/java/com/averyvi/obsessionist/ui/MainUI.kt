@@ -1,4 +1,4 @@
-package com.averyvi.obsessionist.ui
+package com.averyvi.spiritfire.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -11,8 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.averyvi.obsessionist.R
-import com.averyvi.obsessionist.ui.screens.ChangeHabitScreen
+import com.averyvi.spiritfire.R
+import com.averyvi.spiritfire.ui.screens.ChangeHabitScreen
 
 @Composable
 fun MainUI(){

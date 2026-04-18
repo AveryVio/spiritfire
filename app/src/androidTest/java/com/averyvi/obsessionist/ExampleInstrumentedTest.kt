@@ -1,4 +1,4 @@
-package com.averyvi.obsessionist
+package com.averyvi.spiritfire
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.averyvi.obsessionist", appContext.packageName)
+        assertEquals("com.averyvi.spiritfire", appContext.packageName)
     }
 }

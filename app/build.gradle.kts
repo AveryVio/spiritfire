@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.averyvi.obsessionist"
+    namespace = "com.averyvi.spiritfire"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.averyvi.obsessionist"
+        applicationId = "com.averyvi.spiritfire"
         minSdk = 33
         targetSdk = 36
         versionCode = 1

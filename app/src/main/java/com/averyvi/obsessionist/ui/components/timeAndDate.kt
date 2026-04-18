@@ -1,4 +1,4 @@
-package com.averyvi.obsessionist.ui.components
+package com.averyvi.spiritfire.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,9 +15,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.averyvi.obsessionist.R
-import com.averyvi.obsessionist.data.definitions.ResetDaysInterval
-import com.averyvi.obsessionist.data.definitions.ResetTime
+import com.averyvi.spiritfire.R
+import com.averyvi.spiritfire.data.definitions.ResetDaysInterval
+import com.averyvi.spiritfire.data.definitions.ResetTime
 import java.util.Calendar
 
 @Composable
