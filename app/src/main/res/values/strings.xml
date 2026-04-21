@@ -15,4 +15,5 @@
     <string name="MonthlyChange">monthly</string>
     <string name="YearlyChange">yearly</string>
     <string name="CustomDaysChange">days</string>
+    <string name="StepesCard">Steps</string>
 </resources>

@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.sp
 import com.averyvi.spiritfire.ui.components.SettingCardName
 import com.averyvi.spiritfire.ui.fragments.BasicChange
 import com.averyvi.spiritfire.ui.fragments.DateChange
+import com.averyvi.spiritfire.ui.fragments.StepsChange
 
 @Composable
 fun ChangeHabitScreen(
@@ -32,5 +33,6 @@ fun ChangeHabitScreen(
         )
         BasicChange()
         DateChange()
+        StepsChange()
     }
 }

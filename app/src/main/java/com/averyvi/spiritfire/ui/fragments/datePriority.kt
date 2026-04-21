@@ -44,14 +44,14 @@ fun DateChange(){
             //interval day
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.Companion.height(56.dp).fillMaxWidth()
+                modifier = Modifier.height(56.dp).fillMaxWidth()
             ) {
                 timePicker(
                     resetTime = resetTime.value,
                     onResetTime = {
                         resetTime.value = it
                     },
-                    modifier = Modifier.Companion.weight(1f)
+                    modifier = Modifier.weight(1f)
                 )
                 datePicker(
                     ResetDaysUnit = selectedUnit.value,
@@ -62,7 +62,7 @@ fun DateChange(){
                             resetDaysValue.value = it.filter { numb -> numb.isDigit() }
                         }
                     },
-                    modifier = Modifier.Companion.fillMaxWidth().weight(1f)
+                    modifier = Modifier.fillMaxWidth().weight(1f)
                 )
             }
         }
