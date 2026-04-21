@@ -25,3 +25,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+/*
+language guides
+single habit: flame
+all habits: pyre
+*/
+
+/*
+ui language
+flame cards view
+big screen flame view
+pyre cards
+settings
+campfire (pill)
+*/
