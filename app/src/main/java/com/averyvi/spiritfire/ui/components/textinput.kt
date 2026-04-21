@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SimpleTextInput(
+fun FancyTextInput(
     label: @Composable () -> Unit,
     placeholder: @Composable () -> Unit,
     value: String,
@@ -56,6 +56,37 @@ fun SimpleTextInput(
                 colors = brushColorList,
                 end = Offset(gradientEndX, 0f)
             )
+        ),
+        keyboardOptions = keyboardOptions,
+        singleLine = maxLines == 1,
+        maxLines = maxLines
+    )
+}
+
+@Composable
+fun SimpleTextInput(
+    label: @Composable () -> Unit,
+    placeholder: @Composable () -> Unit,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    maxLines: Int = 1,
+){
+
+    TextField(
+        label = label,
+        placeholder = placeholder,
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier,
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        ),
+        shape = RoundedCornerShape(24.dp),
+        textStyle = TextStyle().copy(
+            fontSize = 18.sp,
         ),
         keyboardOptions = keyboardOptions,
         singleLine = maxLines == 1,

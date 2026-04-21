@@ -15,5 +15,8 @@
     <string name="MonthlyChange">monthly</string>
     <string name="YearlyChange">yearly</string>
     <string name="CustomDaysChange">days</string>
-    <string name="StepesCard">Steps</string>
+    <string name="StepsCard">Steps</string>
+    <string name="StepsAmount">steps</string>
+    <string name="StepsComplete">Steps to complete</string>
+    <string name="TimePickerOverlayConfirm">confirm</string>
 </resources>

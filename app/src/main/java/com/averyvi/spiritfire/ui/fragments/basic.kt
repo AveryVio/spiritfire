@@ -22,6 +22,7 @@ import com.averyvi.spiritfire.ui.components.ColorDropdownPicker
 import com.averyvi.spiritfire.ui.components.ColumnSettingCard
 import com.averyvi.spiritfire.ui.components.IconDropdownPicker
 import com.averyvi.spiritfire.ui.components.SettingCardName
+import com.averyvi.spiritfire.ui.elements.FancyTextInput
 import com.averyvi.spiritfire.ui.elements.SimpleTextInput
 
 @Composable
@@ -44,13 +45,14 @@ fun BasicChange(){
             ) {
                 IconDropdownPicker()
                 ColorDropdownPicker()
-                SimpleTextInput(
+                FancyTextInput(
                     label = { Text(stringResource(R.string.HabitName)) },
                     placeholder = { Text(stringResource(R.string.placeholdertext)) },
                     value = habitname.value,
                     onValueChange = { habitname.value = it },
                     modifier = Modifier.fillMaxWidth(),
                     brushColorList = listOf(
+                        MaterialTheme.colorScheme.primary,
                         MaterialTheme.colorScheme.primary,
                         MaterialTheme.colorScheme.secondary,
                         MaterialTheme.colorScheme.tertiary
@@ -69,12 +71,6 @@ fun BasicChange(){
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                brushColorList = listOf(
-                    MaterialTheme.colorScheme.primary,
-                    MaterialTheme.colorScheme.secondary,
-                    MaterialTheme.colorScheme.tertiary
-                ),
-                gradientTextStyle = TextStyle(),
                 keyboardOptions = KeyboardOptions(imeAction = if (habitdesc.value.lines().size < 3) ImeAction.None else ImeAction.Done),
                 maxLines = 3
             )

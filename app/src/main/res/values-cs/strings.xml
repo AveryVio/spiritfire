@@ -14,5 +14,8 @@
     <string name="MonthlyChange">měsíčně</string>
     <string name="YearlyChange">ročně</string>
     <string name="CustomDaysChange">počet dní</string>
-    <string name="StepesCard">Kroků</string>
+    <string name="StepsCard">Kroky</string>
+    <string name="StepsAmount">Kroků</string>
+    <string name="StepsComplete">Kroků k dokončení</string>
+    <string name="TimePickerOverlayConfirm">potvrdit</string>
 </resources>
