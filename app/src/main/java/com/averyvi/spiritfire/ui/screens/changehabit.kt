@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,8 +34,12 @@ fun ChangeHabitScreen(
             textColor = MaterialTheme.colorScheme.onSurface,
             fontSize = 50.sp
         )
-        BasicChange()
-        DateChange()
-        StepsChange()
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(1) //Adaptive(90.dp)
+        ) {
+            item{BasicChange()}
+            item{DateChange()}
+            item{StepsChange()}
+        }
     }
 }
