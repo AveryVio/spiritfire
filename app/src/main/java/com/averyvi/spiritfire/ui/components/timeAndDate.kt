@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -23,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -50,20 +53,33 @@ fun timePicker(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.width(IntrinsicSize.Max),
         ) {
-            Card() { Text(
+            Card(
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors().copy(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                )
+            ) { Text(
                 text = resetTime.hour.toString(),
                 fontSize = 45.sp,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
+
             ) }
             Text(
                 text = ":",
                 fontSize = 25.sp,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
-            Card() { Text(
+            Card(
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors().copy(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                )
+            ) { Text(
                 text = resetTime.minute.toString(),
                 fontSize = 45.sp,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
             ) }
         }
 

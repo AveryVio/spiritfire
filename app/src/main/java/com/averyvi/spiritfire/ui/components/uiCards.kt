@@ -23,7 +23,7 @@ fun ColumnSettingCard(
     content: @Composable () -> Unit
 ){
     Card(
-        modifier = Modifier.border(2.dp, MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(24.dp)),
+        modifier = Modifier.border(2.dp, MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -33,6 +34,10 @@ fun IconDropdownPicker(){
         Card(
             onClick = { cardIsExpanded.value = !cardIsExpanded.value },
             shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors().copy(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            )
         ) {
             Icon(
                 painter = painterResource(selectedIcon.value.res),
@@ -46,6 +51,7 @@ fun IconDropdownPicker(){
                 expanded = true,
                 onDismissRequest = { cardIsExpanded.value = false },
                 shape = RoundedCornerShape(24.dp),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
                 HabitIcon.entries.forEach { icon ->
                     DropdownMenuItem(
@@ -74,6 +80,10 @@ fun ColorDropdownPicker(){
         Card(
             onClick = { cardIsExpanded.value = !cardIsExpanded.value },
             shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors().copy(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            )
         ) {
             Icon(
                 painter = painterResource(R.drawable.r_circle),
@@ -87,6 +97,7 @@ fun ColorDropdownPicker(){
                 expanded = true,
                 onDismissRequest = { cardIsExpanded.value = false },
                 shape = RoundedCornerShape(24.dp),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
                 HabitColor.entries.forEach { color ->
                     DropdownMenuItem(
@@ -118,6 +129,10 @@ fun ResetUnitDropdownPicker(
         Card(
             onClick = { cardIsExpanded.value = !cardIsExpanded.value },
             shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors().copy(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            )
         ) {
             Row(
                 modifier = Modifier.fillMaxHeight(),
@@ -135,6 +150,7 @@ fun ResetUnitDropdownPicker(
                 expanded = true,
                 onDismissRequest = { cardIsExpanded.value = false },
                 shape = RoundedCornerShape(24.dp),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
                 ResetDaysIntervalUnit.entries.forEach { unit ->
                     DropdownMenuItem(

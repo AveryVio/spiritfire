@@ -2,10 +2,12 @@ package com.averyvi.spiritfire.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,7 +23,9 @@ fun MainUI(){
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    Scaffold() { innerPadding ->
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+    ) { innerPadding ->
         Box(
             modifier = Modifier.padding(innerPadding)
         ) {
