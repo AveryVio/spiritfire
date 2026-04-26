@@ -1,5 +1,7 @@
 package com.averyvi.spiritfire.data.viewmodels
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.averyvi.spiritfire.data.definitions.Habit
 import com.averyvi.spiritfire.data.definitions.HabitColor
@@ -7,11 +9,11 @@ import com.averyvi.spiritfire.data.definitions.HabitIcon
 import com.averyvi.spiritfire.data.definitions.ResetDaysInterval
 import com.averyvi.spiritfire.data.definitions.ResetDaysIntervalUnit
 import com.averyvi.spiritfire.data.definitions.ResetTime
+import com.averyvi.spiritfire.data.definitions.habitConsts
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.util.Collections.emptyList
 import kotlin.String
 
 class SingleHabitViewModel(): ViewModel() {
@@ -31,9 +33,9 @@ class SingleHabitViewModel(): ViewModel() {
 
         newPriority: Int = _habit.value.priority,
 
-        newHabitStepsAmount: String = _habit.value.habitStepsAmount,
-        newHabitStepsComplete: String = _habit.value.habitStepsComplete,
-        newHabitStepsStrings: MutableList<String> = _habit.value.habitStepsStrings,
+        newStepsAmount: String = _habit.value.stepsAmount,
+        newStepsComplete: String = _habit.value.stepsComplete,
+        newStepsStrings: List<String> = _habit.value.stepsStrings,
     ) {
         _habit.update { it.copy(
             name = newName,
@@ -43,9 +45,9 @@ class SingleHabitViewModel(): ViewModel() {
             resetInterval = ResetDaysInterval(interval_unit = newResetIntervalUnit, newResetIntervalValue),
             resetTime = newResetTime,
             priority = newPriority,
-            habitStepsAmount = newHabitStepsAmount,
-            habitStepsComplete = newHabitStepsComplete,
-            habitStepsStrings = newHabitStepsStrings,
+            stepsAmount = newStepsAmount,
+            stepsComplete = newStepsComplete,
+            stepsStrings = newStepsStrings,
         )}
     }
 
@@ -56,17 +58,17 @@ class SingleHabitViewModel(): ViewModel() {
             resetInterval = ResetDaysInterval.DAILY,
             resetTime = ResetTime.MIDNIGHT,
             priority = 16,
-            habitStepsAmount = "",
-            habitStepsComplete = "",
-            habitStepsStrings = emptyList(),
+            stepsAmount = "",
+            stepsComplete = "",
+            stepsStrings = List(habitConsts.maxSteps) { index -> "" },
         )}
     }
 
-    fun addNewHabitString(){
-        _habit.value.habitStepsStrings.add("")
-    }
-
-    fun removeLastHabitString(){
-        _habit.value.habitStepsStrings.removeAt(_habit.value.habitStepsStrings.size - 1)
+    fun changeHabitString(index: Int, string: String){
+        val updatedStrings = _habit.value.stepsStrings.toMutableList()
+        updatedStrings[index] = string
+        _habit.update {
+            _habit.value.copy(stepsStrings = updatedStrings)
+        }
     }
 }

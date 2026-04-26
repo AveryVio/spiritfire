@@ -1,5 +1,8 @@
 package com.averyvi.spiritfire.data.definitions
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import java.util.Collections.emptyList
 
 data class Habit(
@@ -14,7 +17,7 @@ data class Habit(
 
     val priority: Int = 16,
 
-    val habitStepsAmount: String = "",
-    val habitStepsComplete: String = "",
-    val habitStepsStrings: MutableList<String> = emptyList(),
+    val stepsAmount: String = "",
+    val stepsComplete: String = "",
+    val stepsStrings: List<String> = List(habitConsts.maxSteps) { "" },
 )
