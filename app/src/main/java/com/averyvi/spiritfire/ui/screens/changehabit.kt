@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.averyvi.spiritfire.data.viewmodels.SingleHabitViewModel
 import com.averyvi.spiritfire.ui.components.SettingCardName
 import com.averyvi.spiritfire.ui.fragments.BasicChange
 import com.averyvi.spiritfire.ui.fragments.DateChange
@@ -23,6 +24,7 @@ import com.averyvi.spiritfire.ui.fragments.StepsChange
 
 @Composable
 fun ChangeHabitScreen(
+    singleHabitViewModel: SingleHabitViewModel,
     modifier: Modifier = Modifier
 ){
     Column(
@@ -43,9 +45,15 @@ fun ChangeHabitScreen(
             verticalItemSpacing = 8.dp,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item{BasicChange()}
-            item{DateChange()}
-            item{StepsChange()}
+            item{BasicChange(
+                singleHabitViewModel = singleHabitViewModel
+            )}
+            item{DateChange(
+                singleHabitViewModel = singleHabitViewModel
+            )}
+            item{StepsChange(
+                singleHabitViewModel = singleHabitViewModel
+            )}
         }
     }
 }

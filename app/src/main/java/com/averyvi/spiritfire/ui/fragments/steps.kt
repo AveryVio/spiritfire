@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.internal.composableLambda
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,17 +25,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.averyvi.spiritfire.R
+import com.averyvi.spiritfire.data.viewmodels.SingleHabitViewModel
 import com.averyvi.spiritfire.ui.components.ColumnSettingCard
 import com.averyvi.spiritfire.ui.components.SettingCardName
 import com.averyvi.spiritfire.ui.elements.FancyTextInput
 import com.averyvi.spiritfire.ui.elements.SimpleTextInput
 
 @Composable
-fun StepsChange(){
+fun StepsChange(
+    singleHabitViewModel: SingleHabitViewModel,
+){
     val habitStepsType = remember { mutableStateOf(false) }
-    val habitStepsAmount = remember { mutableStateOf("") }
-    val habitStepsComplete = remember { mutableStateOf("") }
-    val habitStepsStrings = remember { mutableStateListOf<String>() }
+    val habitStepsAmount = singleHabitViewModel.habit.collectAsState().value.habitStepsAmount
+    val habitStepsComplete = singleHabitViewModel.habit.collectAsState().value.habitStepsComplete
+    val habitStepsStrings = singleHabitViewModel.habit.collectAsState().value.habitStepsStrings
 
     ColumnSettingCard {
         Column(
@@ -54,8 +58,8 @@ fun StepsChange(){
                     checked = habitStepsType.value,
                     onCheckedChange = { habitStepsType.value = it },
                     thumbContent =
-                        if(habitStepsType.value){ {Text("2+")}}
-                        else{{Text("2")} },
+                        if(habitStepsType.value){ {Text("1+")}}
+                        else{{Text("1")} },
                     modifier = Modifier.padding(end = 16.dp)
                 )
             }
@@ -66,28 +70,26 @@ fun StepsChange(){
                     FancyTextInput(
                         label = { Text(stringResource(R.string.StepsAmount)) },
                         placeholder = { Text(stringResource(R.string.placeholdertext)) },
-                        value = habitStepsAmount.value,
+                        value = habitStepsAmount,
                         onValueChange = {
                             if (it.length < 4) {
-                                habitStepsAmount.value = it.filter{ numb -> numb.isDigit() } // todo add a signal to the user that 20 is the max
+                                singleHabitViewModel.changeHabitValue(newHabitStepsAmount = it.filter{ numb -> numb.isDigit() } ) // todo add a signal to the user that 20 is the max
 
-                                if (habitStepsAmount.value.isNotEmpty()) {
-                                    if (habitStepsAmount.value.toInt() > 20) {
-                                        habitStepsAmount.value = "20"
+                                if (habitStepsAmount.isNotEmpty()) {
+                                    if (habitStepsAmount.toInt() > 20) {
+                                        singleHabitViewModel.changeHabitValue(newHabitStepsAmount = "20")
                                     }
-                                    while (habitStepsStrings.size < habitStepsAmount.value.toInt() ) {
-                                        habitStepsStrings.add("")
+                                    while (habitStepsStrings.size < habitStepsAmount.toInt() ) {
+                                        singleHabitViewModel.addNewHabitString()
                                     }
-                                    while (habitStepsStrings.size > habitStepsAmount.value.toInt() ) {
-                                        habitStepsStrings.removeAt(habitStepsStrings.size - 1)
+                                    while (habitStepsStrings.size > habitStepsAmount.toInt() ) {
+                                        singleHabitViewModel.removeLastHabitString()
                                     }
                                 } else {
                                     while (habitStepsStrings.isNotEmpty()) {
-                                        habitStepsStrings.removeAt(habitStepsStrings.size - 1)
+                                        singleHabitViewModel.removeLastHabitString()
                                     }
                                 }
-
-
                             }
                         },
                         brushColorList = listOf(
@@ -105,10 +107,14 @@ fun StepsChange(){
                     SimpleTextInput(
                         label = { Text(stringResource(R.string.StepsComplete)) },
                         placeholder = { Text(stringResource(R.string.placeholdertext)) },
-                        value = habitStepsComplete.value,
+                        value = habitStepsComplete,
                         onValueChange = {
                             if (it.length < 4) {
-                                habitStepsComplete.value = it.filter{ numb -> numb.isDigit() }
+                                singleHabitViewModel.changeHabitValue(newHabitStepsComplete = it.filter{ numb -> numb.isDigit() }) // todo add a signal to the user that 20 is the max
+
+                                if (habitStepsComplete.toInt() > 20) {
+                                    singleHabitViewModel.changeHabitValue("20")
+                                }
                             }
                         },
                         keyboardOptions = KeyboardOptions(
@@ -136,7 +142,7 @@ fun StepsChange(){
                             },
                             keyboardOptions = KeyboardOptions(
                                 imeAction =
-                                    if(index == habitStepsAmount.value.toInt()) ImeAction.Done
+                                    if(index >= (habitStepsAmount.toInt() - 1)) ImeAction.Done
                                     else ImeAction.Next
                             ),
                             modifier = Modifier.fillMaxWidth().height(56.dp)

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -17,22 +18,19 @@ import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.ResetDaysInterval
 import com.averyvi.spiritfire.data.definitions.ResetDaysIntervalUnit
 import com.averyvi.spiritfire.data.definitions.ResetTime
+import com.averyvi.spiritfire.data.viewmodels.SingleHabitViewModel
 import com.averyvi.spiritfire.ui.components.ColumnSettingCard
 import com.averyvi.spiritfire.ui.components.SettingCardName
 import com.averyvi.spiritfire.ui.components.datePicker
 import com.averyvi.spiritfire.ui.components.timePicker
 
 @Composable
-fun DateChange(){
-    var daysResetInterval: ResetDaysInterval
-    val selectedUnit = remember { mutableStateOf(ResetDaysIntervalUnit.DAILY) }
-    val resetDaysValue = remember { mutableStateOf("") }
-    val resetTime = remember { mutableStateOf(
-        ResetTime(
-            hour = 0,
-            minute = 0
-        )
-    ) }
+fun DateChange(
+    singleHabitViewModel: SingleHabitViewModel,
+){
+    val selectedUnit = singleHabitViewModel.habit.collectAsState().value.resetInterval.interval_unit
+    val resetDaysValue = singleHabitViewModel.habit.collectAsState().value.resetInterval.interval_value
+    val resetTime = singleHabitViewModel.habit.collectAsState().value.resetTime
 
     ColumnSettingCard {
         Column() {
@@ -41,25 +39,24 @@ fun DateChange(){
                 textColor = MaterialTheme.colorScheme.secondary,
                 fontSize = 27.sp
             )
-            //interval day
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.height(56.dp).fillMaxWidth()
             ) {
                 timePicker(
-                    resetTime = resetTime.value,
+                    resetTime = resetTime,
                     onResetTime = {
-                        resetTime.value = it
+                        singleHabitViewModel.changeHabitValue(newResetTime = it)
                     },
                     modifier = Modifier.weight(1f)
                 )
                 datePicker(
-                    ResetDaysUnit = selectedUnit.value,
-                    onUnitChange = { selectedUnit.value = it },
-                    ResetDaysValue = resetDaysValue.value,
+                    ResetDaysUnit = selectedUnit,
+                    onUnitChange = { singleHabitViewModel.changeHabitValue(newResetIntervalUnit = it) },
+                    ResetDaysValue = resetDaysValue,
                     onValueChange = {
                         if (it.length < 30) {
-                            resetDaysValue.value = it.filter { numb -> numb.isDigit() }
+                            singleHabitViewModel.changeHabitValue(newResetIntervalValue = it.filter { numb -> numb.isDigit() })
                         }
                     },
                     modifier = Modifier.fillMaxWidth().weight(1f)

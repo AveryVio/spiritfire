@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,11 +26,14 @@ import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.HabitColor
 import com.averyvi.spiritfire.data.definitions.HabitIcon
 import com.averyvi.spiritfire.data.definitions.ResetDaysIntervalUnit
+import com.averyvi.spiritfire.data.viewmodels.SingleHabitViewModel
 
 @Composable
-fun IconDropdownPicker(){
+fun IconDropdownPicker(
+    singleHabitViewModel: SingleHabitViewModel
+){
     Box(){
-        val selectedIcon = remember { mutableStateOf(HabitIcon.moon) }
+        val selectedIcon = singleHabitViewModel.habit.collectAsState().value.icon
         val cardIsExpanded = remember { mutableStateOf(false) }
         Card(
             onClick = { cardIsExpanded.value = !cardIsExpanded.value },
@@ -40,7 +44,7 @@ fun IconDropdownPicker(){
             )
         ) {
             Icon(
-                painter = painterResource(selectedIcon.value.res),
+                painter = painterResource(selectedIcon.res),
                 tint = MaterialTheme.colorScheme.primary,
                 contentDescription = null,
                 modifier = Modifier.aspectRatio(1.2f).fillMaxHeight().padding(8.dp)
@@ -64,7 +68,7 @@ fun IconDropdownPicker(){
                             text = icon.name,
                             color = MaterialTheme.colorScheme.onSurface,
                             ) },
-                        onClick = { selectedIcon.value = icon }
+                        onClick = { singleHabitViewModel.changeHabitValue(newIcon = icon) }
                     )
                 }
             }
@@ -73,9 +77,11 @@ fun IconDropdownPicker(){
 }
 
 @Composable
-fun ColorDropdownPicker(){
+fun ColorDropdownPicker(
+    singleHabitViewModel: SingleHabitViewModel
+){
     Box(){
-        val selectedColor = remember { mutableStateOf(HabitColor.Purple) }
+        val selectedColor = singleHabitViewModel.habit.collectAsState().value.color
         val cardIsExpanded = remember { mutableStateOf(false) }
         Card(
             onClick = { cardIsExpanded.value = !cardIsExpanded.value },
@@ -87,7 +93,7 @@ fun ColorDropdownPicker(){
         ) {
             Icon(
                 painter = painterResource(R.drawable.r_circle),
-                tint = selectedColor.value.color,
+                tint = selectedColor.color,
                 contentDescription = null,
                 modifier = Modifier.aspectRatio(1.2f).fillMaxHeight().padding(8.dp)
             )
@@ -110,7 +116,7 @@ fun ColorDropdownPicker(){
                             text = color.name,
                             color = MaterialTheme.colorScheme.onSurface,
                             ) },
-                        onClick = { selectedColor.value = color }
+                        onClick = { singleHabitViewModel.changeHabitValue(newColor = color) }
                     )
                 }
             }

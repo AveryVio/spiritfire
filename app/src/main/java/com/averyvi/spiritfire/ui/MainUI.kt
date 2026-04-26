@@ -14,10 +14,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.averyvi.spiritfire.R
+import com.averyvi.spiritfire.data.viewmodels.SingleHabitViewModel
 import com.averyvi.spiritfire.ui.screens.ChangeHabitScreen
 
 @Composable
-fun MainUI(){
+fun MainUI(
+    singleHabitViewModel: SingleHabitViewModel
+){
 
     val navController: NavHostController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -37,7 +40,9 @@ fun MainUI(){
 
                 }
                 composable(route = Routes.ChangeHabit.name) {
-                    ChangeHabitScreen()
+                    ChangeHabitScreen(
+                        singleHabitViewModel = singleHabitViewModel
+                    )
                 }
             }
         }
