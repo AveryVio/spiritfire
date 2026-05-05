@@ -18,4 +18,5 @@
     <string name="StepsAmount">Kroků</string>
     <string name="StepsComplete">Kroků k dokončení</string>
     <string name="TimePickerOverlayConfirm">potvrdit</string>
+    <string name="MultipleHabitsView">Několik zvyků</string>
 </resources>

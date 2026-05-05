@@ -1,4 +1,4 @@
-package com.averyvi.spiritfire.ui.fragments
+package com.averyvi.spiritfire.ui.fragments.cards
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

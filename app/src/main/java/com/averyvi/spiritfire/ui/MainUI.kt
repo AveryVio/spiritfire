@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.viewmodels.SingleHabitViewModel
 import com.averyvi.spiritfire.ui.screens.ChangeHabitScreen
+import com.averyvi.spiritfire.ui.screens.MultipleHabitScreen
 
 @Composable
 fun MainUI(
@@ -44,6 +45,9 @@ fun MainUI(
                         singleHabitViewModel = singleHabitViewModel
                     )
                 }
+                composable(route = Routes.MultipleHabits.name) {
+                    MultipleHabitScreen()
+                }
             }
         }
     }
@@ -56,4 +60,7 @@ enum class Routes(title: Int){
     ChangeHabit(
         title = R.string.ChangeHabitScreen
     ),
+    MultipleHabits(
+        title = R.string.MultipleHabitsView
+    )
 }
