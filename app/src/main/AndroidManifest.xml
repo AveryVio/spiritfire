@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".system.tiles.MyQSTileService"
+            android:name=".old.tiles.MyQSTileService"
             android:exported="true"
             android:label="@string/DefaultTileName"
         android:icon="@drawable/handa"
