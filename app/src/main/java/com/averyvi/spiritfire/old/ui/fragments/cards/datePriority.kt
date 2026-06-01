@@ -21,15 +21,15 @@ import com.averyvi.spiritfire.old.ui.components.timePicker
 
 @Composable
 fun DateChange(
-    singleHabitViewModel: com.averyvi.spiritfire.old.data.viewmodels.SingleHabitViewModel,
+    singleHabitViewModel: SingleHabitViewModel,
 ){
     val selectedUnit = singleHabitViewModel.habit.collectAsState().value.resetInterval.interval_unit
     val resetDaysValue = singleHabitViewModel.habit.collectAsState().value.resetInterval.interval_value
     val resetTime = singleHabitViewModel.habit.collectAsState().value.resetTime
 
-    _root_ide_package_.com.averyvi.spiritfire.old.ui.components.ColumnSettingCard {
+    ColumnSettingCard {
         Column() {
-            _root_ide_package_.com.averyvi.spiritfire.old.ui.components.SettingCardName(
+            SettingCardName(
                 text = stringResource(R.string.HabitTimeChangeCard),
                 textColor = MaterialTheme.colorScheme.secondary,
                 fontSize = 27.sp
@@ -38,14 +38,14 @@ fun DateChange(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.height(56.dp).fillMaxWidth()
             ) {
-                _root_ide_package_.com.averyvi.spiritfire.old.ui.components.timePicker(
+                timePicker(
                     resetTime = resetTime,
                     onResetTime = {
                         singleHabitViewModel.changeHabitValue(newResetTime = it)
                     },
                     modifier = Modifier.weight(1f)
                 )
-                _root_ide_package_.com.averyvi.spiritfire.old.ui.components.datePicker(
+                datePicker(
                     ResetDaysUnit = selectedUnit,
                     onUnitChange = { singleHabitViewModel.changeHabitValue(newResetIntervalUnit = it) },
                     ResetDaysValue = resetDaysValue,

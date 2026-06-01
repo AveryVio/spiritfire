@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">Spiritfire</string>
     <string name="DefaultTileName">Thing</string>
     <string name="IntroScreen">Intro</string>
-    <string name="ChangeHabitScreen">Change habit</string>
+    <string name="HabitOverviewScreen">Pyre</string>
     <string name="HabitName">name</string>
     <string name="placeholdertext" translatable="false">foobar</string>
     <string name="BasicHabitInfoChangeCard">Basic info</string>

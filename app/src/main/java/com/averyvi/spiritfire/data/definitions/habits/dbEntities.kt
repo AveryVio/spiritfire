@@ -1,6 +1,7 @@
 package com.averyvi.spiritfire.data.definitions.habits
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
@@ -20,7 +21,7 @@ data class HabitRegistryDBEntity(
     @ColumnInfo(name = "name") val name: String = "Flame",
     @ColumnInfo(name = "description") val description: String = "Something to do.",
     @ColumnInfo(name = "icon") val icon: Int = R.drawable.r_outline_dark_mode_2,
-    @ColumnInfo(name = "colour") val colour: Color = FColour.Red.color,
+    @ColumnInfo(name = "colour") val colour: Int = FColour.Red.color.toArgb(),
     @ColumnInfo(name = "resetType") val resetType: ResetDaysType = ResetDays.DAILY.resetType,
     @ColumnInfo(name = "resetDays") val resetDays: Int = ResetDays.DAILY.resetDays,
     @ColumnInfo(name = "resetHour") val resetHour: Int = 0,

@@ -1,6 +1,7 @@
 package com.averyvi.spiritfire.data.definitions.habits
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.averyvi.spiritfire.R
 import java.util.Date
 
@@ -32,14 +33,14 @@ data class HabitForList(
     val id: Int = 0,
     val name: String = "Flame",
     val icon: Int = R.drawable.r_outline_dark_mode_2,
-    val colour: Color = FColour.Red.color,
+    val colour: Int = FColour.Red.color.toArgb(),
 )
 
 data class HabitBasics(
     val id: Int = 0,
     val name: String = "Flame",
     val icon: Int = R.drawable.r_outline_dark_mode_2,
-    val colour: Color = FColour.Red.color,
+    val colour: Int = FColour.Red.color.toArgb(),
     val checksAmount: Int = 0,
     val checksComplete: Int = 0,
     val checksType: Int = checkTypes.COMPLETIONS.stringRef,
@@ -71,5 +72,5 @@ data class HabitLogItem(
 data class TagUIEntity(
     val id: Int = 0,
     val name: String = "",
-    val colour: Color = FColour.Red.color,
+    val colour: Int = FColour.Red.color.toArgb(),
 )

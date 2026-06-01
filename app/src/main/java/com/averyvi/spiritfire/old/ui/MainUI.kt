@@ -7,7 +7,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -58,7 +57,7 @@ enum class Routes(title: Int){
         title = R.string.IntroScreen
     ),
     ChangeHabit(
-        title = R.string.ChangeHabitScreen
+        title = R.string.HabitOverviewScreen
     ),
     MultipleHabits(
         title = R.string.MultipleHabitsView
