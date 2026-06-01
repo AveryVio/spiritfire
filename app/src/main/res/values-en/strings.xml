@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Spiritfire</string>
+    <string name="DefaultTileName">Thing</string>
+    <string name="IntroScreen">Intro</string>
+    <string name="ChangeHabitScreen">Change habit</string>
+    <string name="HabitName">name</string>
+    <string name="BasicHabitInfoChangeCard">Basic info</string>
+    <string name="HabitDesc">description</string>
+    <string name="HabitTimeChangeCard">Reset time and frequency</string>
+    <string name="ResetTimeDialogName">pick a reset time</string>
+    <string name="IntervalValueSetName">amount</string>
+    <string name="DailyChange">daily</string>
+    <string name="WeekklyChange">weekly</string>
+    <string name="MonthlyChange">monthly</string>
+    <string name="YearlyChange">yearly</string>
+    <string name="CustomDaysChange">days</string>
+    <string name="StepsCard">Steps</string>
+    <string name="StepsAmount">steps</string>
+    <string name="StepsComplete">Steps to complete</string>
+    <string name="TimePickerOverlayConfirm">confirm</string>
+    <string name="MultipleHabitsView">Multiple habits</string>
+    <string name="ChecksCompletions">checks</string>
+    <string name="ChecksSteps">steps</string>
+</resources>

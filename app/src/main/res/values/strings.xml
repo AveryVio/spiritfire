@@ -20,4 +20,6 @@
     <string name="StepsComplete">Steps to complete</string>
     <string name="TimePickerOverlayConfirm">confirm</string>
     <string name="MultipleHabitsView">Multiple habits</string>
+    <string name="ChecksCompletions">checks</string>
+    <string name="ChecksSteps">steps</string>
 </resources>

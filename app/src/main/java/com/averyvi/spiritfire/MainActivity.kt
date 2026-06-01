@@ -5,15 +5,26 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.averyvi.spiritfire.old.data.viewmodels.SingleHabitViewModel
-import com.averyvi.spiritfire.old.ui.MainUI
 import com.averyvi.spiritfire.old.ui.theme.SpiritfireTheme
+import com.averyvi.spiritfire.ui.MainUI
+import com.averyvi.spiritfire.data.db.HabitRegistry
+import com.averyvi.spiritfire.old.data.definitions.Habit
+import java.util.Calendar
 import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
-    private val singleHabitViewModel: SingleHabitViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val habitDatabase = Room.databaseBuilder(
+            context = applicationContext,
+            klass = HabitRegistry::class.java,
+            name = "habit-registry"
+        ).build()
+        val habitDAO = habitDatabase.UserDao()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -21,6 +32,9 @@ class MainActivity : ComponentActivity() {
                 /*MainUI(
                     singleHabitViewModel = singleHabitViewModel
                 )*/
+                MainUI(
+                    habitDAO = habitDAO
+                )
             }
         }
     }

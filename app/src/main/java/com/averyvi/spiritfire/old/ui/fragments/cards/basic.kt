@@ -27,16 +27,16 @@ import com.averyvi.spiritfire.ui.elements.SimpleTextInput
 
 @Composable
 fun BasicChange(
-    singleHabitViewModel: com.averyvi.spiritfire.old.data.viewmodels.SingleHabitViewModel
+    singleHabitViewModel: SingleHabitViewModel
 ){
     val habitname = singleHabitViewModel.habit.collectAsState().value.name
     val habitdesc = singleHabitViewModel.habit.collectAsState().value.description
 
-    _root_ide_package_.com.averyvi.spiritfire.old.ui.components.ColumnSettingCard {
+    ColumnSettingCard {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            _root_ide_package_.com.averyvi.spiritfire.old.ui.components.SettingCardName(
+            SettingCardName(
                 text = stringResource(R.string.BasicHabitInfoChangeCard),
                 textColor = MaterialTheme.colorScheme.primary,
                 fontSize = 35.sp
@@ -45,13 +45,13 @@ fun BasicChange(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.height(56.dp)
             ) {
-                _root_ide_package_.com.averyvi.spiritfire.old.ui.components.IconDropdownPicker(
+                IconDropdownPicker(
                     singleHabitViewModel = singleHabitViewModel
                 )
-                _root_ide_package_.com.averyvi.spiritfire.old.ui.components.ColorDropdownPicker(
+                ColorDropdownPicker(
                     singleHabitViewModel = singleHabitViewModel
                 )
-                _root_ide_package_.com.averyvi.spiritfire.ui.elements.FancyTextInput(
+                FancyTextInput(
                     label = { Text(stringResource(R.string.HabitName)) },
                     placeholder = { Text(stringResource(R.string.placeholdertext)) },
                     value = habitname,
@@ -67,7 +67,7 @@ fun BasicChange(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
             }
-            _root_ide_package_.com.averyvi.spiritfire.ui.elements.SimpleTextInput(
+            SimpleTextInput(
                 label = { Text(stringResource(R.string.HabitDesc)) },
                 placeholder = { Text(stringResource(R.string.placeholdertext)) },
                 value = habitdesc,
