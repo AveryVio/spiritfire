@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.toColor
@@ -13,91 +14,29 @@ import com.averyvi.spiritfire.data.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitRegistryDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.ResetDays
+import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.habits.checkTypes
+import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import java.util.Calendar
 import kotlin.concurrent.thread
 
 @Composable
-fun testingdb(habitDAO: HabitRegistryUserDao){
-    Button(
-        onClick = {
-            thread {
-                habitDAO.insert(
-                    HabitRegistryDBEntity(
-                        name = "Elk",
-                        description = "Antlers",
-                        icon = R.drawable.r_outline_pill_24,
-                        colour = FColour.Yellow.color.toArgb(),
-                        resetType = ResetDays.WEEKLY.resetType,
-                        resetDays = ResetDays.WEEKLY.resetDays,
-                        resetHour = Calendar.HOUR_OF_DAY,
-                        resetMinute = Calendar.MINUTE,
-                        resetOffset = 0,
-                        checksAmount = 3,
-                        checksComplete = 2,
-                        checksType = checkTypes.COMPLETIONS.stringRef,
-                        checksSkipGrace = 1,
-                        checksNames = "",
-                        priority = 2,
-                        cooldownHours = 0,
-                        cooldownMinutes = 2,
-                        cooldownSeconds = 0,
-                        difficulty = 7,
-                    )
-                )
-            }
-        }
-    ) { Text("one add") }
+fun testingdb(
+    habitDAO: HabitRegistryUserDao,
+    habitFilterViewModel: HabitFilterViewModel
+){
+    val allHabits = habitFilterViewModel.filterItems.collectAsState().value
+    val selectedHabits = habitFilterViewModel.selectedFilters.collectAsState().value
 
-    Button(
-        onClick = {
-            thread {
-                habitDAO.insert(
-                    HabitRegistryDBEntity(
-                        name = "Frog",
-                        description = "Croaks",
-                        icon = R.drawable.r_outline_battery_android_0_24,
-                        colour = FColour.Green.color.toArgb(),
-                        resetType = ResetDays.YEARLY.resetType,
-                        resetDays = ResetDays.YEARLY.resetDays,
-                        resetHour = if ((Calendar.HOUR_OF_DAY + 1) <= 24) Calendar.HOUR_OF_DAY + 1 else 24,
-                        resetMinute = Calendar.MINUTE,
-                        resetOffset = 0,
-                        checksAmount = 1,
-                        checksComplete = 1,
-                        checksType = checkTypes.STEPS.stringRef,
-                        checksSkipGrace = 0,
-                        checksNames = "",
-                        priority = 7,
-                        cooldownHours = 1,
-                        cooldownMinutes = 0,
-                        cooldownSeconds = 0,
-                        difficulty = 1,
-                    )
-                )
-            }
-        }
-    ) { Text("two add") }
-    val allHabits: SnapshotStateList<HabitRegistryDBEntity> = SnapshotStateList()
-    Button(
-        onClick = {
-            thread {
-                habitDAO.getAll().forEach { allHabits.add(it) }
-            }.join()
-        }
-    ) { Text("getall") }
-    Button(
-        onClick = {
-            thread {
-                habitDAO.getAll().forEach { allHabits.add(it) }
-                allHabits.forEach { habitDAO.delete(it) }
-            }.join()
-        }
-    ) { Text("deletall") }
     LazyColumn(userScrollEnabled = true) {
         allHabits.forEach {
             item {
                 Column() {
+                    Text("${it.id}")
+                    Text(it.name)
+                    Text("${it.icon}")
+                    Text("${it.colour.toColor()}")
+                    /*
                     Text("${it.id}")
                     Text(it.name + ", " + it.description)
                     Text("${it.icon}")
@@ -109,8 +48,63 @@ fun testingdb(habitDAO: HabitRegistryUserDao){
                     Text("${it.cooldownHours}, ${it.cooldownMinutes}, ${it.cooldownSeconds}")
                     Text("${it.difficulty}")
                     Text("\n\n\n\n")
+                    */
                 }
             }
         }
     }
+}
+
+fun generateRandomHabitEntity(): HabitRegistryDBEntity {
+    // Hardcoded lists for randomized resource/string generation
+    val icons = listOf(
+        R.drawable.r_outline_dark_mode_2,
+        R.drawable.r_outline_battery_android_0_24,
+        R.drawable.r_outline_deceased_24,
+        R.drawable.r_outline_humidity_low_24,
+        R.drawable.r_outline_jamboard_kiosk_24,
+        R.drawable.r_outline_music_note_24,
+        R.drawable.r_outline_pill_24
+    )
+    val names = listOf("Reading", "Exercise", "Meditation", "Coding", "Hydration", "Journaling", "Walking")
+    val descriptions = listOf("Daily task", "Keep the streak going!", "Just do your best", "Don't forget this", "")
+
+    // Restrictions for non-resource integer values
+    val restrictedChecksAmount = (1..10).random()
+    val restrictedChecksComplete = (0..restrictedChecksAmount).random() // Ensures completions don't exceed the total amount
+    val restrictedPriority = (1..10).random()
+    val restrictedDifficulty = (1..5).random()
+    val restrictedCooldownHours = (0..24).random()
+    val restrictedSkipGrace = (0..3).random()
+
+    return HabitRegistryDBEntity(
+        id = 0, // Kept at 0 so Room auto-generates the key
+        name = names.random(),
+        description = descriptions.random(),
+        icon = icons.random(),
+        colour = FColour.entries.random().color.toArgb(),
+        resetType = ResetDaysType.entries.random(),
+
+        // Time & Date integer restrictions
+        resetDays = (1..30).random(),
+        resetHour = (0..23).random(),
+        resetMinute = (0..59).random(),
+        resetOffset = (-12..12).random(),
+
+        // Checks restrictions
+        checksAmount = restrictedChecksAmount,
+        checksComplete = restrictedChecksComplete,
+        checksType = checkTypes.entries.random().stringRef,
+        checksSkipGrace = restrictedSkipGrace,
+        checksNames = "",
+
+        // Settings restrictions
+        priority = restrictedPriority,
+        difficulty = restrictedDifficulty,
+
+        // Cooldown restrictions
+        cooldownHours = restrictedCooldownHours,
+        cooldownMinutes = (0..59).random(),
+        cooldownSeconds = (0..59).random()
+    )
 }

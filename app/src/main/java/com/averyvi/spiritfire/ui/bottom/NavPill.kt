@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun NavPill(
-    changeSheetVisibility: (Boolean) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.Bottom,
@@ -22,9 +21,7 @@ fun NavPill(
         Card() {
             Text("jfsdk")
         }
-        Card(
-            onClick = { changeSheetVisibility(true) }
-        ) {
+        Card() {
             Text("show")
         }
     }
