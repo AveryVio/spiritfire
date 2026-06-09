@@ -22,4 +22,8 @@
     <string name="MultipleHabitsView">Multiple habits</string>
     <string name="ChecksCompletions">checks</string>
     <string name="ChecksSteps">steps</string>
+    <string name="SelectAll">select all</string>
+    <string name="BottomSheetFiltersTitle">filter</string>
+    <string name="BottomSheetInfo">Choose which habits get displayed in the app. This does not affect the editor and individual statistics.</string>
+    <string name="NewHabitScreen">Light flame</string>
 </resources>

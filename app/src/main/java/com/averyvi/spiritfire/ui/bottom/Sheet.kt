@@ -19,6 +19,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -40,7 +41,12 @@ import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.text.capitalize
+import com.averyvi.spiritfire.R
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,59 +62,102 @@ fun AppBottomSheet(
         else -> ToggleableState.Indeterminate
     }
 
-    Column() {
-        ListItem(
-            leadingContent = @Composable {
-                TriStateCheckbox(
-                    state = selectedAllState,
-                    onClick = {
-                        if (allHabits.size == selectedHabits.size) {
-                            allHabits.forEach { habitFilterViewModel.unselectFilter(it.id) }
-                        } else {
-                            allHabits.forEach { habitFilterViewModel.selectFilter(it.id) }
-                        }
-                    },
-                    colors = CheckboxDefaults.colors().copy(
-                        checkedCheckmarkColor = MaterialTheme.colorScheme.surface,
-                        checkedBoxColor = MaterialTheme.colorScheme.onSurface,
-                        checkedBorderColor = MaterialTheme.colorScheme.onSurface
+    Column(
+        modifier = Modifier.padding(horizontal = 4.dp + 2.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.BottomSheetFiltersTitle).replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.ROOT
+                ) else it.toString()
+            },
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(horizontal = 16.dp + 8.dp)
+        )
+        Spacer(
+            modifier = Modifier.height(16.dp + 4.dp)
+        )
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            TriStateCheckbox(
+                state = selectedAllState,
+                onClick = {
+                    if (allHabits.size == selectedHabits.size) {
+                        allHabits.forEach { habitFilterViewModel.unselectFilter(it.id) }
+                    } else {
+                        allHabits.forEach { habitFilterViewModel.selectFilter(it.id) }
+                    }
+                },
+                colors = CheckboxDefaults.colors().copy(
+                    checkedCheckmarkColor = MaterialTheme.colorScheme.surface,
+                    checkedBoxColor = MaterialTheme.colorScheme.onSurface,
+                    checkedBorderColor = MaterialTheme.colorScheme.onSurface,
+
                     )
-                )
-            },
-            headlineContent = @Composable {
-                Text(
-                    text = "Select All"
-                )
-            },
+            )
+            Text(
+                text = stringResource(R.string.SelectAll).replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.ROOT
+                    ) else it.toString()
+                }
+            )
+        }
+        Spacer(
+            modifier = Modifier.height(16.dp)
         )
         LazyVerticalGrid(
             columns = GridCells.Adaptive(200.dp)
         ) {
             allHabits.forEach { currentHabit ->
                 item {
-                    ListItem(
-                        leadingContent = @Composable {
-                            Checkbox(
-                                checked = selectedHabits.contains(currentHabit.id),
-                                onCheckedChange = {
-                                    habitFilterViewModel.toggleFilter(
-                                        currentHabit.id
-                                    )
-                                },
-                                colors = CheckboxDefaults.colors().copy(
-                                    checkedBoxColor = Color(currentHabit.colour),
-                                    checkedBorderColor = Color(currentHabit.colour),
-                                ),
-                            )
-                        },
-                        headlineContent = @Composable {
-                            Text(
-                                text = currentHabit.name
-                            )
-                        },
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Checkbox(
+                            checked = selectedHabits.contains(currentHabit.id),
+                            onCheckedChange = {
+                                habitFilterViewModel.toggleFilter(
+                                    currentHabit.id
+                                )
+                            },
+                            colors = CheckboxDefaults.colors().copy(
+                                checkedBoxColor = Color(currentHabit.colour),
+                                checkedBorderColor = Color(currentHabit.colour),
+                            ),
+                        )
+                        Text(
+                            text = currentHabit.name
+                        )
+                    }
                 }
             }
         }
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp + 8.dp),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.u_info_24dp_000000_fill0_wght400_grad0_opsz24),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                contentDescription = "info icon"
+            )
+            Text(
+                text = stringResource(R.string.BottomSheetInfo),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Spacer(
+            modifier = Modifier.height(16.dp + 8.dp)
+        )
     }
 }

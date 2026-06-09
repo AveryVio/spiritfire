@@ -7,9 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import com.averyvi.spiritfire.ui.RouteNavType
 
 @Composable
 fun NavPill(
+    navigateFunc: (RouteNavType) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.Bottom,
@@ -21,7 +23,11 @@ fun NavPill(
         Card() {
             Text("jfsdk")
         }
-        Card() {
+        Card(
+            onClick = {
+                navigateFunc(RouteNavType.PRIMARY)
+            }
+        ) {
             Text("show")
         }
     }

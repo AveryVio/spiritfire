@@ -9,9 +9,13 @@ enum class Routes(
     HabitOverview(
         title = R.string.HabitOverviewScreen
     ),
+
+    NewHabit(
+        title = R.string.NewHabitScreen
+    )
 }
 
-enum class NavType() {
+enum class RouteNavType() {
     PRIMARY,
     SECONDARY,
     HOME,
@@ -19,21 +23,25 @@ enum class NavType() {
 }
 
 fun DecideNextRoute(
-    currentRoute: Routes,
-    navType: NavType,
+    currentRoute: String?,
+    routeNavType: RouteNavType,
     intendedDestination: Routes = Routes.HabitOverview
 ): Routes {
-    when(navType){
-        NavType.PRIMARY -> {
+    when(routeNavType){
+        RouteNavType.PRIMARY -> {
+            return when(currentRoute){
+                Routes.HabitOverview.name -> { Routes.NewHabit }
+                Routes.NewHabit.name -> { Routes.HabitOverview }
+                else -> { Routes.HabitOverview }
+            }
+        }
+        RouteNavType.SECONDARY -> {
 
         }
-        NavType.SECONDARY -> {
+        RouteNavType.HOME -> {
 
         }
-        NavType.HOME -> {
-            return Routes.HabitOverview
-        }
-        NavType.CUSTOM -> {
+        RouteNavType.CUSTOM -> {
 
         }
         else -> {

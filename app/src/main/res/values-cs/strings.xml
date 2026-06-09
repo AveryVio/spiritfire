@@ -21,4 +21,8 @@
     <string name="MultipleHabitsView">Několik zvyků</string>
     <string name="ChecksCompletions">splnění</string>
     <string name="ChecksSteps">kroků</string>
+    <string name="SelectAll">vybrat vše</string>
+    <string name="BottomSheetFiltersTitle">filtr</string>
+    <string name="BottomSheetInfo">Vyberte, jaké zvyky se mají ukazovat v aplikaci. Toto neovnlivňuje editor a individuální statistiky.</string>
+    <string name="NewHabitScreen">Zápalky</string>
 </resources>

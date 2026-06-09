@@ -31,14 +31,14 @@ import com.averyvi.spiritfire.ui.elements.SimpleTextInput
 
 @Composable
 fun StepsChange(
-    singleHabitViewModel: com.averyvi.spiritfire.old.data.viewmodels.SingleHabitViewModel,
+    singleHabitViewModel: SingleHabitViewModel,
 ){
     val habitStepsType = remember { mutableStateOf(false) }
     val habitStepsAmount = singleHabitViewModel.habit.collectAsState().value.stepsAmount
     val habitStepsComplete = singleHabitViewModel.habit.collectAsState().value.stepsComplete
     val habitStepsStrings = singleHabitViewModel.habit.collectAsState().value.stepsStrings
 
-    _root_ide_package_.com.averyvi.spiritfire.old.ui.components.ColumnSettingCard {
+    ColumnSettingCard {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -47,7 +47,7 @@ fun StepsChange(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                _root_ide_package_.com.averyvi.spiritfire.old.ui.components.SettingCardName(
+                SettingCardName(
                     text = stringResource(R.string.StepsCard),
                     textColor = MaterialTheme.colorScheme.tertiary,
                     fontSize = 25.sp
@@ -68,15 +68,15 @@ fun StepsChange(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (habitStepsType.value) {
-                    _root_ide_package_.com.averyvi.spiritfire.ui.elements.FancyTextInput(
+                    FancyTextInput(
                         label = { Text(stringResource(R.string.StepsAmount)) },
                         placeholder = { Text(stringResource(R.string.placeholdertext)) },
                         value = habitStepsAmount,
                         onValueChange = {
                             if ((it.toIntOrNull()
-                                    ?: 0) > _root_ide_package_.com.averyvi.spiritfire.old.data.definitions.habitConsts.maxSteps
+                                    ?: 0) > habitConsts.maxSteps
                             ) {
-                                singleHabitViewModel.changeHabitValue(newStepsAmount = _root_ide_package_.com.averyvi.spiritfire.old.data.definitions.habitConsts.maxSteps.toString())
+                                singleHabitViewModel.changeHabitValue(newStepsAmount = habitConsts.maxSteps.toString())
                             } else {
                                 singleHabitViewModel.changeHabitValue(newStepsAmount = it.filter { numb -> numb.isDigit() }) // todo add a signal to the user that 20 is the max
                             }
@@ -93,15 +93,15 @@ fun StepsChange(
                         ),
                         modifier = Modifier.fillMaxWidth().weight(1f)
                     )
-                    _root_ide_package_.com.averyvi.spiritfire.ui.elements.SimpleTextInput(
+                    SimpleTextInput(
                         label = { Text(stringResource(R.string.StepsComplete)) },
                         placeholder = { Text(stringResource(R.string.placeholdertext)) },
                         value = habitStepsComplete,
                         onValueChange = {
                             if ((it.toIntOrNull()
-                                    ?: 0) > _root_ide_package_.com.averyvi.spiritfire.old.data.definitions.habitConsts.maxSteps
+                                    ?: 0) > habitConsts.maxSteps
                             ) {
-                                singleHabitViewModel.changeHabitValue(newStepsComplete = _root_ide_package_.com.averyvi.spiritfire.old.data.definitions.habitConsts.maxSteps.toString())
+                                singleHabitViewModel.changeHabitValue(newStepsComplete = habitConsts.maxSteps.toString())
                             } else {
                                 singleHabitViewModel.changeHabitValue(newStepsComplete = it.filter { numb -> numb.isDigit() }) // todo add a signal to the user that 20 is the max
                             }
@@ -122,7 +122,7 @@ fun StepsChange(
                     if (habitStepsAmount.isNotEmpty()) {
                         habitStepsStrings.take(habitStepsAmount.toIntOrNull() ?: 0)
                             .forEachIndexed { index, string ->
-                                _root_ide_package_.com.averyvi.spiritfire.ui.elements.SimpleTextInput(
+                                SimpleTextInput(
                                     label = { Text(stringResource(R.string.StepsComplete)) },
                                     placeholder = { Text(stringResource(R.string.placeholdertext)) },
                                     value = string,
