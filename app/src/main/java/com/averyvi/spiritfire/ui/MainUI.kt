@@ -29,6 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.averyvi.spiritfire.data.db.HabitLogUserDao
 import com.averyvi.spiritfire.data.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.ui.bottom.AppBottomSheet
@@ -41,7 +42,8 @@ import kotlin.concurrent.thread
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainUI(
-    habitDAO: HabitRegistryUserDao
+    habitDAO: HabitRegistryUserDao,
+    logDAO: HabitLogUserDao
 ){
     val filterVMfactory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
@@ -124,7 +126,12 @@ fun MainUI(
                                         generateRandomHabitEntity()
                                     )
                                 }.join()
-                            }) { Text("add") }
+                            }) { Text("add rigistry") }
+                            Button(onClick = {
+                                thread {
+                                    logDAO.insert(generateRandomLogEntity(habitDAO.getAll()))// todo: add a view model with the full habits or something
+                                }.join()
+                            }) { Text("add log") }
                             Button(onClick = {
                                 thread {
                                     habitDAO.getAll().forEach { habitDAO.delete(it) }
@@ -132,7 +139,8 @@ fun MainUI(
                             }) { Text("remove") }
                             testingdb(
                                 habitDAO = habitDAO,
-                                habitFilterViewModel = habitFilterViewModel
+                                logDAO = logDAO,
+                                habitFilterViewModel = habitFilterViewModel,
                             )
                         }
                     }
@@ -140,6 +148,8 @@ fun MainUI(
                     composable(route = Routes.HabitOverview.name) {
                         HabitOverview(
                             habitFilterViewModel = habitFilterViewModel,
+                            habitDAO = habitDAO,
+                            logDAO = logDAO,
                         )
                     }
                 }

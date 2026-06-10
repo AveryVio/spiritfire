@@ -64,7 +64,7 @@ data class HabitCheckingUI(
 )
 
 data class HabitLogItem(
-    val logTime: Date = Date(0),
+    val logTime: Long = Date(0).time,
     val checks: Int = 0,
     val habit: Int = 0,
 )

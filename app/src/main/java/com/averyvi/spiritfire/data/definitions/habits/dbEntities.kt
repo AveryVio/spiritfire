@@ -49,26 +49,13 @@ data class HabitRegistryDBEntity(
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["parentHabitId"])]
+    indices = [Index(value = ["habit"])]
 )
 data class HabitLogDBEntity(
-    @PrimaryKey(autoGenerate = false) val logTime: Date = Date(0),
+    @PrimaryKey(autoGenerate = false) val logTime: Long = Date(0).time,
     @ColumnInfo(name = "checks") val checks: Int = 0,
     @ColumnInfo(name = "habit") val habit: Int = 0,
 )
-
-/*
-data class HabitWithLogs(
-    @Embedded
-    val habit: HabitRegistryDBEntity,
-
-    @Relation(
-        parentColumn = "habitId",
-        entityColumn = "parentHabitId"
-    )
-    val logs: List<HabitLogDBEntity>
-)
-*/
 
 
 
@@ -114,7 +101,7 @@ data class HabitWithTags(
 
 
 @Entity(
-    tableName = "habit_registry",
+    tableName = "tag_registry",
     foreignKeys = [
         ForeignKey(
             entity = HabitRegistryDBEntity::class,
@@ -123,10 +110,10 @@ data class HabitWithTags(
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["parentHabitId"])]
+    indices = [Index(value = ["habit"])]
 )
 data class TagDBEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "name") val name: String = "",
-    @ColumnInfo(name = "colour") val colour: Color = FColour.Red.color,
+    @ColumnInfo(name = "colour") val colour: Int = FColour.Red.color.toArgb(),
 )

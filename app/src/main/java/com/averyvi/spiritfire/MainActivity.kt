@@ -4,16 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import com.averyvi.spiritfire.old.data.viewmodels.SingleHabitViewModel
 import com.averyvi.spiritfire.old.ui.theme.SpiritfireTheme
 import com.averyvi.spiritfire.ui.MainUI
 import com.averyvi.spiritfire.data.db.HabitRegistry
-import com.averyvi.spiritfire.old.data.definitions.Habit
-import java.util.Calendar
-import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
 
@@ -24,7 +18,8 @@ class MainActivity : ComponentActivity() {
             klass = HabitRegistry::class.java,
             name = "habit-registry"
         ).build()
-        val habitDAO = habitDatabase.UserDao()
+        val habitDAO = habitDatabase.HabitRegistryDAO()
+        val logDAO = habitDatabase.HabitLogDAO()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -33,7 +28,8 @@ class MainActivity : ComponentActivity() {
                     singleHabitViewModel = singleHabitViewModel
                 )*/
                 MainUI(
-                    habitDAO = habitDAO
+                    habitDAO = habitDAO,
+                    logDAO = logDAO,
                 )
             }
         }
