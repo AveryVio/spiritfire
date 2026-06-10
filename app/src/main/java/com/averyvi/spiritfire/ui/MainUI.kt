@@ -1,9 +1,12 @@
 package com.averyvi.spiritfire.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetScaffold
@@ -12,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberTopAppBarState
@@ -77,7 +81,9 @@ fun MainUI(
         }
     }
 
-    Box() {
+    Box(
+        modifier = Modifier
+    ) {
         val scaffoldState = rememberBottomSheetScaffoldState()
         val scope = rememberCoroutineScope()
 
@@ -100,7 +106,7 @@ fun MainUI(
             }
         ) { innerPadding ->
             Box(
-                modifier = Modifier.fillMaxSize().padding(innerPadding)
+                modifier = Modifier.fillMaxSize().displayCutoutPadding()
             ) {
 
 
@@ -126,7 +132,7 @@ fun MainUI(
                                         generateRandomHabitEntity()
                                     )
                                 }.join()
-                            }) { Text("add rigistry") }
+                            }) { Text("add registry") }
                             Button(onClick = {
                                 thread {
                                     logDAO.insert(generateRandomLogEntity(habitDAO.getAll()))// todo: add a view model with the full habits or something
