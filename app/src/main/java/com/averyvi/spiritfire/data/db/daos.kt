@@ -4,9 +4,13 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.RewriteQueriesToDropUnusedColumns
+import androidx.room.Transaction
 import com.averyvi.spiritfire.data.definitions.habits.HabitRegistryDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitForList
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
+import com.averyvi.spiritfire.data.definitions.habits.HabitRow
+import com.averyvi.spiritfire.data.definitions.habits.HabitWithTags
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,6 +30,9 @@ interface HabitRegistryUserDao {
     @Query("SELECT name FROM habit_registry")
     fun getAllNames(): List<String>
 
+    @Transaction
+    @Query("SELECT * FROM habit_registry")
+    fun getAllHabits(): Flow<List<HabitWithTags>>
 
     @Query("SELECT id, name, icon, colour FROM habit_registry")
     fun getAllHabitsForList(): Flow<List<HabitForList>>

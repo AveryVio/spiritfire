@@ -4,11 +4,15 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitRegistryDBEntity
+import com.averyvi.spiritfire.data.definitions.habits.HabitTagCrossRef
+import com.averyvi.spiritfire.data.definitions.habits.TagDBEntity
 
 @Database(
     entities = [
         HabitRegistryDBEntity::class,
-        HabitLogDBEntity::class
+        HabitLogDBEntity::class,
+        TagDBEntity::class,
+        HabitTagCrossRef::class,
                ],
     version = 1,
     exportSchema = false)

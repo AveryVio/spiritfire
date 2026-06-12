@@ -34,7 +34,7 @@ data class HabitRegistryDBEntity(
     @ColumnInfo(name = "checksNames") val checksNames: String = "",
     @ColumnInfo(name = "priority") val priority: Int = 0,
     @ColumnInfo(name = "cooldownHours") val cooldownHours: Int = 0,
-    @ColumnInfo(name = "cooldownMinute") val cooldownMinutes: Int = 0,
+    @ColumnInfo(name = "cooldownMinutes") val cooldownMinutes: Int = 0,
     @ColumnInfo(name = "cooldownSeconds") val cooldownSeconds: Int = 0,
     @ColumnInfo(name = "difficulty") val difficulty: Int = 0,
 )
@@ -84,17 +84,58 @@ data class HabitTagCrossRef(
     val tagId: Int
 )
 
+
+
+
+
+
 data class HabitWithTags(
     @Embedded
     val habit: HabitRegistryDBEntity,
 
     @Relation(
-        parentColumn = "habitId",
-        entityColumn = "tagId",
-        associateBy = Junction(HabitTagCrossRef::class)
+        parentColumn = "id",
+        entityColumn = "id",
+        associateBy = Junction(
+            value = HabitTagCrossRef::class,
+            parentColumn = "habitId",
+            entityColumn = "tagId"
+        )
     )
     val tags: List<TagDBEntity>
 )
+
+fun HabitWithTags.toHabitRow(): HabitRow {
+    return HabitRow(
+        id = this.habit.id,
+        name = this.habit.name,
+        description = this.habit.description,
+        icon = this.habit.icon,
+        colour = Color(this.habit.colour),
+        resetType = this.habit.resetType,
+        resetDays = this.habit.resetDays,
+        resetHour = this.habit.resetHour,
+        resetMinute = this.habit.resetMinute,
+        resetOffset = this.habit.resetOffset,
+        checksAmount = this.habit.checksAmount,
+        checksComplete = this.habit.checksComplete,
+        checksType = this.habit.checksType,
+        checksSkipGrace = this.habit.checksSkipGrace,
+        checksNames = this.habit.checksNames,
+        priority = this.habit.priority,
+        cooldownHours = this.habit.cooldownHours,
+        cooldownMinutes = this.habit.cooldownMinutes,
+        cooldownSeconds = this.habit.cooldownSeconds,
+        difficulty = this.habit.difficulty,
+        tags = this.tags.map { tagDbEntity ->
+            TagUIEntity(
+                id = tagDbEntity.id,
+                name = tagDbEntity.name,
+                colour = tagDbEntity.colour
+            )
+        }
+    )
+}
 
 
 
@@ -102,15 +143,6 @@ data class HabitWithTags(
 
 @Entity(
     tableName = "tag_registry",
-    foreignKeys = [
-        ForeignKey(
-            entity = HabitRegistryDBEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["habit"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [Index(value = ["habit"])]
 )
 data class TagDBEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
