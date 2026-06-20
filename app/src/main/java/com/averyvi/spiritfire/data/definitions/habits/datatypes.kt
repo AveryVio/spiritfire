@@ -44,7 +44,7 @@ data class ResetDays(
         val THREE =
             ResetDays(
                 resetType = ResetDaysType.CUSTOM_DAYS,
-                resetDays = 2
+                resetDays = 3
             )
     }
 }

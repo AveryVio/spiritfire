@@ -1,18 +1,15 @@
 package com.averyvi.spiritfire.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.averyvi.spiritfire.data.db.HabitLogUserDao
-import com.averyvi.spiritfire.data.db.HabitRegistryUserDao
+import com.averyvi.spiritfire.data.sources.db.HabitLogUserDao
+import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.definitions.ui.OverviewViewModel
 import com.averyvi.spiritfire.ui.components.UICard
@@ -34,6 +31,8 @@ fun HabitOverview(
         }
     }
     val OverviewViewModel: OverviewViewModel = viewModel(factory = OverviewVMfactory)
+
+    // repositories: viz Gemini
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),

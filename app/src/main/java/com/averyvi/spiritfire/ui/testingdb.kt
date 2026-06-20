@@ -1,27 +1,49 @@
 package com.averyvi.spiritfire.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toString
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColor
 import com.averyvi.spiritfire.R
-import com.averyvi.spiritfire.data.db.HabitLogUserDao
-import com.averyvi.spiritfire.data.db.HabitRegistryUserDao
+import com.averyvi.spiritfire.data.sources.db.HabitLogUserDao
+import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
+import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRegistryDBEntity
-import com.averyvi.spiritfire.data.definitions.habits.ResetDays
+import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.habits.checkTypes
+import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
-import java.util.Calendar
 import java.util.Date
 import kotlin.collections.forEach
 import kotlin.concurrent.thread
@@ -31,7 +53,7 @@ fun testingdb(
     habitDAO: HabitRegistryUserDao,
     logDAO: HabitLogUserDao,
     habitFilterViewModel: HabitFilterViewModel,
-){
+){/*
     val allHabits = habitFilterViewModel.filterItems.collectAsState().value
     val selectedHabits = habitFilterViewModel.selectedFilters.collectAsState().value
 
@@ -71,7 +93,11 @@ fun testingdb(
                 Text(it.checks.toString())
             }
         }
-    }
+    }*/
+    HabitTestingScreen(
+        habitDAO = habitDAO,
+        logDAO = logDAO,
+    )
 }
 
 fun generateRandomHabitEntity(): HabitRegistryDBEntity {
@@ -159,4 +185,154 @@ fun generateRandomLogEntity(existingHabits: List<HabitRegistryDBEntity>): HabitL
         checks = randomChecks,
         habit = selectedHabit.id
     )
+}
+
+//testing functions by an llm
+
+@Composable
+fun HabitTestingScreen(
+    habitDAO: HabitRegistryUserDao,
+    logDAO: HabitLogUserDao,
+    modifier: Modifier = Modifier
+) {
+    // Collect all habits as a flow
+    val habitsWithTags by habitDAO.getAllHabits().collectAsState(initial = emptyList())
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(habitsWithTags.size) { habitDbEntity ->
+            // Convert to the UI state row using your existing extension function
+            val habitRow = habitsWithTags[habitDbEntity].toHabitRow()
+
+            // Collect logs for this specific habit
+            val logs by logDAO.getAllByHabit(habitRow.id).collectAsState(initial = emptyList())
+
+            HabitTestingCard(
+                habit = habitRow,
+                logs = logs
+            )
+        }
+    }
+}
+
+@Composable
+fun HabitTestingCard(
+    habit: HabitRow,
+    logs: List<HabitLogItem>,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // --- HEADER: Visual Icon, Color, and Name ---
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Display the custom color mapped to the DB integer
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(color = habit.colour, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Display the dynamic icon based on the resource ID
+                    Icon(
+                        painter = painterResource(id = habit.icon),
+                        contentDescription = habit.name,
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+                    Text(
+                        text = habit.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    if (habit.description.isNotBlank()) {
+                        Text(
+                            text = habit.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // --- DETAILS: Settings & Checks ---
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = "Priority: ${habit.priority}",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Text(
+                        text = "Difficulty: ${habit.difficulty}",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Checks: ${habit.checksComplete} / ${habit.checksAmount}",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Text(
+                        text = "Reset: ${habit.resetType.name} (Days: ${habit.resetDays})",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // --- LOG DATA ---
+            Text(
+                text = "Log Entries: ${logs.size}",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            if (logs.isNotEmpty()) {
+                val latestLog = logs.maxByOrNull { it.logTime }
+                latestLog?.let {
+                    Text(
+                        text = "Latest log: ${Date(it.logTime)}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "Checks logged: ${it.checks}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else {
+                Text(
+                    text = "No logs yet for this habit.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
 }

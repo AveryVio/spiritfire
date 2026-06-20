@@ -1,4 +1,4 @@
-package com.averyvi.spiritfire.data.db
+package com.averyvi.spiritfire.data.sources.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

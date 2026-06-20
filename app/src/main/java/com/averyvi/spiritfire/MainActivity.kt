@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.room.Room
 import com.averyvi.spiritfire.old.ui.theme.SpiritfireTheme
 import com.averyvi.spiritfire.ui.MainUI
-import com.averyvi.spiritfire.data.db.HabitRegistry
+import com.averyvi.spiritfire.data.sources.db.HabitRegistry
 
 class MainActivity : ComponentActivity() {
 

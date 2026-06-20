@@ -84,6 +84,14 @@ data class HabitTagCrossRef(
     val tagId: Int
 )
 
+@Entity(
+    tableName = "tag_registry",
+)
+data class TagDBEntity(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo(name = "name") val name: String = "",
+    @ColumnInfo(name = "colour") val colour: Int = FColour.Red.color.toArgb(),
+)
 
 
 
@@ -136,16 +144,3 @@ fun HabitWithTags.toHabitRow(): HabitRow {
         }
     )
 }
-
-
-
-
-
-@Entity(
-    tableName = "tag_registry",
-)
-data class TagDBEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "name") val name: String = "",
-    @ColumnInfo(name = "colour") val colour: Int = FColour.Red.color.toArgb(),
-)
