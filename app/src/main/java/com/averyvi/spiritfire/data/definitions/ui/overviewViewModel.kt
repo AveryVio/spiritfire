@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
+import com.averyvi.spiritfire.data.sources.HabitRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -12,13 +13,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class OverviewViewModel(
-    private val habitDAO: HabitRegistryUserDao,
+    private val habitRepository: HabitRepository,
     private val habitFilterViewModel: HabitFilterViewModel
 ) : ViewModel() {
-    private val _allItems: StateFlow<List<HabitRow>> = habitDAO.getAllHabits()
-        .map { habitDbList ->
-            habitDbList.map { habitWithTags -> habitWithTags.toHabitRow() }
-        }
+    private val _allItems: StateFlow<List<HabitRow>> = habitRepository.getAllHabits()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

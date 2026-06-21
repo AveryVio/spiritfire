@@ -44,14 +44,14 @@ import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.habits.checkTypes
 import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
+import com.averyvi.spiritfire.data.sources.HabitRepository
 import java.util.Date
 import kotlin.collections.forEach
 import kotlin.concurrent.thread
 
 @Composable
 fun testingdb(
-    habitDAO: HabitRegistryUserDao,
-    logDAO: HabitLogUserDao,
+    habitRepository: HabitRepository,
     habitFilterViewModel: HabitFilterViewModel,
 ){/*
     val allHabits = habitFilterViewModel.filterItems.collectAsState().value
@@ -95,8 +95,7 @@ fun testingdb(
         }
     }*/
     HabitTestingScreen(
-        habitDAO = habitDAO,
-        logDAO = logDAO,
+        habitRepository = habitRepository
     )
 }
 
@@ -154,7 +153,7 @@ fun generateRandomHabitEntity(): HabitRegistryDBEntity {
     )
 }
 
-fun generateRandomLogEntity(existingHabits: List<HabitRegistryDBEntity>): HabitLogDBEntity {
+fun generateRandomLogEntity(existingHabits: List<HabitRow>): HabitLogDBEntity {
     // Fallback if the registry is empty
     if (existingHabits.isEmpty()) {
         return HabitLogDBEntity(
@@ -191,12 +190,11 @@ fun generateRandomLogEntity(existingHabits: List<HabitRegistryDBEntity>): HabitL
 
 @Composable
 fun HabitTestingScreen(
-    habitDAO: HabitRegistryUserDao,
-    logDAO: HabitLogUserDao,
+    habitRepository: HabitRepository,
     modifier: Modifier = Modifier
 ) {
     // Collect all habits as a flow
-    val habitsWithTags by habitDAO.getAllHabits().collectAsState(initial = emptyList())
+    val habitsWithTags by habitRepository.getAllHabits().collectAsState(initial = emptyList())
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -205,10 +203,10 @@ fun HabitTestingScreen(
     ) {
         items(habitsWithTags.size) { habitDbEntity ->
             // Convert to the UI state row using your existing extension function
-            val habitRow = habitsWithTags[habitDbEntity].toHabitRow()
+            val habitRow = habitsWithTags[habitDbEntity]
 
             // Collect logs for this specific habit
-            val logs by logDAO.getAllByHabit(habitRow.id).collectAsState(initial = emptyList())
+            val logs by habitRepository.getAllLogsForHabit(habitRow.id).collectAsState(initial = emptyList())
 
             HabitTestingCard(
                 habit = habitRow,

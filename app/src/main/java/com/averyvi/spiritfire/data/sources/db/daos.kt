@@ -25,13 +25,13 @@ interface HabitRegistryUserDao {
     fun delete(habit: HabitRegistryDBEntity)
 
     @Query("SELECT * FROM habit_registry")
-    fun getAll(): List<HabitRegistryDBEntity>
+    fun getAllEntities(): Flow<List<HabitRegistryDBEntity>>
 
     @Query("SELECT * FROM habit_registry WHERE id = :selectId")
-    fun getAllById(selectId: Int): List<HabitRegistryDBEntity>
+    fun getAllById(selectId: Int): Flow<List<HabitRegistryDBEntity>>
 
     @Query("SELECT name FROM habit_registry")
-    fun getAllNames(): List<String>
+    fun getAllNames(): Flow<List<String>>
 
     @Transaction
     @Query("SELECT * FROM habit_registry")
@@ -39,6 +39,13 @@ interface HabitRegistryUserDao {
 
     @Query("SELECT id, name, icon, colour FROM habit_registry")
     fun getAllHabitsForList(): Flow<List<HabitForList>>
+
+    @Query("""
+                SELECT habit_registry.* FROM habit_registry
+                INNER JOIN habit_tag_cross_ref ON habit_registry.id = habit_tag_cross_ref.habitId
+                WHERE habit_tag_cross_ref.tagId = :selectTag
+            """)
+    fun getAllByTag(selectTag: Int): Flow<List<HabitWithTags>>
 }
 
 @Dao
@@ -50,7 +57,7 @@ interface HabitLogUserDao {
     fun delete(log: HabitLogDBEntity)
 
     @Query("SELECT * FROM habit_log")
-    fun getAll(): List<HabitLogDBEntity>
+    fun getAll(): Flow<List<HabitLogDBEntity>>
 
     @Query("SELECT * FROM habit_log WHERE habit = :selectId")
     fun getAllByHabit(selectId: Int): Flow<List<HabitLogItem>>
@@ -64,11 +71,18 @@ interface TagUserDao {
     @Delete
     fun delete(log: TagDBEntity)
 
-    @Query("SELECT * FROM habit_log")
-    fun getAll(): List<TagDBEntity>
+    @Query("SELECT * FROM tag_registry")
+    fun getAll(): Flow<List<TagDBEntity>>
 
-    @Query("SELECT * FROM habit_log WHERE habit = :selectId")
-    fun getAllByHabit(selectId: Int): Flow<List<TagDBEntity>>
+    @Query("SELECT * FROM tag_registry WHERE id = :selectId")
+    fun getAllById(selectId: Int): Flow<List<TagDBEntity>>
+
+    @Query("""
+                SELECT tag_registry.* FROM tag_registry
+                INNER JOIN habit_tag_cross_ref ON tag_registry.id = habit_tag_cross_ref.tagId
+                WHERE habit_tag_cross_ref.habitId = :selectHabit
+        """)
+    fun getAllTagsByHabit(selectHabit: Int): Flow<List<TagDBEntity>>
 }
 
 @Dao
@@ -80,8 +94,5 @@ interface HabitTagCrossRefUserDao {
     fun delete(log: HabitTagCrossRef)
 
     @Query("SELECT * FROM habit_tag_cross_ref")
-    fun getAll(): List<HabitTagCrossRef>
-
-    @Query("SELECT habitId FROM habit_tag_cross_ref WHERE tagId = :selectTag")
-    fun getAllByTag(selectTag: Int): List<HabitRegistryDBEntity>
+    fun getAll(): Flow<List<HabitTagCrossRef>>
 }

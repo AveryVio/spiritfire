@@ -20,4 +20,8 @@ abstract class HabitRegistry : RoomDatabase() {
     abstract fun HabitRegistryDAO(): HabitRegistryUserDao
 
     abstract fun HabitLogDAO(): HabitLogUserDao
+
+    abstract fun TagDAO(): TagUserDao
+
+    abstract fun HabitTagCrossRefDAO(): HabitTagCrossRefUserDao
 }

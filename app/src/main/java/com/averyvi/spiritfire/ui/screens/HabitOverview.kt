@@ -12,20 +12,20 @@ import com.averyvi.spiritfire.data.sources.db.HabitLogUserDao
 import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.definitions.ui.OverviewViewModel
+import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.ui.components.UICard
 import com.averyvi.spiritfire.ui.testingdb
 
 @Composable
 fun HabitOverview(
     habitFilterViewModel: HabitFilterViewModel,
-    habitDAO: HabitRegistryUserDao,
-    logDAO: HabitLogUserDao
+    habitRepository: HabitRepository
 ){
     val OverviewVMfactory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return OverviewViewModel(
-                habitDAO =  habitDAO,
+                habitRepository = habitRepository,
                 habitFilterViewModel = habitFilterViewModel
             ) as T
         }
@@ -48,8 +48,7 @@ fun HabitOverview(
     }
 
     testingdb(
-        habitDAO = habitDAO,
-        logDAO = logDAO,
+        habitRepository = habitRepository,
         habitFilterViewModel = habitFilterViewModel
     )
 }

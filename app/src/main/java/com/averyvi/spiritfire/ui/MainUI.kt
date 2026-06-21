@@ -16,6 +16,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -24,31 +25,42 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
+import com.averyvi.spiritfire.data.definitions.habits.HabitRegistryDBEntity
+import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.sources.db.HabitLogUserDao
 import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
+import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.ui.bottom.AppBottomSheet
 import com.averyvi.spiritfire.ui.bottom.NavPill
 import com.averyvi.spiritfire.ui.screens.HabitOverview
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.concurrent.thread
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainUI(
-    habitDAO: HabitRegistryUserDao,
-    logDAO: HabitLogUserDao
+    habitRepository: HabitRepository
 ){
     val filterVMfactory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return HabitFilterViewModel(habitDAO) as T
+            return HabitFilterViewModel(habitRepository) as T
         }
     }
     val habitFilterViewModel: HabitFilterViewModel = viewModel(factory = filterVMfactory)
@@ -123,26 +135,28 @@ fun MainUI(
                                 expandBottomSheet(scaffoldState, scope)
                             }) { Text("exp load") }
                             Button(onClick = {
-                                thread {
-                                    habitDAO.insert(
+                                habitFilterViewModel.viewModelScope.launch {
+                                    habitRepository.insertHabit(
                                         generateRandomHabitEntity()
                                     )
-                                }.join()
+                                }
                             }) { Text("add registry") }
                             Button(onClick = {
-                                thread {
-                                    logDAO.insert(generateRandomLogEntity(habitDAO.getAll()))// todo: add a view model with the full habits or something
-                                }.join()
+                                habitFilterViewModel.viewModelScope.launch {
+                                    var newValue: HabitLogDBEntity = generateRandomLogEntity(listOf(
+                                        HabitRow(tags = emptyList())
+                                    ))
+                                    habitRepository.insertLog(generateRandomLogEntity(habitRepository.getAllHabits().first()))
+                                }
                             }) { Text("add log") }
                             Button(onClick = {
-                                thread {
-                                    habitDAO.getAll().forEach { habitDAO.delete(it) }
-                                }.join()
+                                habitFilterViewModel.viewModelScope.launch {
+                                    habitRepository.getAllHabitEntities().first().forEach { habitRepository.deleteHabit(it) }
+                                }
                             }) { Text("remove") }
                             testingdb(
-                                habitDAO = habitDAO,
-                                logDAO = logDAO,
                                 habitFilterViewModel = habitFilterViewModel,
+                                habitRepository = habitRepository,
                             )
                         }
                     }
@@ -150,8 +164,7 @@ fun MainUI(
                     composable(route = Routes.HabitOverview.name) {
                         HabitOverview(
                             habitFilterViewModel = habitFilterViewModel,
-                            habitDAO = habitDAO,
-                            logDAO = logDAO,
+                            habitRepository = habitRepository,
                         )
                     }
                 }
