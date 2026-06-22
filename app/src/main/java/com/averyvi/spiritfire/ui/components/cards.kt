@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,7 +31,12 @@ fun UICard(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ){
-    Card(modifier = modifier) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        modifier = modifier
+    ) {
         Box() {
             content()
         }
@@ -76,10 +82,10 @@ fun WideHabitOverviewCard(
                 )
             }
             Spacer(modifier = Modifier.height(8.dp + 2.dp))
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 LinearIconifiedProgress(
                     iconCount = 5,

@@ -45,6 +45,7 @@ import com.averyvi.spiritfire.data.definitions.habits.checkTypes
 import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
+import com.averyvi.spiritfire.ui.components.WideHabitOverviewCard
 import java.util.Date
 import kotlin.collections.forEach
 import kotlin.concurrent.thread
@@ -211,6 +212,11 @@ fun HabitTestingScreen(
             HabitTestingCard(
                 habit = habitRow,
                 logs = logs
+            )
+            // add my onw card
+            WideHabitOverviewCard(
+                habit = habitRow,
+                completeCount = if(logs.isNotEmpty()) logs.last().checks else 0,
             )
         }
     }
