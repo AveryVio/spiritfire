@@ -216,7 +216,7 @@ fun HabitTestingScreen(
             // add my onw card
             WideHabitOverviewCard(
                 habit = habitRow,
-                completeCount = if(logs.isNotEmpty()) logs.last().checks else 0,
+                completeCount = if(logs.isNotEmpty()) logs.first().checks else 0,
             )
         }
     }

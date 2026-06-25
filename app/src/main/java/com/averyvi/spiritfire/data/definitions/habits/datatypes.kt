@@ -19,22 +19,22 @@ data class ResetDays(
         val DAILY =
             ResetDays(
                 resetType = ResetDaysType.DAILY,
-                resetDays = 0
+                resetDays = 1
             )
         val WEEKLY =
             ResetDays(
                 resetType = ResetDaysType.WEEKLY,
-                resetDays = 0
+                resetDays = 7
             )
         val MOTHLY =
             ResetDays(
                 resetType = ResetDaysType.MONTHLY,
-                resetDays = 0
+                resetDays = 30
             )
         val YEARLY =
             ResetDays(
                 resetType = ResetDaysType.YEARLY,
-                resetDays = 0
+                resetDays = 365
             )
         val EVERYOTHER =
             ResetDays(
