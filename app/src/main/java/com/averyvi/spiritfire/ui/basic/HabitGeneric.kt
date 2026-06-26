@@ -39,7 +39,7 @@ fun HabitCheckIcon(
     ) {
         Icon(
             painter = painterResource(icon),
-            modifier = Modifier.padding((size.value * 0.1).dp).size(size),
+            modifier = Modifier.padding((size.value * 0.25).dp).size(size),
             contentDescription = null
         )
     }
@@ -67,7 +67,7 @@ fun CircularHabitProgress(
         CircularProgressIndicator(
             progress = { progress },
             strokeWidth = (size.value * 0.1).dp,
-            modifier = Modifier.size((size.value * 1.3).dp)
+            modifier = Modifier.size((size.value * 1.55).dp)
         )
     }
 }

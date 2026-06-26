@@ -54,7 +54,7 @@ fun WideHabitOverviewCard(
     UICard() {
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier
