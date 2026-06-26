@@ -8,27 +8,45 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.ui.RouteNavType
+import com.averyvi.spiritfire.ui.Routes
 
 @Composable
 fun NavPill(
-    navigateFunc: (RouteNavType) -> Unit,
+    navigateFunc: (RouteNavType, Routes) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Card() {
-            Text("left")
-        }
-        Card() {
-            Text("jfsdk")
+        Card(
+            onClick = {
+                navigateFunc(
+                    RouteNavType.CUSTOM,
+                    Routes.HabitOverview
+                )
+            }
+        ) {
+            Text("Overview")
         }
         Card(
             onClick = {
-                navigateFunc(RouteNavType.PRIMARY)
+                navigateFunc(
+                    RouteNavType.CUSTOM,
+                    Routes.NewHabit
+                )
             }
         ) {
-            Text("show")
+            Text("Home")
+        }
+        Card(
+            onClick = {
+                navigateFunc(
+                    RouteNavType.CUSTOM,
+                    Routes.TestingScreen
+                )
+            }
+        ) {
+            Text("Testing")
         }
     }
 }

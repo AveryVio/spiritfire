@@ -25,4 +25,5 @@
     <string name="BottomSheetFiltersTitle">filtr</string>
     <string name="BottomSheetInfo">Vyberte, jaké zvyky se mají ukazovat v aplikaci. Toto neovnlivňuje editor a individuální statistiky.</string>
     <string name="NewHabitScreen">Zápalky</string>
+    <string name="TestingScreen">střep Dawnmakeru</string>
 </resources>

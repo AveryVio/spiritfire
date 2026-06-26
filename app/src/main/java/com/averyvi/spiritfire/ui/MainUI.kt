@@ -16,7 +16,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -32,25 +31,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
-import com.averyvi.spiritfire.data.definitions.habits.HabitRegistryDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
-import com.averyvi.spiritfire.data.sources.db.HabitLogUserDao
-import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
+import com.averyvi.spiritfire.experiments.generateRandomHabitEntity
+import com.averyvi.spiritfire.experiments.generateRandomLogEntity
+import com.averyvi.spiritfire.experiments.testingScreenUI
+import com.averyvi.spiritfire.experiments.testingdb
 import com.averyvi.spiritfire.ui.bottom.AppBottomSheet
 import com.averyvi.spiritfire.ui.bottom.NavPill
 import com.averyvi.spiritfire.ui.screens.HabitOverview
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.forEach
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.concurrent.thread
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,11 +64,15 @@ fun MainUI(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    fun NavControllerNavigate(routeNavType: RouteNavType){
+    fun NavControllerNavigate(
+        routeNavType: RouteNavType,
+        intendedDestination: Routes
+    ){
         navController.navigate(
             route = DecideNextRoute(
                 currentRoute,
-                routeNavType
+                routeNavType,
+                intendedDestination
             ).name
         )
     }
@@ -127,41 +124,21 @@ fun MainUI(
                         navController.navigate(route = route.name)
                     }
 
-                    composable(route = Routes.NewHabit.name) {
-                        Column() {
-                            Text("fjsklfdj")
-                            Text("fjsklfdj")
-                            Button(onClick = {
-                                expandBottomSheet(scaffoldState, scope)
-                            }) { Text("exp load") }
-                            Button(onClick = {
-                                habitFilterViewModel.viewModelScope.launch {
-                                    habitRepository.insertHabit(
-                                        generateRandomHabitEntity()
-                                    )
-                                }
-                            }) { Text("add registry") }
-                            Button(onClick = {
-                                habitFilterViewModel.viewModelScope.launch {
-                                    var newValue: HabitLogDBEntity = generateRandomLogEntity(listOf(
-                                        HabitRow(tags = emptyList())
-                                    ))
-                                    habitRepository.insertLog(generateRandomLogEntity(habitRepository.getAllHabits().first()))
-                                }
-                            }) { Text("add log") }
-                            Button(onClick = {
-                                habitFilterViewModel.viewModelScope.launch {
-                                    habitRepository.getAllHabitEntities().first().forEach { habitRepository.deleteHabit(it) }
-                                }
-                            }) { Text("remove") }
-                            testingdb(
-                                habitFilterViewModel = habitFilterViewModel,
-                                habitRepository = habitRepository,
-                            )
-                        }
+                    composable(route = Routes.TestingScreen.name) {
+                        testingScreenUI(
+                            habitFilterViewModel = habitFilterViewModel,
+                            habitRepository = habitRepository,
+                        )
                     }
 
                     composable(route = Routes.HabitOverview.name) {
+                        HabitOverview(
+                            habitFilterViewModel = habitFilterViewModel,
+                            habitRepository = habitRepository,
+                        )
+                    }
+
+                    composable(route = Routes.NewHabit.name) {
                         HabitOverview(
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
@@ -190,7 +167,12 @@ fun MainUI(
                 },
             contentAlignment = Alignment.Center
         ) {
-            NavPill(navigateFunc = { NavControllerNavigate(it) })
+            NavPill(navigateFunc = { it1, it2 ->
+                NavControllerNavigate(
+                    routeNavType = it1,
+                    intendedDestination = it2
+                )
+            })
         }
     }
 }

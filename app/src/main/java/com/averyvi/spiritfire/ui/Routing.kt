@@ -6,6 +6,10 @@ import com.averyvi.spiritfire.R
 enum class Routes(
     @field:StringRes val title: Int,
 ){
+    TestingScreen(
+        title = R.string.TestingScreen
+    ),
+
     HabitOverview(
         title = R.string.HabitOverviewScreen
     ),
@@ -42,7 +46,17 @@ fun DecideNextRoute(
 
         }
         RouteNavType.CUSTOM -> {
-
+            return when(intendedDestination) {
+                Routes.TestingScreen -> {
+                    Routes.TestingScreen
+                }
+                Routes.HabitOverview -> {
+                    Routes.HabitOverview
+                }
+                Routes.NewHabit -> {
+                    Routes.NewHabit
+                }
+            }
         }
         else -> {
 

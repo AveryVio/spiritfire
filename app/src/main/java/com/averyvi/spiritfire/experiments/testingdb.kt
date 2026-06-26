@@ -1,4 +1,4 @@
-package com.averyvi.spiritfire.ui
+package com.averyvi.spiritfire.experiments
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,10 +31,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColor
 import com.averyvi.spiritfire.R
-import com.averyvi.spiritfire.data.sources.db.HabitLogUserDao
-import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
@@ -42,13 +39,10 @@ import com.averyvi.spiritfire.data.definitions.habits.HabitRegistryDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.habits.checkTypes
-import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.ui.components.WideHabitOverviewCard
 import java.util.Date
-import kotlin.collections.forEach
-import kotlin.concurrent.thread
 
 @Composable
 fun testingdb(
