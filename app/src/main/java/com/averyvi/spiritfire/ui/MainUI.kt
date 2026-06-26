@@ -139,10 +139,6 @@ fun MainUI(
                     }
 
                     composable(route = Routes.NewHabit.name) {
-                        HabitOverview(
-                            habitFilterViewModel = habitFilterViewModel,
-                            habitRepository = habitRepository,
-                        )
                     }
                 }
             }

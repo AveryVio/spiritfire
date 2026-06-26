@@ -11,8 +11,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.definitions.ui.OverviewViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
-import com.averyvi.spiritfire.ui.components.WideHabitOverviewCard
+import com.averyvi.spiritfire.ui.components.BigHabitOverviewCard
 import androidx.compose.runtime.collectAsState
+import com.averyvi.spiritfire.ui.components.MinimalHabitOverviewCard
+import com.averyvi.spiritfire.ui.components.SmallHabitOverviewCard
 
 @Composable
 fun HabitOverview(
@@ -41,7 +43,17 @@ fun HabitOverview(
             val habitRow = displayedHabits[viewPosition]
             val logsList = filtredLogs.filter { it.habit == habitRow.id }
 
-            WideHabitOverviewCard(
+            BigHabitOverviewCard(
+                habit = habitRow,
+                onCompleteClick = { },
+                completeCount = if(logsList.isNotEmpty()) logsList.first().checks else 0, // test and then implement the currently complete logic
+            )
+            SmallHabitOverviewCard(
+                habit = habitRow,
+                onCompleteClick = { },
+                completeCount = if(logsList.isNotEmpty()) logsList.first().checks else 0, // test and then implement the currently complete logic
+            )
+            MinimalHabitOverviewCard(
                 habit = habitRow,
                 onCompleteClick = { },
                 completeCount = if(logsList.isNotEmpty()) logsList.first().checks else 0, // test and then implement the currently complete logic

@@ -41,7 +41,7 @@ import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.habits.checkTypes
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
-import com.averyvi.spiritfire.ui.components.WideHabitOverviewCard
+import com.averyvi.spiritfire.ui.components.BigHabitOverviewCard
 import java.util.Date
 
 @Composable
@@ -208,7 +208,7 @@ fun HabitTestingScreen(
                 logs = logs
             )
             // add my onw card
-            WideHabitOverviewCard(
+            BigHabitOverviewCard(
                 habit = habitRow,
                 completeCount = if(logs.isNotEmpty()) logs.first().checks else 0,
             )

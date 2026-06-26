@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,12 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.ui.basic.CircularHabitProgress
 import com.averyvi.spiritfire.ui.basic.LinearIconifiedProgress
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun UICard(
@@ -44,12 +43,12 @@ fun UICard(
 }
 
 @Composable
-fun WideHabitOverviewCard(
+fun BigHabitOverviewCard(
     habit: HabitRow,
     onCompleteClick: () -> Unit = {},
     completeCount: Int,
 ) {
-    val progress = completeCount / habit.checksAmount
+    val progress = completeCount.toFloat() / habit.checksAmount.toFloat()
 
     UICard() {
         Column(
@@ -70,7 +69,7 @@ fun WideHabitOverviewCard(
                         colour = habit.colour,
                         complete = completeCount >= habit.checksComplete,
                         onClick = onCompleteClick,
-                        progress = progress.toFloat(),
+                        progress = progress,
                         size = 32.dp
                     )
                     Text(
@@ -104,6 +103,79 @@ fun WideHabitOverviewCard(
                     size = 16.dp + 8.dp
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SmallHabitOverviewCard(
+    habit: HabitRow,
+    onCompleteClick: () -> Unit = {},
+    completeCount: Int,
+) {
+    val progress = completeCount.toFloat() / habit.checksAmount.toFloat()
+
+    UICard() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth().padding(8.dp + 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularHabitProgress(
+                    icon = habit.icon,
+                    colour = habit.colour,
+                    complete = completeCount >= habit.checksComplete,
+                    onClick = onCompleteClick,
+                    progress = progress,
+                    size = 16.dp + 8.dp
+                )
+                Text(
+                    text = habit.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Text(
+                text = stringResource(habit.resetType.uiText)
+            )
+        }
+    }
+}
+
+@Composable
+fun MinimalHabitOverviewCard(
+    habit: HabitRow,
+    onCompleteClick: () -> Unit = {},
+    completeCount: Int,
+) {
+    val progress = completeCount.toFloat() / habit.checksAmount.toFloat()
+
+    UICard() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp + 2.dp)
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CircularHabitProgress(
+                icon = habit.icon,
+                colour = habit.colour,
+                complete = completeCount >= habit.checksComplete,
+                onClick = onCompleteClick,
+                progress = progress,
+                size = 16.dp
+            )
+            Text(
+                text = habit.name,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
