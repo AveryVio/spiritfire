@@ -210,7 +210,7 @@ fun HabitTestingScreen(
             // add my onw card
             BigHabitOverviewCard(
                 habit = habitRow,
-                completeCount = if(logs.isNotEmpty()) logs.first().checks else 0,
+                completeCount = if(logs.isNotEmpty()) logs.sortedBy { it.logTime }.first().checks else 0,
             )
         }
     }

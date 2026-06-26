@@ -24,11 +24,12 @@ fun isWithinPeriod(
     val now = ZonedDateTime.now(localZone)
     val actionTime = Instant.ofEpochMilli(targetTimestamp).atZone(localZone)
 
-    var periodStart = now // time of reset within a single day
-        .withHour(habitRow.resetHour)
-        .withMinute(habitRow.resetMinute)
-        .withSecond(0)
-        .withNano(0)
+
+    var periodStart = getStartingPeriod(
+        now = now, // time of reset within a single day
+        resetHour = habitRow.resetHour,
+        resetMinute = habitRow.resetMinute,
+    )
 
     /*
     general guide:
@@ -38,31 +39,80 @@ fun isWithinPeriod(
         figure out if the action time is within the period
      */
 
-    when(habitRow.resetType){
+    periodStart = getAdjustedPeriod(
+        now = now,
+        periodStart = periodStart,
+        localZone = localZone,
+        habitRow = habitRow,
+        periodsAgo = periodsAgo,
+    )
+
+    val periodEnd = getEndPeriod(
+        periodStart = periodStart,
+        resetType = habitRow.resetType,
+        resetDays = habitRow.resetDays.toLong()
+    )
+
+    return (
+            actionTime.isEqual(periodStart)
+                    || actionTime.isAfter(periodStart)
+                    && actionTime.isBefore(periodEnd)
+            )
+}
+
+fun getStartingPeriod(
+    now: ZonedDateTime,
+    resetHour: Int,
+    resetMinute: Int,
+): ZonedDateTime {
+    return now
+        .withHour(resetHour)
+        .withMinute(resetMinute)
+        .withSecond(0)
+        .withNano(0)
+}
+
+fun getAdjustedPeriod(
+    now: ZonedDateTime,
+    periodStart: ZonedDateTime,
+    localZone: ZoneId,
+    habitRow: HabitRow,
+    periodsAgo: Long
+): ZonedDateTime {
+    var periodStart = periodStart
+
+    when(habitRow.resetType) {
         ResetDaysType.DAILY -> {
-            if(now.isBefore(periodStart)) {
+            if (now.isBefore(periodStart)) {
                 periodStart = periodStart.minusDays(1)
             }
             periodStart.minusDays(periodsAgo)
-        } ResetDaysType.WEEKLY -> {
+        }
+
+        ResetDaysType.WEEKLY -> {
             // Assuming habitRow.resetOffset represents DayOfWeek (1 = Monday, 7 = Sunday)
 
             val resetDayOfWeek = DayOfWeek.of(habitRow.resetOffset)
             periodStart = periodStart.with(TemporalAdjusters.previousOrSame(resetDayOfWeek))
 
-            if(now.isBefore(periodStart)) {
+            if (now.isBefore(periodStart)) {
                 periodStart = periodStart.minusWeeks(1)
             }
             periodStart = periodStart.minusWeeks(periodsAgo)
-        } ResetDaysType.MONTHLY -> {
+        }
+
+        ResetDaysType.MONTHLY -> {
             // Assuming resetOffset represents the day of the month (1-31)
 
             val maxDaysInMonth = now.month.length(now.toLocalDate().isLeapYear)
-            val safeOffset = minOf(habitRow.resetOffset, maxDaysInMonth) // if offset is 31 but month has 30 days, it snaps to 30.
+            val safeOffset = minOf(
+                habitRow.resetOffset,
+                maxDaysInMonth
+            ) // if offset is 31 but month has 30 days, it snaps to 30.
 
             periodStart = periodStart.withDayOfMonth(safeOffset)
 
-            if(now.isBefore(periodStart)) {
+            if (now.isBefore(periodStart)) {
                 periodStart = periodStart.minusMonths(1)
 
                 // Re-calculate safe day for the previous month
@@ -70,17 +120,21 @@ fun isWithinPeriod(
                 periodStart = periodStart.withDayOfMonth(minOf(habitRow.resetOffset, prevMonthSafe))
             }
             periodStart = periodStart.minusMonths(periodsAgo)
-        } ResetDaysType.YEARLY -> {
+        }
+
+        ResetDaysType.YEARLY -> {
             // Assuming resetOffset is Day of Year (1-365)
 
             periodStart = periodStart.withDayOfYear(habitRow.resetOffset)
 
-            if(now.isBefore(periodStart)) {
+            if (now.isBefore(periodStart)) {
                 periodStart = periodStart.minusYears(1)
             }
 
-        periodStart = periodStart.minusYears(periodsAgo)
-        } ResetDaysType.CUSTOM_DAYS -> {
+            periodStart = periodStart.minusYears(periodsAgo)
+        }
+
+        ResetDaysType.CUSTOM_DAYS -> {
             // Assuming resetOffset is within resetDays range
             val anchorStart = Instant.EPOCH.atZone(localZone)
                 .withHour(habitRow.resetHour)
@@ -98,19 +152,19 @@ fun isWithinPeriod(
             periodStart = effectiveAnchor.plusDays(totalDaysToAdd)
         }
     }
-
-    val periodEnd = when (habitRow.resetType) {
-        ResetDaysType.DAILY -> periodStart.plusDays(1)
-        ResetDaysType.WEEKLY -> periodStart.plusWeeks(1)
-        ResetDaysType.MONTHLY -> periodStart.plusMonths(1)
-        ResetDaysType.YEARLY -> periodStart.plusYears(1)
-        ResetDaysType.CUSTOM_DAYS -> periodStart.plusDays(habitRow.resetDays.toLong())
-    }
-
-    return (
-            actionTime.isEqual(periodStart)
-                    || actionTime.isAfter(periodStart)
-                    && actionTime.isBefore(periodEnd)
-            )
+    return periodStart
 }
 
+fun getEndPeriod(
+    periodStart: ZonedDateTime,
+    resetType: ResetDaysType,
+    resetDays: Long
+): ZonedDateTime {
+ return when (resetType) {
+     ResetDaysType.DAILY -> periodStart.plusDays(1)
+     ResetDaysType.WEEKLY -> periodStart.plusWeeks(1)
+     ResetDaysType.MONTHLY -> periodStart.plusMonths(1)
+     ResetDaysType.YEARLY -> periodStart.plusYears(1)
+     ResetDaysType.CUSTOM_DAYS -> periodStart.plusDays(resetDays)
+ }
+}

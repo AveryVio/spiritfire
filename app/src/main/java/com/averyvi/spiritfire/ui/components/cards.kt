@@ -67,7 +67,7 @@ fun BigHabitOverviewCard(
                     CircularHabitProgress(
                         icon = habit.icon,
                         colour = habit.colour,
-                        complete = completeCount >= habit.checksComplete,
+                        complete = completeCount < habit.checksComplete,
                         onClick = onCompleteClick,
                         progress = progress,
                         size = 32.dp
