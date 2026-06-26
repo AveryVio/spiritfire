@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.habits.FColour
@@ -35,7 +36,12 @@ import com.averyvi.spiritfire.ui.basic.CircularHabitProgress
 import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
 import com.averyvi.spiritfire.ui.basic.LinearIconifiedProgress
 import com.averyvi.spiritfire.ui.components.UICard
+import com.averyvi.spiritfire.ui.components.WideHabitOverviewCard
 import com.averyvi.spiritfire.ui.testingdb
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun HabitOverview(
@@ -52,80 +58,23 @@ fun HabitOverview(
         }
     }
     val OverviewViewModel: OverviewViewModel = viewModel(factory = OverviewVMfactory)
+    val displayedHabits = OverviewViewModel.displayedHabits.collectAsState().value
+    val filtredLogs = OverviewViewModel.filtredLogs.collectAsState().value
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        item {
-            Column(
-                modifier = Modifier.padding(16.dp + 8.dp)
-            ) {
-                UICard() {
-                    Column(
-                        modifier = Modifier
-                            .padding(8.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                CircularHabitProgress(
-                                    icon = R.drawable.r_outline_dark_mode_2,
-                                    colour = FColour.Purple.color,
-                                    complete = true,
-                                    progress = 0.85f,
-                                    size = 32.dp
-                                )
-                                Text(
-                                    text = "Habit",
-                                    style = MaterialTheme.typography.displaySmall,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Text(
-                                text = "jfkldsjfl"
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp + 2.dp))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            LinearIconifiedProgress(
-                                iconCount = 5,
-                                icon = R.drawable.ur_mode_heat_24dp_000000_fill0_wght400_grad0_opsz24,
-                                value = 4,
-                                colour = FColour.Red.color,
-                                size = 16.dp + 8.dp
-                            )
-                            LinearIconifiedProgress(
-                                iconCount = 7,
-                                icon = R.drawable.ur_star_24dp_000000_fill0_wght400_grad0_opsz24,
-                                value = 4,
-                                colour = FColour.Yellow.color,
-                                size = 16.dp + 8.dp
-                            )
-                        }
-                        Spacer(Modifier.height(4.dp + 2.dp))
-                        HorizontalDivider(
-                            thickness = 2.dp
-                        )
-                        Spacer(Modifier.height(4.dp + 2.dp))
-                        Row() {
-                            // streak
-                            // last few checks
-                        }
-                    }
-                }
-            }
+        items(displayedHabits.size) { viewPosition ->
+            val habitRow = displayedHabits[viewPosition]
+            val logsList = filtredLogs.filter { it.habit == habitRow.id }
+
+            WideHabitOverviewCard(
+                habit = habitRow,
+                onCompleteClick = { },
+                completeCount = if(logsList.isNotEmpty()) logsList.first().checks else 0, // test and then implement the currently complete logic
+            )
         }
 
     }

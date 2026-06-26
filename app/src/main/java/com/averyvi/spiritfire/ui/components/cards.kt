@@ -46,6 +46,7 @@ fun UICard(
 @Composable
 fun WideHabitOverviewCard(
     habit: HabitRow,
+    onCompleteClick: () -> Unit = {},
     completeCount: Int,
 ) {
     val progress = completeCount / habit.checksAmount
@@ -68,6 +69,7 @@ fun WideHabitOverviewCard(
                         icon = habit.icon,
                         colour = habit.colour,
                         complete = completeCount >= habit.checksComplete,
+                        onClick = onCompleteClick,
                         progress = progress.toFloat(),
                         size = 32.dp
                     )
@@ -101,15 +103,6 @@ fun WideHabitOverviewCard(
                     colour = FColour.Yellow.color,
                     size = 16.dp + 8.dp
                 )
-            }
-            Spacer(Modifier.height(4.dp + 2.dp))
-            HorizontalDivider(
-                thickness = 2.dp
-            )
-            Spacer(Modifier.height(4.dp + 2.dp))
-            Row() {
-                // streak
-                // last few checks
             }
         }
     }

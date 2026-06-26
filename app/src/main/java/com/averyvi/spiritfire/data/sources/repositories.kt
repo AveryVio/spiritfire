@@ -21,10 +21,12 @@ import kotlinx.coroutines.withContext
 
 interface HabitRepository {
     fun getAllHabits(): Flow<List<HabitRow>>
+    fun getSelectHabits(selectIds: List<Int>): Flow<List<HabitRow>>
     fun getAllHabitEntities(): Flow<List<HabitRegistryDBEntity>>
     fun getAllTags(): Flow<List<TagDBEntity>>
     fun getAllHabtTagCrossRefs(): Flow<List<HabitTagCrossRef>>
     fun getAllLogsForHabit(habitId: Int): Flow<List<HabitLogItem>>
+    fun getAllLogsFromListOfHabits(selectIds: List<Int>): Flow<List<HabitLogItem>>
     fun getHabitsForList(): Flow<List<HabitForList>>
     fun getTagsById(habitId: Int): Flow<List<TagDBEntity>>
     fun getAllTagsByHabit(habitId: Int): Flow<List<TagDBEntity>>
@@ -56,6 +58,14 @@ class OfflineFirstHabitRepository(
             .flowOn(Dispatchers.IO)
     }
 
+    override fun getSelectHabits(selectIds: List<Int>): Flow<List<HabitRow>> {
+        return habitDao.getAllFromListOfIds(selectIds)
+            .map { dbHabitList ->
+                dbHabitList.map { habitWithTags -> habitWithTags.toHabitRow() }
+            }
+            .flowOn(Dispatchers.IO)
+    }
+
     override fun getAllHabitEntities(): Flow<List<HabitRegistryDBEntity>> {
         return habitDao.getAllEntities()
             .flowOn(Dispatchers.IO)
@@ -73,6 +83,11 @@ class OfflineFirstHabitRepository(
 
     override fun getAllLogsForHabit(habitId: Int): Flow<List<HabitLogItem>> {
         return logDao.getAllByHabit(habitId)
+            .flowOn(Dispatchers.IO)
+    }
+
+    override fun getAllLogsFromListOfHabits(selectIds: List<Int>): Flow<List<HabitLogItem>> {
+        return logDao.getAllFromListOfHabits(selectIds)
             .flowOn(Dispatchers.IO)
     }
 

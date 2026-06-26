@@ -2,6 +2,8 @@ package com.averyvi.spiritfire.data.definitions.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
+import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
@@ -37,4 +39,11 @@ class OverviewViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    val filtredLogs: StateFlow<List<HabitLogItem>> = habitRepository.getAllLogsFromListOfHabits(displayedHabits.value.map { it.id })
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 }

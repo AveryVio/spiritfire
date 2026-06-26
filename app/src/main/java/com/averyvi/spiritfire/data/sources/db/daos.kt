@@ -30,6 +30,9 @@ interface HabitRegistryUserDao {
     @Query("SELECT * FROM habit_registry WHERE id = :selectId")
     fun getAllById(selectId: Int): Flow<List<HabitRegistryDBEntity>>
 
+    @Query("SELECT * FROM habit_registry WHERE id IN (:selectIds)")
+    fun getAllFromListOfIds(selectIds: List<Int>): Flow<List<HabitWithTags>>
+
     @Query("SELECT name FROM habit_registry")
     fun getAllNames(): Flow<List<String>>
 
@@ -61,6 +64,9 @@ interface HabitLogUserDao {
 
     @Query("SELECT * FROM habit_log WHERE habit = :selectId")
     fun getAllByHabit(selectId: Int): Flow<List<HabitLogItem>>
+
+    @Query("SELECT * FROM habit_log WHERE habit IN (:selectIds)")
+    fun getAllFromListOfHabits(selectIds: List<Int>): Flow<List<HabitLogItem>>
 }
 
 @Dao
