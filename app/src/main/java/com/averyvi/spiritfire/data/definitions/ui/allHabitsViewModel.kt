@@ -2,25 +2,16 @@ package com.averyvi.spiritfire.data.definitions.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
-import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
-import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class OverviewViewModel(
+class AllHabitsViewModel(
     private val habitRepository: HabitRepository,
     private val habitFilterViewModel: HabitFilterViewModel
 ) : ViewModel() {
@@ -45,13 +36,4 @@ class OverviewViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
-
-    val filtredLogs: StateFlow<List<HabitLogItem>> = habitRepository.getAllLogsFromListOfHabits(displayedHabits.value.map { it.id })
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
-
-    val sortingFiltering: StateFlow<SortingFiltering> = MutableStateFlow(SortingFiltering.EMPTY.addSorting(ColumnType.NAME, false).addFilter(FilteringType.AMOUNT, ColumnType.ID, ""))
 }

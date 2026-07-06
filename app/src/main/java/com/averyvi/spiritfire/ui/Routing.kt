@@ -14,9 +14,13 @@ enum class Routes(
         title = R.string.HabitOverviewScreen
     ),
 
+    AllHabits(
+        title = R.string.AllHabitsScreen
+    ),
+
     NewHabit(
         title = R.string.NewHabitScreen
-    )
+    ),
 }
 
 enum class RouteNavType() {
@@ -49,6 +53,9 @@ fun DecideNextRoute(
             return when(intendedDestination) {
                 Routes.TestingScreen -> {
                     Routes.TestingScreen
+                }
+                Routes.AllHabits -> {
+                    Routes.AllHabits
                 }
                 Routes.HabitOverview -> {
                     Routes.HabitOverview

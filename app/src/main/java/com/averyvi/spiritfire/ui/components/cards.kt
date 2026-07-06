@@ -18,11 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.ui.basic.CircularHabitProgress
+import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
 import com.averyvi.spiritfire.ui.basic.LinearIconifiedProgress
 
 @Composable
@@ -43,13 +43,10 @@ fun UICard(
 }
 
 @Composable
-fun BigHabitOverviewCard(
+fun BigHabitPropertiesCard(
     habit: HabitRow,
     onCompleteClick: () -> Unit = {},
-    completeCount: Int,
 ) {
-    val progress = completeCount.toFloat() / habit.checksAmount.toFloat()
-
     UICard() {
         Column(
             modifier = Modifier
@@ -64,13 +61,12 @@ fun BigHabitOverviewCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CircularHabitProgress(
+                    HabitCheckIcon(
                         icon = habit.icon,
                         colour = habit.colour,
-                        complete = completeCount < habit.checksComplete,
+                        complete = true,
                         onClick = onCompleteClick,
-                        progress = progress,
-                        size = 32.dp
+                        size = 12.dp
                     )
                     Text(
                         text = habit.name,
@@ -108,13 +104,10 @@ fun BigHabitOverviewCard(
 }
 
 @Composable
-fun SmallHabitOverviewCard(
+fun SmallHabitPropertiesCard(
     habit: HabitRow,
     onCompleteClick: () -> Unit = {},
-    completeCount: Int,
 ) {
-    val progress = completeCount.toFloat() / habit.checksAmount.toFloat()
-
     UICard() {
         Row(
             modifier = Modifier
@@ -125,13 +118,12 @@ fun SmallHabitOverviewCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CircularHabitProgress(
+                HabitCheckIcon(
                     icon = habit.icon,
                     colour = habit.colour,
-                    complete = completeCount >= habit.checksComplete,
+                    complete = true,
                     onClick = onCompleteClick,
-                    progress = progress,
-                    size = 16.dp + 8.dp
+                    size = 8.dp
                 )
                 Text(
                     text = habit.name,
@@ -147,13 +139,10 @@ fun SmallHabitOverviewCard(
 }
 
 @Composable
-fun MinimalHabitOverviewCard(
+fun MinimalHabitPropertiesCard(
     habit: HabitRow,
     onCompleteClick: () -> Unit = {},
-    completeCount: Int,
 ) {
-    val progress = completeCount.toFloat() / habit.checksAmount.toFloat()
-
     UICard() {
         Row(
             modifier = Modifier
@@ -163,13 +152,12 @@ fun MinimalHabitOverviewCard(
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CircularHabitProgress(
+            HabitCheckIcon(
                 icon = habit.icon,
                 colour = habit.colour,
-                complete = completeCount >= habit.checksComplete,
+                complete = true,
                 onClick = onCompleteClick,
-                progress = progress,
-                size = 16.dp
+                size = 4.dp
             )
             Text(
                 text = habit.name,

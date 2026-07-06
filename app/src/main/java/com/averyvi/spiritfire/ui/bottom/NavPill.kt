@@ -32,7 +32,7 @@ fun NavPill(
             onClick = {
                 navigateFunc(
                     RouteNavType.CUSTOM,
-                    Routes.NewHabit
+                    Routes.AllHabits
                 )
             }
         ) {

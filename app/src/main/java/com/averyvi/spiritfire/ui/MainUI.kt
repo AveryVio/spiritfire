@@ -40,6 +40,7 @@ import com.averyvi.spiritfire.experiments.testingScreenUI
 import com.averyvi.spiritfire.experiments.testingdb
 import com.averyvi.spiritfire.ui.bottom.AppBottomSheet
 import com.averyvi.spiritfire.ui.bottom.NavPill
+import com.averyvi.spiritfire.ui.screens.AllHaibitsScreen
 import com.averyvi.spiritfire.ui.screens.HabitOverview
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
@@ -133,6 +134,13 @@ fun MainUI(
 
                     composable(route = Routes.HabitOverview.name) {
                         HabitOverview(
+                            habitFilterViewModel = habitFilterViewModel,
+                            habitRepository = habitRepository,
+                        )
+                    }
+
+                    composable(route = Routes.AllHabits.name) {
+                        AllHaibitsScreen(
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
                         )

@@ -39,7 +39,7 @@ fun HabitCheckIcon(
     ) {
         Icon(
             painter = painterResource(icon),
-            modifier = Modifier.padding((size.value * 0.25).dp).size(size),
+            modifier = Modifier.padding(size),
             contentDescription = null
         )
     }
