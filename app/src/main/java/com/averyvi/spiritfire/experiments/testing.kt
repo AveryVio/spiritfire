@@ -7,6 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewModelScope
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import kotlinx.coroutines.flow.first
@@ -14,16 +19,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun testingScreenUI(
-
     habitFilterViewModel: HabitFilterViewModel,
     habitRepository: HabitRepository
 ){
     Column() {
         Text("fjsklfdj")
-        Text("fjsklfdj")/*
-        Button(onClick = {
-            expandBottomSheet(scaffoldState, scope)
-        }) { Text("exp load") }*/
         Button(onClick = {
             habitFilterViewModel.viewModelScope.launch {
                 habitRepository.insertHabit(

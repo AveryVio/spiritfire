@@ -22,9 +22,10 @@ import kotlinx.coroutines.flow.stateIn
 
 class OverviewViewModel(
     private val habitRepository: HabitRepository,
-    private val habitFilterViewModel: HabitFilterViewModel
+    private val habitFilterViewModel: HabitFilterViewModel,
+    val sortingFiltering: SortingFiltering,
 ) : ViewModel() {
-    private val _allItems: StateFlow<List<HabitRow>> = habitRepository.getAllHabits()
+    private val _allItems: StateFlow<List<HabitRow>> = habitRepository.getFilteredAndSortedHabits(sortingFiltering)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -52,6 +53,4 @@ class OverviewViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-
-    val sortingFiltering: StateFlow<SortingFiltering> = MutableStateFlow(SortingFiltering.EMPTY.addSorting(ColumnType.NAME, false).addFilter(FilteringType.AMOUNT, ColumnType.ID, ""))
 }

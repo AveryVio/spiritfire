@@ -39,6 +39,11 @@ import com.averyvi.spiritfire.data.definitions.habits.HabitRegistryDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.habits.checkTypes
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.ui.components.BigHabitPropertiesCard
@@ -187,8 +192,10 @@ fun HabitTestingScreen(
     habitRepository: HabitRepository,
     modifier: Modifier = Modifier
 ) {
+    val sorter = SortingFiltering.TESTING
+
     // Collect all habits as a flow
-    val habitsWithTags by habitRepository.getAllHabits().collectAsState(initial = emptyList())
+    val habitsWithTags by habitRepository.getFilteredAndSortedHabits(sorter).collectAsState(initial = emptyList())
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -207,9 +214,10 @@ fun HabitTestingScreen(
                 logs = logs
             )
             // add my onw card
+/*
             BigHabitPropertiesCard(
                 habit = habitRow,
-            )
+            )*/
         }
     }
 }
@@ -266,6 +274,20 @@ fun HabitTestingCard(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Text(
+                    text = "id: ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Text(
+                    text = habit.id.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))

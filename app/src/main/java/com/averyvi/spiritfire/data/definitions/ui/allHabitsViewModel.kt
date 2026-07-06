@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,9 +14,10 @@ import kotlinx.coroutines.flow.stateIn
 
 class AllHabitsViewModel(
     private val habitRepository: HabitRepository,
-    private val habitFilterViewModel: HabitFilterViewModel
+    private val habitFilterViewModel: HabitFilterViewModel,
+    val sortingFiltering: SortingFiltering,
 ) : ViewModel() {
-    private val _allItems: StateFlow<List<HabitRow>> = habitRepository.getAllHabits()
+    private val _allItems: StateFlow<List<HabitRow>> = habitRepository.getFilteredAndSortedHabits(sortingFiltering)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

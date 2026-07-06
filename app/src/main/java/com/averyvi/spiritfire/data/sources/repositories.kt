@@ -8,6 +8,9 @@ import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.HabitTagCrossRef
 import com.averyvi.spiritfire.data.definitions.habits.TagDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
 import com.averyvi.spiritfire.data.sources.db.HabitLogUserDao
 import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.sources.db.HabitTagCrossRefUserDao
@@ -23,11 +26,16 @@ interface HabitRepository {
     fun getAllHabits(): Flow<List<HabitRow>>
     fun getSelectHabits(selectIds: List<Int>): Flow<List<HabitRow>>
     fun getAllHabitEntities(): Flow<List<HabitRegistryDBEntity>>
+    fun getFilteredAndSortedHabits(sortingFiltering: SortingFiltering): Flow<List<HabitRow>>
+
     fun getAllTags(): Flow<List<TagDBEntity>>
     fun getAllHabtTagCrossRefs(): Flow<List<HabitTagCrossRef>>
+
     fun getAllLogsForHabit(habitId: Int): Flow<List<HabitLogItem>>
     fun getAllLogsFromListOfHabits(selectIds: List<Int>): Flow<List<HabitLogItem>>
+
     fun getHabitsForList(): Flow<List<HabitForList>>
+
     fun getTagsById(habitId: Int): Flow<List<TagDBEntity>>
     fun getAllTagsByHabit(habitId: Int): Flow<List<TagDBEntity>>
     fun getAllHabitsByTag(tagId: Int): Flow<List<HabitRow>>
@@ -71,6 +79,98 @@ class OfflineFirstHabitRepository(
             .flowOn(Dispatchers.IO)
     }
 
+    override fun getFilteredAndSortedHabits(sortingFiltering: SortingFiltering): Flow<List<HabitRow>> {
+        return getAllHabits().map { habits ->
+            var processedList = habits
+
+            // sorting
+            if (sortingFiltering.sorting.isNotEmpty()) {
+                processedList = processedList.sortedWith(Comparator { h1, h2 ->
+                    var comparisonResult = 0
+
+                    for (i in sortingFiltering.sorting.indices) {
+                        val column = sortingFiltering.sorting[i]
+                        val reverse = sortingFiltering.sortingReverse.getOrNull(i) ?: false
+
+                        val cmp = when (column) {
+                            ColumnType.NAME -> h1.name.compareTo(h2.name, ignoreCase = true)
+                            ColumnType.ID -> h1.id.compareTo(h2.id)
+                            ColumnType.DIFFICULTY -> h1.difficulty.compareTo(h2.difficulty)
+                            ColumnType.PRIORITY -> h1.priority.compareTo(h2.priority)
+                            ColumnType.TAGS_ID -> {
+                                val min1 = h1.tags.minOfOrNull { it.id } ?: Int.MAX_VALUE
+                                val min2 = h2.tags.minOfOrNull { it.id } ?: Int.MAX_VALUE
+                                min1.compareTo(min2)
+                            }
+                            ColumnType.TAGS_NAME -> {
+                                val min1 = h1.tags.minOfOrNull { it.name } ?: ""
+                                val min2 = h2.tags.minOfOrNull { it.name } ?: ""
+                                min1.compareTo(min2)
+                            }
+                            ColumnType.URGENCY -> {
+                                // TODO: Replace with your actual 'closest next reset' urgency comparison
+                                0
+                            }
+                        }
+
+                        if (cmp != 0) {
+                            comparisonResult = if (reverse) cmp else -cmp
+                            break
+                        }
+                    }
+                    comparisonResult
+                })
+            }
+
+            // filters
+            for (i in sortingFiltering.filterTypes.indices) {
+                val type = sortingFiltering.filterTypes.getOrNull(i) ?: continue
+                val column = sortingFiltering.filterColumns.getOrNull(i) ?: continue
+                val valueStr = sortingFiltering.filterValues.getOrNull(i) ?: ""
+                val inverse = sortingFiltering.filterInverse.getOrNull(i) ?: false
+
+                if (type == FilteringType.AMOUNT) {
+                    val amount = valueStr.toIntOrNull() ?: continue
+                    processedList = if (inverse) processedList.drop(amount) else processedList.take(amount)
+                    continue
+                }
+
+                processedList = processedList.filter { habit ->
+                    val match = when (type) {
+                        FilteringType.VALUE -> {
+                            when (column) {
+                                ColumnType.NAME -> habit.name == valueStr
+                                ColumnType.ID -> habit.id.toString() == valueStr
+                                ColumnType.TAGS_ID -> habit.tags.any { it.id.toString() == valueStr }
+                                ColumnType.TAGS_NAME -> habit.tags.any { it.name == valueStr }
+                                ColumnType.DIFFICULTY -> habit.difficulty.toString() == valueStr
+                                ColumnType.PRIORITY -> habit.priority.toString() == valueStr
+                                ColumnType.URGENCY -> true // TODO: Add exact string match logic for your urgency states if applicable
+                            }
+                        }
+                        FilteringType.THRESHOLD -> {
+                            val threshold = valueStr.toIntOrNull() ?: 0
+                            when (column) {
+                                ColumnType.ID -> habit.id >= threshold
+                                ColumnType.DIFFICULTY -> habit.difficulty >= threshold
+                                ColumnType.PRIORITY -> habit.priority >= threshold
+                                ColumnType.NAME -> habit.name >= valueStr
+                                else -> true
+                            }
+                        }
+                        else -> true
+                    }
+
+                    if (inverse) !match else match
+                }
+            }
+
+            processedList
+        }.flowOn(Dispatchers.IO)
+    }
+
+
+
     override fun getAllTags(): Flow<List<TagDBEntity>> {
         return tagDao.getAll()
             .flowOn(Dispatchers.IO)
@@ -80,6 +180,8 @@ class OfflineFirstHabitRepository(
         return habitTagCrossRefDao.getAll()
             .flowOn(Dispatchers.IO)
     }
+
+
 
     override fun getAllLogsForHabit(habitId: Int): Flow<List<HabitLogItem>> {
         return logDao.getAllByHabit(habitId)
@@ -91,10 +193,14 @@ class OfflineFirstHabitRepository(
             .flowOn(Dispatchers.IO)
     }
 
+
+
     override fun getHabitsForList(): Flow<List<HabitForList>> {
         return habitDao.getAllHabitsForList()
             .flowOn(Dispatchers.IO)
     }
+
+
 
     override fun getTagsById(habitId: Int): Flow<List<TagDBEntity>> {
         return tagDao.getAllById(habitId)
@@ -115,6 +221,8 @@ class OfflineFirstHabitRepository(
             }
             .flowOn(Dispatchers.IO)
     }
+
+
 
     // insert
     override suspend fun insertHabit(habit: HabitRegistryDBEntity) {
@@ -140,6 +248,8 @@ class OfflineFirstHabitRepository(
             habitTagCrossRefDao.insert(crossRef)
         }
     }
+
+
 
     // delete
     override suspend fun deleteHabit(habit: HabitRegistryDBEntity) {

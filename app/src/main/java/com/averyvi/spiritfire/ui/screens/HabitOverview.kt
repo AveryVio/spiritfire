@@ -12,6 +12,11 @@ import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.definitions.ui.OverviewViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import androidx.compose.runtime.collectAsState
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
 
 @Composable
 fun HabitOverview(
@@ -23,14 +28,15 @@ fun HabitOverview(
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return OverviewViewModel(
                 habitRepository = habitRepository,
-                habitFilterViewModel = habitFilterViewModel
+                habitFilterViewModel = habitFilterViewModel,
+                sortingFiltering = SortingFiltering.TESTING // todo: temp
             ) as T
         }
     }
     val OverviewViewModel: OverviewViewModel = viewModel(factory = OverviewVMfactory)
     val displayedHabits = OverviewViewModel.displayedHabits.collectAsState().value
     val filtredLogs = OverviewViewModel.filtredLogs.collectAsState().value
-    val sortingFiltering = OverviewViewModel.sortingFiltering.collectAsState().value
+    val sortingFiltering = OverviewViewModel.sortingFiltering
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),

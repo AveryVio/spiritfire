@@ -9,6 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
 import com.averyvi.spiritfire.data.definitions.ui.AllHabitsViewModel
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
@@ -26,7 +31,9 @@ fun AllHaibitsScreen(
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return AllHabitsViewModel(
                 habitRepository = habitRepository,
-                habitFilterViewModel = habitFilterViewModel
+                habitFilterViewModel = habitFilterViewModel,
+                sortingFiltering =  SortingFiltering.TESTING// todo: temp
+
             ) as T
         }
     }
