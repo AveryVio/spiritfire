@@ -1,6 +1,7 @@
 package com.averyvi.spiritfire.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,7 +57,6 @@ fun AllHabitsScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-
         items(
             count = firstGroupSize,
             span = { GridItemSpan(3) },
@@ -84,10 +84,6 @@ fun AllHabitsScreen(
                 onCompleteClick = { },
             )
         }
-
-
-
-
 
         items(
             count = displayedHabits.size - firstGroupSize - secondGroupSize,
