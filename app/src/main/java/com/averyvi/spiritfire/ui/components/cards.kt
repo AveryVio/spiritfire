@@ -3,6 +3,7 @@ package com.averyvi.spiritfire.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,7 +30,9 @@ import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.ui.basic.CircularHabitProgress
 import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
+import com.averyvi.spiritfire.ui.basic.IconPillWithValue
 import com.averyvi.spiritfire.ui.basic.LinearIconifiedProgress
+import com.averyvi.spiritfire.ui.basic.SmallPill
 
 @Composable
 fun UICard(
@@ -67,40 +73,57 @@ fun BigHabitPropertiesCard(
                         colour = habit.colour,
                         complete = true,
                         onClick = onCompleteClick,
-                        size = 12.dp
+                        size = 32.dp + 16.dp + 8.dp
                     )
-                    Text(
-                        text = habit.name,
-                        style = MaterialTheme.typography.displaySmall,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    Column() {
+                        Text(
+                            text = habit.name,
+                            style = MaterialTheme.typography.displaySmall,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            text = stringResource(habit.resetType.uiText),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = stringResource(habit.resetType.uiText),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Normal
-                )
             }
             Spacer(modifier = Modifier.height(8.dp + 2.dp))
-            Column(
-                modifier = Modifier,
+            FlowRow(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                LinearIconifiedProgress(
-                    iconCount = 5,
+                IconPillWithValue(
                     icon = R.drawable.ur_mode_heat_24dp_000000_fill0_wght400_grad0_opsz24,
                     value = habit.difficulty,
                     colour = FColour.Red.color,
-                    size = 16.dp + 8.dp
                 )
-                LinearIconifiedProgress(
-                    iconCount = 7,
+                IconPillWithValue(
                     icon = R.drawable.ur_star_24dp_000000_fill0_wght400_grad0_opsz24,
                     value = habit.priority,
                     colour = FColour.Yellow.color,
-                    size = 16.dp + 8.dp
                 )
+                habit.tags.forEachIndexed { index, entity ->
+                    if(index < 7) {
+                        SmallPill(
+                            color = Color(entity.colour)
+                        ) {
+                            Text(
+                                text = entity.name
+                            )
+                        }
+                    } else if(index == 7) {
+                        SmallPill(
+                            color = MaterialTheme.colorScheme.onSurface
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.u_more_horiz_24dp_000000_fill0_wght400_grad0_opsz24),
+                                contentDescription = null,
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -114,29 +137,65 @@ fun SmallHabitPropertiesCard(
     UICard() {
         Row(
             modifier = Modifier
-                .fillMaxWidth().padding(8.dp + 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(8.dp + 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 HabitCheckIcon(
                     icon = habit.icon,
                     colour = habit.colour,
                     complete = true,
                     onClick = onCompleteClick,
-                    size = 8.dp
+                    size = 32.dp + 16.dp
                 )
-                Text(
-                    text = habit.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Text(
+                        text = habit.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(habit.resetType.uiText)
+                    )
+                }
             }
-            Text(
-                text = stringResource(habit.resetType.uiText)
-            )
+            Spacer(modifier = Modifier.weight(1f))
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                IconPillWithValue(
+                    icon = R.drawable.ur_mode_heat_24dp_000000_fill0_wght400_grad0_opsz24,
+                    value = habit.difficulty,
+                    colour = FColour.Red.color,
+                )
+                IconPillWithValue(
+                    icon = R.drawable.ur_star_24dp_000000_fill0_wght400_grad0_opsz24,
+                    value = habit.priority,
+                    colour = FColour.Yellow.color,
+                )
+                SmallPill(
+                    color = MaterialTheme.colorScheme.primary
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.u_tag_24dp_000000_fill0_wght400_grad0_opsz24),
+                            contentDescription = null,
+                        )
+                        Text(
+                            text = habit.tags.size.toString(),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -152,21 +211,40 @@ fun MinimalHabitPropertiesCard(
                 .fillMaxWidth()
                 .padding(4.dp + 2.dp)
                 .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Spacer(modifier = Modifier.weight(1f))
             HabitCheckIcon(
                 icon = habit.icon,
                 colour = habit.colour,
                 complete = true,
                 onClick = onCompleteClick,
-                size = 4.dp
+                size = 32.dp
             )
-            Text(
-                text = habit.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
+            Spacer(modifier = Modifier.weight(1f))
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                SmallPill(
+                    color = MaterialTheme.colorScheme.primary
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.u_tag_24dp_000000_fill0_wght400_grad0_opsz24),
+                            contentDescription = null,
+                        )
+                        Text(
+                            text = habit.tags.size.toString(),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }

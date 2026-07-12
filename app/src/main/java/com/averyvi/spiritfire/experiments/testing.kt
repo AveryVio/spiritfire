@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewModelScope
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
+import com.averyvi.spiritfire.data.definitions.habits.HabitTagCrossRef
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
@@ -50,6 +51,33 @@ fun testingScreenUI(
                 habitRepository.getAllHabitEntities().first().forEach { habitRepository.deleteHabit(it) }
             }
         }) { Text("remove") }
+        Button(onClick = {
+            habitFilterViewModel.viewModelScope.launch {
+                habitRepository.insertTag(
+                    generateRandomTagEntity()
+                )
+            }
+        }) { Text("add random tag") }
+
+        Button(onClick = {
+            habitFilterViewModel.viewModelScope.launch {
+                val habits = habitRepository.getAllHabits().first()
+                val tags = habitRepository.getAllTags().first()
+
+                if (habits.isNotEmpty() && tags.isNotEmpty()) {
+                    val randomHabit = habits.random()
+                    val randomTag = tags.random()
+
+                    habitRepository.insertCrossRef(
+                        HabitTagCrossRef(
+                            habitId = randomHabit.id,
+                            tagId = randomTag.id
+                        )
+                    )
+                }
+            }
+        }) { Text("link random tag to habit") }
+
         testingdb(
             habitFilterViewModel = habitFilterViewModel,
             habitRepository = habitRepository,

@@ -38,6 +38,7 @@ import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRegistryDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
+import com.averyvi.spiritfire.data.definitions.habits.TagDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.checkTypes
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
@@ -185,7 +186,17 @@ fun generateRandomLogEntity(existingHabits: List<HabitRow>): HabitLogDBEntity {
     )
 }
 
-//testing functions by an llm
+fun generateRandomTagEntity(): TagDBEntity {
+    val tagNames = listOf("Health", "Work", "Urgent", "Personal", "Hobby", "Morning", "Evening", "Chore")
+
+    return TagDBEntity(
+        id = 0, // 0 allows Room to auto-generate the ID
+        name = tagNames.random(),
+        colour = FColour.entries.random().color.toArgb()
+    )
+}
+
+// screen
 
 @Composable
 fun HabitTestingScreen(

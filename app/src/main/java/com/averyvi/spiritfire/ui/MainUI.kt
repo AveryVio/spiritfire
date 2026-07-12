@@ -120,7 +120,7 @@ fun MainUI(
 
                 NavHost(
                     navController = navController,
-                    startDestination = Routes.HabitOverview.name,
+                    startDestination = Routes.AllHabits.name,
                 ) {
 
                     val onRouteButtonClicked = { route: Routes ->
