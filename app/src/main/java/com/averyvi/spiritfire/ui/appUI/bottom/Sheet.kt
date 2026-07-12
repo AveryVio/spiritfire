@@ -1,4 +1,4 @@
-package com.averyvi.spiritfire.ui.bottom
+package com.averyvi.spiritfire.ui.appUI.bottom
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -1,19 +1,17 @@
 package com.averyvi.spiritfire.ui.screens
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
 import com.averyvi.spiritfire.data.definitions.ui.AllHabitsViewModel
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
@@ -22,7 +20,7 @@ import com.averyvi.spiritfire.ui.components.MinimalHabitPropertiesCard
 import com.averyvi.spiritfire.ui.components.SmallHabitPropertiesCard
 
 @Composable
-fun AllHaibitsScreen(
+fun AllHabitsScreen(
     habitFilterViewModel: HabitFilterViewModel,
     habitRepository: HabitRepository
 ){
@@ -40,22 +38,37 @@ fun AllHaibitsScreen(
     val AllHabitsViewModel: AllHabitsViewModel = viewModel(factory = AllHabitsVMfactory)
     val displayedHabits = AllHabitsViewModel.displayedHabits.collectAsState().value
 
-    LazyColumn(
+    val firstGroupSize = (displayedHabits.size * 0.2).toInt()
+    val secondGroupSize = (displayedHabits.size * 0.3).toInt()
+
+    LazyVerticalStaggeredGrid(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        columns = StaggeredGridCells.Adaptive(120.dp)
     ) {
 
-        items(displayedHabits.size) { viewPosition ->
+        items(firstGroupSize) { viewPosition ->
             val habitRow = displayedHabits[viewPosition]
 
             BigHabitPropertiesCard(
                 habit = habitRow,
                 onCompleteClick = { },
             )
+        }
+
+        items(
+            count = secondGroupSize,
+            ) { viewPosition ->
+            val habitRow = displayedHabits[viewPosition + firstGroupSize]
+
             SmallHabitPropertiesCard(
                 habit = habitRow,
                 onCompleteClick = { },
             )
+        }
+
+        items(displayedHabits.size - firstGroupSize - secondGroupSize) { viewPosition ->
+            val habitRow = displayedHabits[viewPosition + firstGroupSize + secondGroupSize]
+
             MinimalHabitPropertiesCard(
                 habit = habitRow,
                 onCompleteClick = { },

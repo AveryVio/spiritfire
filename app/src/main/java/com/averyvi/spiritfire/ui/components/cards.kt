@@ -3,11 +3,13 @@ package com.averyvi.spiritfire.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.habits.FColour
@@ -34,7 +37,7 @@ fun UICard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Box() {
             content()
@@ -53,13 +56,11 @@ fun BigHabitPropertiesCard(
                 .padding(16.dp)
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     HabitCheckIcon(
                         icon = habit.icon,
@@ -71,18 +72,20 @@ fun BigHabitPropertiesCard(
                     Text(
                         text = habit.name,
                         style = MaterialTheme.typography.displaySmall,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(habit.resetType.uiText)
+                    text = stringResource(habit.resetType.uiText),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Normal
                 )
             }
             Spacer(modifier = Modifier.height(8.dp + 2.dp))
             Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                modifier = Modifier,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 LinearIconifiedProgress(
                     iconCount = 5,

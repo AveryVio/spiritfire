@@ -27,4 +27,6 @@
     <string name="BottomSheetInfo">Choose which habits get displayed in the app. This does not affect the editor and individual statistics.</string>
     <string name="NewHabitScreen">Light flame</string>
     <string name="TestingScreen">Dawnmaker shard</string>
+    <string name="AllHabitsScreen">torches</string>
+    <string name="settingsScreen">settings</string>
 </resources>

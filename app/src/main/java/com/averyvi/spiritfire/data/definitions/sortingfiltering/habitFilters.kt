@@ -29,7 +29,7 @@ data class SortingFiltering(
                 .addSorting(ColumnType.TAGS_ID, false)
                 .addSorting(ColumnType.ID, false)
                 .addSorting(ColumnType.ID, false)
-                .addFilter(FilteringType.AMOUNT, ColumnType.NAME, "15", false)
+                .addFilter(FilteringType.AMOUNT, ColumnType.NAME, "35", false)
 
         fun SortingFiltering.addSorting(
             columnType: ColumnType,

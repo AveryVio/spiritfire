@@ -1,15 +1,17 @@
 package com.averyvi.spiritfire.ui
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -20,30 +22,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
-import com.averyvi.spiritfire.data.definitions.habits.HabitRow
+import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
-import com.averyvi.spiritfire.experiments.generateRandomHabitEntity
-import com.averyvi.spiritfire.experiments.generateRandomLogEntity
 import com.averyvi.spiritfire.experiments.testingScreenUI
-import com.averyvi.spiritfire.experiments.testingdb
-import com.averyvi.spiritfire.ui.bottom.AppBottomSheet
-import com.averyvi.spiritfire.ui.bottom.NavPill
-import com.averyvi.spiritfire.ui.screens.AllHaibitsScreen
+import com.averyvi.spiritfire.ui.appUI.bottom.AppBottomSheet
+import com.averyvi.spiritfire.ui.appUI.bottom.NavPill
+import com.averyvi.spiritfire.ui.appUI.top.AppBar
+import com.averyvi.spiritfire.ui.screens.AllHabitsScreen
 import com.averyvi.spiritfire.ui.screens.HabitOverview
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,6 +104,7 @@ fun MainUI(
             //modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
             topBar = {
+                AppBar()
             },
             sheetPeekHeight = 64.dp + 16.dp,
             sheetContent = @Composable {
@@ -112,7 +114,7 @@ fun MainUI(
             }
         ) { innerPadding ->
             Box(
-                modifier = Modifier.fillMaxSize().displayCutoutPadding()
+                modifier = Modifier.fillMaxSize().padding(top = 4.dp)
             ) {
 
 
@@ -140,7 +142,7 @@ fun MainUI(
                     }
 
                     composable(route = Routes.AllHabits.name) {
-                        AllHaibitsScreen(
+                        AllHabitsScreen(
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
                         )
