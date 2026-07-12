@@ -6,6 +6,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.ui.RouteNavType
 import com.averyvi.spiritfire.ui.Routes
@@ -18,35 +19,17 @@ fun NavPill(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Card(
-            onClick = {
-                navigateFunc(
-                    RouteNavType.CUSTOM,
-                    Routes.HabitOverview
-                )
+        Routes.entries.forEachIndexed { index, routes ->
+            Card(
+                onClick = {
+                    navigateFunc(
+                        RouteNavType.CUSTOM,
+                        routes,
+                    )
+                }
+            ) {
+                Text(stringResource(routes.title))
             }
-        ) {
-            Text("Overview")
-        }
-        Card(
-            onClick = {
-                navigateFunc(
-                    RouteNavType.CUSTOM,
-                    Routes.AllHabits
-                )
-            }
-        ) {
-            Text("Home")
-        }
-        Card(
-            onClick = {
-                navigateFunc(
-                    RouteNavType.CUSTOM,
-                    Routes.TestingScreen
-                )
-            }
-        ) {
-            Text("Testing")
         }
     }
 }

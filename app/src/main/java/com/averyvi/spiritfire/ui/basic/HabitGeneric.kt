@@ -104,7 +104,7 @@ fun LinearIconifiedProgress(
 @Composable
 fun SmallPill(
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surface,
+    color: Color = MaterialTheme.colorScheme.onSurface,
     content: @Composable () -> Unit,
 ) {
     Card(
