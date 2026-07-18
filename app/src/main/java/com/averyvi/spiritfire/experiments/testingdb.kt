@@ -47,8 +47,14 @@ import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
+import com.averyvi.spiritfire.data.transformations.getAdjustedPeriod
+import com.averyvi.spiritfire.data.transformations.getEndPeriod
+import com.averyvi.spiritfire.data.transformations.getStartingPeriod
 import com.averyvi.spiritfire.ui.components.BigHabitPropertiesCard
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Date
+import kotlin.random.Random
 
 @Composable
 fun testingdb(
@@ -183,6 +189,57 @@ fun generateRandomLogEntity(existingHabits: List<HabitRow>): HabitLogDBEntity {
         logTime = randomTime,
         checks = randomChecks,
         habit = selectedHabit.id
+    )
+}
+
+fun generateRandomLogWithinPeriod(existingHabits: List<HabitRow>, periodsAgo: Long): HabitLogDBEntity? {
+    if (existingHabits.isEmpty()) return null
+
+    val habit = existingHabits.random()
+
+    val localZone = ZoneId.systemDefault()
+    val now = ZonedDateTime.now(localZone)
+
+    var periodStart = getStartingPeriod(
+        now = now,
+        resetHour = habit.resetHour,
+        resetMinute = habit.resetMinute
+    )
+
+    periodStart = getAdjustedPeriod(
+        now = now,
+        periodStart = periodStart,
+        localZone = localZone,
+        habitRow = habit,
+        periodsAgo = periodsAgo
+    )
+
+    val periodEnd = getEndPeriod(
+        periodStart = periodStart,
+        resetType = habit.resetType,
+        resetDays = habit.resetDays.toLong()
+    )
+
+    val startMillis = periodStart.toInstant().toEpochMilli()
+    val endMillis = periodEnd.toInstant().toEpochMilli()
+
+    val randomTime = if (startMillis < endMillis) {
+        Random.nextLong(startMillis, endMillis)
+    } else {
+        startMillis
+    }
+
+    val maxChecks = habit.checksAmount
+    val randomChecks = if (maxChecks > 0) {
+        (0..maxChecks).random()
+    } else {
+        0
+    }
+
+    return HabitLogDBEntity(
+        logTime = randomTime,
+        checks = randomChecks,
+        habit = habit.id
     )
 }
 

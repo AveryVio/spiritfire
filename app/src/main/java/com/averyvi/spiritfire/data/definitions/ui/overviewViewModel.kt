@@ -13,10 +13,13 @@ import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
 import com.averyvi.spiritfire.data.sources.HabitRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -47,7 +50,16 @@ class OverviewViewModel(
         initialValue = emptyList()
     )
 
-    val filtredLogs: StateFlow<List<HabitLogItem>> = habitRepository.getAllLogsFromListOfHabits(displayedHabits.value.map { it.id })
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val filtredLogs: StateFlow<List<HabitLogItem>> = displayedHabits
+        .flatMapLatest { habits ->
+            if (habits.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                habitRepository.getAllLogsFromListOfHabits(habits.map { it.id })
+            }
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

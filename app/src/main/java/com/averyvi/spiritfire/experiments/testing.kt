@@ -34,7 +34,7 @@ fun testingScreenUI(
         }) { Text("add registry") }
         Button(onClick = {
             habitFilterViewModel.viewModelScope.launch {
-                var newValue: HabitLogDBEntity = generateRandomLogEntity(
+                val newValue: HabitLogDBEntity = generateRandomLogEntity(
                     listOf(
                         HabitRow(tags = emptyList())
                     )
@@ -46,6 +46,17 @@ fun testingScreenUI(
                 )
             }
         }) { Text("add log") }
+        Button(onClick = {
+            habitFilterViewModel.viewModelScope.launch {
+                val habits = habitRepository.getAllHabits().first()
+                val randomPeriod = (0..6L).random() // Adjust range as needed
+
+                val newLog = generateRandomLogWithinPeriod(habits, randomPeriod)
+                if (newLog != null) {
+                    habitRepository.insertLog(newLog)
+                }
+            }
+        }) { Text("add period-specific log") }
         Button(onClick = {
             habitFilterViewModel.viewModelScope.launch {
                 habitRepository.getAllHabitEntities().first().forEach { habitRepository.deleteHabit(it) }

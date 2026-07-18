@@ -2,8 +2,11 @@ package com.averyvi.spiritfire.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,19 +18,31 @@ import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.definitions.ui.OverviewViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import androidx.compose.runtime.collectAsState
+import com.averyvi.spiritfire.data.definitions.habits.FColour
+import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
+import com.averyvi.spiritfire.data.definitions.habits.HabitRow
+import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
+import com.averyvi.spiritfire.data.transformations.isWithinPeriod
 import com.averyvi.spiritfire.ui.basic.FlowPillButton
+import com.averyvi.spiritfire.ui.components.UICard
 import kotlinx.coroutines.flow.Flow
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoField
+import java.time.temporal.TemporalField
+import java.util.Collections.emptyList
+import kotlin.compareTo
 
 @Composable
 fun HabitOverview(
     habitFilterViewModel: HabitFilterViewModel,
     habitRepository: HabitRepository
-){
+) {
     val OverviewVMfactory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -60,8 +75,57 @@ fun HabitOverview(
         items(displayedHabits.size) { viewPosition ->
             val habitRow = displayedHabits[viewPosition]
             val logsList = filtredLogs.filter { it.habit == habitRow.id }
-        }
 
+            UICard() {
+                val beginingOfPeriods = 0
+                val shownItems = 7
+
+                val isDone: MutableList<Boolean> = getCompletedPeriods(
+                    beginingOfPeriods = beginingOfPeriods,
+                    shownItems = shownItems,
+                    habitRow = habitRow,
+                    logsList = logsList,
+                )
+
+                Row() {
+                    isDone.forEachIndexed { index, bool ->
+                        if (bool) {
+                            Card(
+                                colors = CardDefaults.cardColors().copy(
+                                    containerColor = FColour.Red.color
+                                )
+                            ) {
+                                Text(index.toString())
+                            }
+                        } else {
+                            val isWithinGrace = determineGrace(
+                                completionArrayIndex = index,
+                                completionArray = isDone,
+                                skipGrace = habitRow.checksSkipGrace,
+                            )
+
+                            if (isWithinGrace) {
+                                Card(
+                                    colors = CardDefaults.cardColors().copy(
+                                        containerColor = FColour.Red.color
+                                    )
+                                ) {
+                                    Text(index.toString())
+                                }
+                            } else {
+                                Card(
+                                    colors = CardDefaults.cardColors().copy(
+                                        containerColor = FColour.Blue.color
+                                    )
+                                ) {
+                                    Text(index.toString())
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -71,3 +135,52 @@ fun HabitOverview(
  * // this month (group of cards)
  * // completion ratio this year
  */
+
+fun getCompletedPeriods(
+    beginingOfPeriods: Int,
+    shownItems: Int,
+    habitRow: HabitRow,
+    logsList: List<HabitLogItem>
+): MutableList<Boolean> {
+    var completedPeriods: MutableList<Boolean> = mutableListOf()
+
+    for (period in (beginingOfPeriods)..(beginingOfPeriods + shownItems)) {
+        val logsInPeriod = logsList.filter { log ->
+            isWithinPeriod(
+                habitRow = habitRow,
+                targetTimestamp = log.logTime,
+                periodsAgo = period.toLong(),
+            )
+        }
+        val totalChecks = logsInPeriod.sumOf { it.checks }
+
+        val requiredChecks = if (habitRow.checksAmount > 0) habitRow.checksAmount else 1
+
+        completedPeriods.add(period, totalChecks >= requiredChecks)
+    }
+
+    return completedPeriods
+}
+
+fun determineGrace(
+    completionArrayIndex: Int,
+    completionArray: MutableList<Boolean>,
+    skipGrace: Int,
+): Boolean {
+
+    var misses = 1
+
+    /*var newerPeriods = completionArrayIndex - 1
+    while (newerPeriods >= 0 && !isDone[newerPeriods]) {
+        misses++
+        newerPeriods--
+    }*/
+
+    var olderPeriods = completionArrayIndex + 1
+    while (olderPeriods < completionArray.size && !completionArray[olderPeriods]) {
+        misses++
+        olderPeriods++
+    }
+
+    return misses <= skipGrace
+}
