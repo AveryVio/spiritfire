@@ -9,7 +9,10 @@ enum class FColour(val color: Color){
     Blue(color = Color.hsv(224f, 0.55f, 1f)),
     Yellow(color = Color.hsv(50f, 0.5f, 0.9f)),
     Purple(color = Color.hsv(256f, 0.66f, 1f)),
-    Grey(color = Color.hsv(0f, 0f, 0.32f ))
+}
+
+enum class SColour(val color: Color){
+    Grey(color = Color.hsv(0f, 0f, 0.32f )),
 }
 
 data class ResetDays(

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
+import com.averyvi.spiritfire.data.definitions.habits.SColour
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
 import com.averyvi.spiritfire.data.transformations.isWithinPeriod
@@ -171,7 +172,7 @@ fun ShowRowsOfItems(
 
 @Composable
 fun CompletionChip(
-    color: Color = FColour.Grey.color,
+    color: Color = SColour.Grey.color,
     size: Dp = 32.dp
 ) {
     Card(
