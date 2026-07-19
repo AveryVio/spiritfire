@@ -36,14 +36,11 @@ fun HabitCheckIcon(
 ) {
     Card(
         shape = CircleShape,
-        colors = CardColors(
-            contentColor = MaterialTheme.colorScheme.surface,
-            containerColor = colour,
-            disabledContentColor = colour,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+        colors = CardDefaults.cardColors().copy(
+            contentColor = if (complete) MaterialTheme.colorScheme.surface else colour ,
+            containerColor = if (complete) colour else  MaterialTheme.colorScheme.surfaceContainer,
         ),
         modifier = Modifier.size(size),
-        enabled = complete,
         onClick = onClick,
     ) {
         Icon(
