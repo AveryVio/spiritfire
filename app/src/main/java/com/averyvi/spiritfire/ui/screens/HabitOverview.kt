@@ -29,6 +29,7 @@ import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
 import com.averyvi.spiritfire.data.transformations.isWithinPeriod
 import com.averyvi.spiritfire.ui.basic.FlowPillButton
 import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
@@ -45,13 +46,14 @@ fun HabitOverview(
             return OverviewViewModel(
                 habitRepository = habitRepository,
                 habitFilterViewModel = habitFilterViewModel,
-                habitSortingFiltering = HabitSortingFiltering.TESTING // todo: temp
+                habitSortingFiltering = HabitSortingFiltering.TESTING, // todo: temp
+                logSortingFiltering = LogSortingFiltering.TESTING
             ) as T
         }
     }
     val OverviewViewModel: OverviewViewModel = viewModel(factory = OverviewVMfactory)
     val displayedHabits = OverviewViewModel.displayedHabits.collectAsState().value
-    val filtredLogs = OverviewViewModel.filtredLogs.collectAsState().value //todo add sorting filtering for logs
+    val filtredLogs = OverviewViewModel.filtredLogs.collectAsState().value
     val sortingFiltering = OverviewViewModel.habitSortingFiltering
 
     Column() {

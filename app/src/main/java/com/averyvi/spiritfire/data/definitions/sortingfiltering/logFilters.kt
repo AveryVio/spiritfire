@@ -1,16 +1,16 @@
 package com.averyvi.spiritfire.data.definitions.sortingfiltering
 
-data class HabitSortingFiltering(
-    val sorting: List<HabitColumnType>,
+data class LogSortingFiltering(
+    val sorting: List<LogColumnType>,
     val sortingReverse: List<Boolean>,
-    val filterTypes: List<HabitFilteringType>,
-    val filterColumns: List<HabitColumnType>,
+    val filterTypes: List<LogFilteringType>,
+    val filterColumns: List<LogColumnType>,
     val filterValues: List<String>,
     val filterInverse: List<Boolean>,
 ) {
     companion object {
         val EMPTY =
-            HabitSortingFiltering(
+            LogSortingFiltering(
                 sorting = emptyList(),
                 sortingReverse = emptyList(),
                 filterTypes = emptyList(),
@@ -19,31 +19,27 @@ data class HabitSortingFiltering(
                 filterInverse = emptyList(),
             )
 
-            val TESTING =
-            HabitSortingFiltering.EMPTY
+        val TESTING =
+            LogSortingFiltering.EMPTY
                 //.addSorting(ColumnType.ID, false)
-                .addSorting(HabitColumnType.PRIORITY, true)
-                .addSorting(HabitColumnType.DIFFICULTY, true)
-                .addSorting(HabitColumnType.NAME, true)
-                .addSorting(HabitColumnType.TAGS_NAME, true)
-                .addSorting(HabitColumnType.TAGS_ID, true)
-                .addSorting(HabitColumnType.ID, true)
-                .addSorting(HabitColumnType.ID, true)
-                .addFilter(HabitFilteringType.AMOUNT, HabitColumnType.NAME, "35", false)
+                .addSorting(LogColumnType.TIME, true)
+                .addSorting(LogColumnType.HABIT, true)
+                .addSorting(LogColumnType.CHECKS, true)
+                .addFilter(LogFilteringType.AMOUNT, LogColumnType.TIME, "35", false)
 
-        fun HabitSortingFiltering.addSorting(
-            habitColumnType: HabitColumnType,
+        fun LogSortingFiltering.addSorting(
+            habitColumnType: LogColumnType,
             reverse: Boolean
-        ): HabitSortingFiltering {
+        ): LogSortingFiltering {
             return this.copy(
                 sorting = this.sorting.plus(habitColumnType),
                 sortingReverse = this.sortingReverse.plus(reverse)
             )
         }
-        fun HabitSortingFiltering.removeSorting(
-            habitColumnType: HabitColumnType,
+        fun LogSortingFiltering.removeSorting(
+            habitColumnType: LogColumnType,
             reverse: Boolean
-        ): HabitSortingFiltering {
+        ): LogSortingFiltering {
             val index = this.sorting.indexOf(habitColumnType)
 
             if (index == -1) return this
@@ -54,12 +50,12 @@ data class HabitSortingFiltering(
             )
         }
 
-        fun HabitSortingFiltering.addFilter(
-            type: HabitFilteringType,
-            column: HabitColumnType,
+        fun LogSortingFiltering.addFilter(
+            type: LogFilteringType,
+            column: LogColumnType,
             value: String,
             inverse: Boolean,
-        ): HabitSortingFiltering {
+        ): LogSortingFiltering {
             return this.copy(
                 filterTypes = this.filterTypes.plus(type),
                 filterColumns = this.filterColumns.plus(column),
@@ -67,12 +63,12 @@ data class HabitSortingFiltering(
                 filterInverse = this.filterInverse.plus(inverse),
             )
         }
-        fun HabitSortingFiltering.removeFilter(
-            type: HabitFilteringType,
-            column: HabitColumnType,
+        fun LogSortingFiltering.removeFilter(
+            type: LogFilteringType,
+            column: LogColumnType,
             value: String,
             inverse: Boolean
-        ): HabitSortingFiltering {
+        ): LogSortingFiltering {
             val index = this.filterValues.indexOf(value)
 
             if (index == -1) return this
@@ -87,17 +83,14 @@ data class HabitSortingFiltering(
     }
 }
 
-enum class HabitColumnType {
-    NAME,
-    ID,
-    TAGS_ID,
-    TAGS_NAME,
+enum class LogColumnType {
+    TIME,
+    CHECKS,
+    HABIT,
     URGENCY, // closest next reset
-    DIFFICULTY,
-    PRIORITY,
 }
 
-enum class HabitFilteringType {
+enum class LogFilteringType {
     AMOUNT, // get certain amount of values
     THRESHOLD, // the value has to be above or below a certain value (default above)
     VALUE, // include only one value or exclue only one value (default include)

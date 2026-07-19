@@ -1,5 +1,6 @@
 package com.averyvi.spiritfire.data.sources
 
+import android.util.Log
 import com.averyvi.spiritfire.data.definitions.habits.HabitForList
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
@@ -11,6 +12,9 @@ import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitColumnType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitFilteringType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogColumnType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogFilteringType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
 import com.averyvi.spiritfire.data.sources.db.HabitLogUserDao
 import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.sources.db.HabitTagCrossRefUserDao
@@ -32,6 +36,10 @@ interface HabitRepository {
 
     fun getAllLogsForHabit(habitId: Int): Flow<List<HabitLogItem>>
     fun getAllLogsFromListOfHabits(selectIds: List<Int>): Flow<List<HabitLogItem>>
+    fun getFilteredAndSortedLogs(
+        logSortingFiltering: LogSortingFiltering,
+        selectIds: List<Int>,
+    ): Flow<List<HabitLogItem>>
 
     fun getHabitsForList(): Flow<List<HabitForList>>
 
@@ -113,7 +121,7 @@ class OfflineFirstHabitRepository(
                         }
 
                         if (cmp != 0) {
-                            comparisonResult = if (reverse) cmp else -cmp
+                            comparisonResult = if (reverse) -cmp else cmp
                             break
                         }
                     }
@@ -190,6 +198,84 @@ class OfflineFirstHabitRepository(
     override fun getAllLogsFromListOfHabits(selectIds: List<Int>): Flow<List<HabitLogItem>> {
         return logDao.getAllFromListOfHabits(selectIds)
             .flowOn(Dispatchers.IO)
+    }
+
+    override fun getFilteredAndSortedLogs(
+        logSortingFiltering: LogSortingFiltering,
+        selectIds: List<Int>,
+    ): Flow<List<HabitLogItem>> {
+        return logDao.getAllFromListOfHabits(selectIds).map { logs ->
+            var processedList = logs
+
+            // sorting
+            if (logSortingFiltering.sorting.isNotEmpty()) {
+                processedList = processedList.sortedWith(Comparator { l1, l2 ->
+                    var comparisonResult = 0
+
+                    for (i in logSortingFiltering.sorting.indices) {
+                        val column = logSortingFiltering.sorting[i]
+                        val reverse = logSortingFiltering.sortingReverse.getOrNull(i) ?: false
+
+                        val cmp = when (column) {
+                            LogColumnType.TIME -> l1.logTime.compareTo(l2.logTime)
+                            LogColumnType.CHECKS -> l1.checks.compareTo(l2.checks)
+                            LogColumnType.HABIT -> l1.habit.compareTo(l2.habit)
+                            LogColumnType.URGENCY -> {
+                                // TODO: Replace with your actual 'closest next reset' urgency comparison
+                                0
+                            }
+                        }
+
+                        if (cmp != 0) {
+                            comparisonResult = if (reverse) -cmp else cmp
+                            break
+                        }
+                    }
+                    comparisonResult
+                })
+            }
+
+            // filters
+            for (i in logSortingFiltering.filterTypes.indices) {
+                val type = logSortingFiltering.filterTypes.getOrNull(i) ?: continue
+                val column = logSortingFiltering.filterColumns.getOrNull(i) ?: continue
+                val valueStr = logSortingFiltering.filterValues.getOrNull(i) ?: ""
+                val inverse = logSortingFiltering.filterInverse.getOrNull(i) ?: false
+
+                if (type == LogFilteringType.AMOUNT) {
+                    val amount = valueStr.toIntOrNull() ?: continue
+                    processedList = if (inverse) processedList.drop(amount) else processedList.take(amount)
+                    continue
+                }
+
+                processedList = processedList.filter { log ->
+                    val match = when (type) {
+                        LogFilteringType.VALUE -> {
+                            when (column) {
+                                LogColumnType.TIME -> log.logTime.toString() == valueStr
+                                LogColumnType.CHECKS -> log.checks.toString() == valueStr
+                                LogColumnType.HABIT -> log.habit.toString() == valueStr
+                                LogColumnType.URGENCY -> true // TODO: Add exact string match logic for your urgency states if applicable
+                            }
+                        }
+                        LogFilteringType.THRESHOLD -> {
+                            val threshold = valueStr.toLongOrNull() ?: 0L
+                            when (column) {
+                                LogColumnType.TIME -> log.logTime >= threshold
+                                LogColumnType.CHECKS -> log.checks >= threshold
+                                LogColumnType.HABIT -> log.habit >= threshold
+                                else -> true
+                            }
+                        }
+                        else -> true
+                    }
+
+                    if (inverse) !match else match
+                }
+            }
+
+            processedList
+        }.flowOn(Dispatchers.IO)
     }
 
 

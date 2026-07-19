@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,6 +19,7 @@ class OverviewViewModel(
     private val habitRepository: HabitRepository,
     private val habitFilterViewModel: HabitFilterViewModel,
     val habitSortingFiltering: HabitSortingFiltering,
+    val logSortingFiltering: LogSortingFiltering,
 ) : ViewModel() {
     private val _allItems: StateFlow<List<HabitRow>> = habitRepository.getFilteredAndSortedHabits(habitSortingFiltering)
         .stateIn(
@@ -48,7 +50,10 @@ class OverviewViewModel(
             if (habits.isEmpty()) {
                 flowOf(emptyList())
             } else {
-                habitRepository.getAllLogsFromListOfHabits(habits.map { it.id })
+                habitRepository.getFilteredAndSortedLogs(
+                    logSortingFiltering = logSortingFiltering,
+                    selectIds = habits.map { it.id }
+                )
             }
         }
         .stateIn(

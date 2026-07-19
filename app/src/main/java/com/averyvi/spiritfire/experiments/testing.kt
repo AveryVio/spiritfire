@@ -10,6 +10,7 @@ import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.HabitTagCrossRef
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
+import com.averyvi.spiritfire.data.transformations.isWithinPeriod
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -52,6 +53,39 @@ fun testingScreenUI(
                 }
             }
         }) { Text("add period-specific log") }
+        Button(onClick = {
+            habitFilterViewModel.viewModelScope.launch {
+                val habits = habitRepository.getAllHabits().first()
+
+                if (habits.isNotEmpty()) {
+                    // 1. Pick a random habit
+                    val selectedHabit = habits.random()
+
+                    // 2. Fetch the existing logs specifically for this habit from the repository
+                    val existingLogs = habitRepository.getAllLogsForHabit(selectedHabit.id).first()
+
+                    // 3. Check if any log already exists in the current period (periodsAgo = 0)
+                    val alreadyLoggedThisPeriod = existingLogs.any { log ->
+                        isWithinPeriod(
+                            habitRow = selectedHabit,
+                            targetTimestamp = log.logTime,
+                            periodsAgo = 0L
+                        )
+                    }
+
+                    // 4. Only insert a new log if the current period is empty
+                    if (!alreadyLoggedThisPeriod) {
+                        val maxChecks = selectedHabit.checksAmount
+                        val newLog = HabitLogDBEntity(
+                            logTime = System.currentTimeMillis(),
+                            checks = if (maxChecks > 0) maxChecks else 0,
+                            habit = selectedHabit.id
+                        )
+                        habitRepository.insertLog(newLog)
+                    }
+                }
+            }
+        }) { Text("add log now (if empty)") }
         Button(onClick = {
             habitFilterViewModel.viewModelScope.launch {
                 habitRepository.getAllHabitEntities().first().forEach { habitRepository.deleteHabit(it) }
