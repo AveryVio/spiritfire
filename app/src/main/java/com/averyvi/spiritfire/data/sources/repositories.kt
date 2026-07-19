@@ -8,9 +8,9 @@ import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.HabitTagCrossRef
 import com.averyvi.spiritfire.data.definitions.habits.TagDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.toHabitRow
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitColumnType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitFilteringType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering
 import com.averyvi.spiritfire.data.sources.db.HabitLogUserDao
 import com.averyvi.spiritfire.data.sources.db.HabitRegistryUserDao
 import com.averyvi.spiritfire.data.sources.db.HabitTagCrossRefUserDao
@@ -19,14 +19,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 
 interface HabitRepository {
     fun getAllHabits(): Flow<List<HabitRow>>
     fun getSelectHabits(selectIds: List<Int>): Flow<List<HabitRow>>
     fun getAllHabitEntities(): Flow<List<HabitRegistryDBEntity>>
-    fun getFilteredAndSortedHabits(sortingFiltering: SortingFiltering): Flow<List<HabitRow>>
+    fun getFilteredAndSortedHabits(habitSortingFiltering: HabitSortingFiltering): Flow<List<HabitRow>>
 
     fun getAllTags(): Flow<List<TagDBEntity>>
     fun getAllHabtTagCrossRefs(): Flow<List<HabitTagCrossRef>>
@@ -79,35 +78,35 @@ class OfflineFirstHabitRepository(
             .flowOn(Dispatchers.IO)
     }
 
-    override fun getFilteredAndSortedHabits(sortingFiltering: SortingFiltering): Flow<List<HabitRow>> {
+    override fun getFilteredAndSortedHabits(habitSortingFiltering: HabitSortingFiltering): Flow<List<HabitRow>> {
         return getAllHabits().map { habits ->
             var processedList = habits
 
             // sorting
-            if (sortingFiltering.sorting.isNotEmpty()) {
+            if (habitSortingFiltering.sorting.isNotEmpty()) {
                 processedList = processedList.sortedWith(Comparator { h1, h2 ->
                     var comparisonResult = 0
 
-                    for (i in sortingFiltering.sorting.indices) {
-                        val column = sortingFiltering.sorting[i]
-                        val reverse = sortingFiltering.sortingReverse.getOrNull(i) ?: false
+                    for (i in habitSortingFiltering.sorting.indices) {
+                        val column = habitSortingFiltering.sorting[i]
+                        val reverse = habitSortingFiltering.sortingReverse.getOrNull(i) ?: false
 
                         val cmp = when (column) {
-                            ColumnType.NAME -> h1.name.compareTo(h2.name, ignoreCase = true)
-                            ColumnType.ID -> h1.id.compareTo(h2.id)
-                            ColumnType.DIFFICULTY -> h1.difficulty.compareTo(h2.difficulty)
-                            ColumnType.PRIORITY -> h1.priority.compareTo(h2.priority)
-                            ColumnType.TAGS_ID -> {
+                            HabitColumnType.NAME -> h1.name.compareTo(h2.name, ignoreCase = true)
+                            HabitColumnType.ID -> h1.id.compareTo(h2.id)
+                            HabitColumnType.DIFFICULTY -> h1.difficulty.compareTo(h2.difficulty)
+                            HabitColumnType.PRIORITY -> h1.priority.compareTo(h2.priority)
+                            HabitColumnType.TAGS_ID -> {
                                 val min1 = h1.tags.minOfOrNull { it.id } ?: Int.MAX_VALUE
                                 val min2 = h2.tags.minOfOrNull { it.id } ?: Int.MAX_VALUE
                                 min1.compareTo(min2)
                             }
-                            ColumnType.TAGS_NAME -> {
+                            HabitColumnType.TAGS_NAME -> {
                                 val min1 = h1.tags.minOfOrNull { it.name } ?: ""
                                 val min2 = h2.tags.minOfOrNull { it.name } ?: ""
                                 min1.compareTo(min2)
                             }
-                            ColumnType.URGENCY -> {
+                            HabitColumnType.URGENCY -> {
                                 // TODO: Replace with your actual 'closest next reset' urgency comparison
                                 0
                             }
@@ -123,13 +122,13 @@ class OfflineFirstHabitRepository(
             }
 
             // filters
-            for (i in sortingFiltering.filterTypes.indices) {
-                val type = sortingFiltering.filterTypes.getOrNull(i) ?: continue
-                val column = sortingFiltering.filterColumns.getOrNull(i) ?: continue
-                val valueStr = sortingFiltering.filterValues.getOrNull(i) ?: ""
-                val inverse = sortingFiltering.filterInverse.getOrNull(i) ?: false
+            for (i in habitSortingFiltering.filterTypes.indices) {
+                val type = habitSortingFiltering.filterTypes.getOrNull(i) ?: continue
+                val column = habitSortingFiltering.filterColumns.getOrNull(i) ?: continue
+                val valueStr = habitSortingFiltering.filterValues.getOrNull(i) ?: ""
+                val inverse = habitSortingFiltering.filterInverse.getOrNull(i) ?: false
 
-                if (type == FilteringType.AMOUNT) {
+                if (type == HabitFilteringType.AMOUNT) {
                     val amount = valueStr.toIntOrNull() ?: continue
                     processedList = if (inverse) processedList.drop(amount) else processedList.take(amount)
                     continue
@@ -137,24 +136,24 @@ class OfflineFirstHabitRepository(
 
                 processedList = processedList.filter { habit ->
                     val match = when (type) {
-                        FilteringType.VALUE -> {
+                        HabitFilteringType.VALUE -> {
                             when (column) {
-                                ColumnType.NAME -> habit.name == valueStr
-                                ColumnType.ID -> habit.id.toString() == valueStr
-                                ColumnType.TAGS_ID -> habit.tags.any { it.id.toString() == valueStr }
-                                ColumnType.TAGS_NAME -> habit.tags.any { it.name == valueStr }
-                                ColumnType.DIFFICULTY -> habit.difficulty.toString() == valueStr
-                                ColumnType.PRIORITY -> habit.priority.toString() == valueStr
-                                ColumnType.URGENCY -> true // TODO: Add exact string match logic for your urgency states if applicable
+                                HabitColumnType.NAME -> habit.name == valueStr
+                                HabitColumnType.ID -> habit.id.toString() == valueStr
+                                HabitColumnType.TAGS_ID -> habit.tags.any { it.id.toString() == valueStr }
+                                HabitColumnType.TAGS_NAME -> habit.tags.any { it.name == valueStr }
+                                HabitColumnType.DIFFICULTY -> habit.difficulty.toString() == valueStr
+                                HabitColumnType.PRIORITY -> habit.priority.toString() == valueStr
+                                HabitColumnType.URGENCY -> true // TODO: Add exact string match logic for your urgency states if applicable
                             }
                         }
-                        FilteringType.THRESHOLD -> {
+                        HabitFilteringType.THRESHOLD -> {
                             val threshold = valueStr.toIntOrNull() ?: 0
                             when (column) {
-                                ColumnType.ID -> habit.id >= threshold
-                                ColumnType.DIFFICULTY -> habit.difficulty >= threshold
-                                ColumnType.PRIORITY -> habit.priority >= threshold
-                                ColumnType.NAME -> habit.name >= valueStr
+                                HabitColumnType.ID -> habit.id >= threshold
+                                HabitColumnType.DIFFICULTY -> habit.difficulty >= threshold
+                                HabitColumnType.PRIORITY -> habit.priority >= threshold
+                                HabitColumnType.NAME -> habit.name >= valueStr
                                 else -> true
                             }
                         }

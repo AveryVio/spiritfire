@@ -1,7 +1,5 @@
 package com.averyvi.spiritfire.ui.screens
 
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -23,7 +21,6 @@ import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.definitions.ui.OverviewViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -31,24 +28,11 @@ import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
-import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering
 import com.averyvi.spiritfire.data.transformations.isWithinPeriod
 import com.averyvi.spiritfire.ui.basic.FlowPillButton
 import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
 import com.averyvi.spiritfire.ui.components.UICard
-import kotlinx.coroutines.flow.Flow
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoField
-import java.time.temporal.TemporalField
-import java.util.Collections.emptyList
-import kotlin.compareTo
-import kotlin.math.ceil
 
 @Composable
 fun HabitOverview(
@@ -61,14 +45,14 @@ fun HabitOverview(
             return OverviewViewModel(
                 habitRepository = habitRepository,
                 habitFilterViewModel = habitFilterViewModel,
-                sortingFiltering = SortingFiltering.TESTING // todo: temp
+                habitSortingFiltering = HabitSortingFiltering.TESTING // todo: temp
             ) as T
         }
     }
     val OverviewViewModel: OverviewViewModel = viewModel(factory = OverviewVMfactory)
     val displayedHabits = OverviewViewModel.displayedHabits.collectAsState().value
     val filtredLogs = OverviewViewModel.filtredLogs.collectAsState().value //todo add sorting filtering for logs
-    val sortingFiltering = OverviewViewModel.sortingFiltering
+    val sortingFiltering = OverviewViewModel.habitSortingFiltering
 
     Column() {
         FlowRow() {

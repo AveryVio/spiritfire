@@ -40,17 +40,12 @@ import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.habits.TagDBEntity
 import com.averyvi.spiritfire.data.definitions.habits.checkTypes
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.ColumnType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.FilteringType
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addFilter
-import com.averyvi.spiritfire.data.definitions.sortingfiltering.SortingFiltering.Companion.addSorting
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.data.transformations.getAdjustedPeriod
 import com.averyvi.spiritfire.data.transformations.getEndPeriod
 import com.averyvi.spiritfire.data.transformations.getStartingPeriod
-import com.averyvi.spiritfire.ui.components.BigHabitPropertiesCard
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Date
@@ -260,7 +255,7 @@ fun HabitTestingScreen(
     habitRepository: HabitRepository,
     modifier: Modifier = Modifier
 ) {
-    val sorter = SortingFiltering.TESTING
+    val sorter = HabitSortingFiltering.TESTING
 
     // Collect all habits as a flow
     val habitsWithTags by habitRepository.getFilteredAndSortedHabits(sorter).collectAsState(initial = emptyList())

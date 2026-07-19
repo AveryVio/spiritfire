@@ -1,16 +1,16 @@
 package com.averyvi.spiritfire.data.definitions.sortingfiltering
 
-data class SortingFiltering(
-    val sorting: List<ColumnType>,
+data class HabitSortingFiltering(
+    val sorting: List<HabitColumnType>,
     val sortingReverse: List<Boolean>,
-    val filterTypes: List<FilteringType>,
-    val filterColumns: List<ColumnType>,
+    val filterTypes: List<HabitFilteringType>,
+    val filterColumns: List<HabitColumnType>,
     val filterValues: List<String>,
     val filterInverse: List<Boolean>,
 ) {
     companion object {
         val EMPTY =
-            SortingFiltering(
+            HabitSortingFiltering(
                 sorting = emptyList(),
                 sortingReverse = emptyList(),
                 filterTypes = emptyList(),
@@ -20,31 +20,31 @@ data class SortingFiltering(
             )
 
             val TESTING =
-            SortingFiltering.EMPTY
+            HabitSortingFiltering.EMPTY
                 //.addSorting(ColumnType.ID, false)
-                .addSorting(ColumnType.PRIORITY, false)
-                .addSorting(ColumnType.DIFFICULTY, false)
-                .addSorting(ColumnType.NAME, false)
-                .addSorting(ColumnType.TAGS_NAME, false)
-                .addSorting(ColumnType.TAGS_ID, false)
-                .addSorting(ColumnType.ID, false)
-                .addSorting(ColumnType.ID, false)
-                .addFilter(FilteringType.AMOUNT, ColumnType.NAME, "35", false)
+                .addSorting(HabitColumnType.PRIORITY, false)
+                .addSorting(HabitColumnType.DIFFICULTY, false)
+                .addSorting(HabitColumnType.NAME, false)
+                .addSorting(HabitColumnType.TAGS_NAME, false)
+                .addSorting(HabitColumnType.TAGS_ID, false)
+                .addSorting(HabitColumnType.ID, false)
+                .addSorting(HabitColumnType.ID, false)
+                .addFilter(HabitFilteringType.AMOUNT, HabitColumnType.NAME, "35", false)
 
-        fun SortingFiltering.addSorting(
-            columnType: ColumnType,
+        fun HabitSortingFiltering.addSorting(
+            habitColumnType: HabitColumnType,
             reverse: Boolean
-        ): SortingFiltering {
+        ): HabitSortingFiltering {
             return this.copy(
-                sorting = this.sorting.plus(columnType),
+                sorting = this.sorting.plus(habitColumnType),
                 sortingReverse = this.sortingReverse.plus(reverse)
             )
         }
-        fun SortingFiltering.removeSorting(
-            columnType: ColumnType,
+        fun HabitSortingFiltering.removeSorting(
+            habitColumnType: HabitColumnType,
             reverse: Boolean
-        ): SortingFiltering {
-            val index = this.sorting.indexOf(columnType)
+        ): HabitSortingFiltering {
+            val index = this.sorting.indexOf(habitColumnType)
 
             if (index == -1) return this
 
@@ -54,12 +54,12 @@ data class SortingFiltering(
             )
         }
 
-        fun SortingFiltering.addFilter(
-            type: FilteringType,
-            column: ColumnType,
+        fun HabitSortingFiltering.addFilter(
+            type: HabitFilteringType,
+            column: HabitColumnType,
             value: String,
             inverse: Boolean,
-        ): SortingFiltering {
+        ): HabitSortingFiltering {
             return this.copy(
                 filterTypes = this.filterTypes.plus(type),
                 filterColumns = this.filterColumns.plus(column),
@@ -67,12 +67,12 @@ data class SortingFiltering(
                 filterInverse = this.filterInverse.plus(inverse),
             )
         }
-        fun SortingFiltering.removeFilter(
-            type: FilteringType,
-            column: ColumnType,
+        fun HabitSortingFiltering.removeFilter(
+            type: HabitFilteringType,
+            column: HabitColumnType,
             value: String,
             inverse: Boolean
-        ): SortingFiltering {
+        ): HabitSortingFiltering {
             val index = this.filterValues.indexOf(value)
 
             if (index == -1) return this
@@ -87,7 +87,7 @@ data class SortingFiltering(
     }
 }
 
-enum class ColumnType {
+enum class HabitColumnType {
     NAME,
     ID,
     TAGS_ID,
@@ -97,7 +97,7 @@ enum class ColumnType {
     PRIORITY,
 }
 
-enum class FilteringType {
+enum class HabitFilteringType {
     AMOUNT, // get certain amount of values
     THRESHOLD, // the value has to be above or below a certain value (default above)
     VALUE, // include only one value or exclue only one value (default include)
