@@ -123,19 +123,29 @@ fun generateRandomHabitEntity(): HabitRegistryDBEntity {
     val restrictedCooldownHours = (0..24).random()
     val restrictedSkipGrace = (0..3).random()
 
+    val resetType = ResetDaysType.entries.random()
+
+     val offset = when (resetType) {
+         ResetDaysType.DAILY -> 0
+         ResetDaysType.WEEKLY -> (0..7).random()
+         ResetDaysType.MONTHLY -> (0..30).random()
+         ResetDaysType.YEARLY -> (0..365).random()
+         ResetDaysType.CUSTOM_DAYS -> (0..1225).random()
+     }
+
     return HabitRegistryDBEntity(
         id = 0, // Kept at 0 so Room auto-generates the key
         name = names.random(),
         description = descriptions.random(),
         icon = icons.random(),
         colour = FColour.entries.random().color.toArgb(),
-        resetType = ResetDaysType.entries.random(),
+        resetType = resetType,
 
         // Time & Date integer restrictions
         resetDays = (1..30).random(),
         resetHour = (0..23).random(),
         resetMinute = (0..59).random(),
-        resetOffset = (-12..12).random(),
+        resetOffset = offset,
 
         // Checks restrictions
         checksAmount = restrictedChecksAmount,

@@ -3,13 +3,16 @@ package com.averyvi.spiritfire.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,8 +26,10 @@ import com.averyvi.spiritfire.data.sources.HabitRepository
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
@@ -34,6 +39,7 @@ import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFilter
 import com.averyvi.spiritfire.data.transformations.isWithinPeriod
 import com.averyvi.spiritfire.ui.basic.FlowPillButton
 import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
+import com.averyvi.spiritfire.ui.basic.IconPillWithValue
 import com.averyvi.spiritfire.ui.components.UICard
 
 @Composable
@@ -68,6 +74,7 @@ fun HabitOverview(
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -87,10 +94,13 @@ fun HabitOverview(
                 )
 
                 Column(
-                    modifier = Modifier.padding(4.dp)
+                    modifier = Modifier.padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
-                    Row() {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp + 2.dp)
+                    ) {
                         HabitCheckIcon(
                             icon = habitRow.icon,
                             colour = habitRow.colour,
@@ -100,12 +110,22 @@ fun HabitOverview(
                         )
                         Column() {
                             Text(
-                                habitRow.name
+                                text = habitRow.name,
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
                             )
                             Text(
-                                stringResource(habitRow.resetType.uiText)
+                                stringResource(habitRow.resetType.uiText),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Normal
                             )
                         }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = (
+                                    if (logsList.isNotEmpty()) logsList[0].checks.toString() else "0"
+                                    ) + " / " + habitRow.checksAmount.toString()
+                        )
                     }
 
                     ShowRowsOfItems(
@@ -126,7 +146,7 @@ fun HabitOverview(
 
                                 if (isWithinGrace) {
                                     CompletionChip(
-                                        color = FColour.Red.color,
+                                        color = FColour.Purple.color,
                                         size = 32.dp
                                     )
                                 } else {
@@ -223,18 +243,27 @@ fun determineGrace(
 ): Boolean {
 
     var misses = 1
+    var foundPastAnchor = false
+    var foundFutureAnchor = false
 
-    /*var newerPeriods = completionArrayIndex - 1
-    while (newerPeriods >= 0 && !isDone[newerPeriods]) {
-        misses++
+    var newerPeriods = completionArrayIndex - 1
+    while (newerPeriods >= 0) {
+        if (!completionArray[newerPeriods]) misses++
+        else {
+            foundFutureAnchor = true
+            break
+        }
         newerPeriods--
-    }*/
-
-    var olderPeriods = completionArrayIndex + 1
-    while (olderPeriods < completionArray.size && !completionArray[olderPeriods]) {
-        misses++
-        olderPeriods++
     }
 
-    return misses <= skipGrace
+    var olderPeriods = completionArrayIndex + 1
+    while (olderPeriods < completionArray.size) {
+        if (!completionArray[olderPeriods]) misses++
+        else {
+            foundPastAnchor = true
+            break
+        }
+        olderPeriods++
+    }
+    return (misses <= skipGrace) && foundPastAnchor && foundFutureAnchor
 }

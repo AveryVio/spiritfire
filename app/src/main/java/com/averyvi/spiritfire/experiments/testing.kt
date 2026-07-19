@@ -45,7 +45,7 @@ fun testingScreenUI(
         Button(onClick = {
             habitFilterViewModel.viewModelScope.launch {
                 val habits = habitRepository.getAllHabits().first()
-                val randomPeriod = (0..6L).random() // Adjust range as needed
+                val randomPeriod = (0..7L).random() // Adjust range as needed
 
                 val newLog = generateRandomLogWithinPeriod(habits, randomPeriod)
                 if (newLog != null) {
