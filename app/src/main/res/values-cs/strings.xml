@@ -28,4 +28,18 @@
     <string name="TestingScreen">střep Dawnmakeru</string>
     <string name="AllHabitsScreen">Louče</string>
     <string name="settingsScreen">nastavení</string>
+    <string name="SortingFilteringName">název</string>
+    <string name="SortingFilteringId">id</string>
+    <string name="SortingFilteringTagsId">id použitých značek</string>
+    <string name="SortingFilteringTagsName">jména použitých značek</string>
+    <string name="SortingFilteringUrgency">naléhavé</string>
+    <string name="SortingFilteringDifficulty">obtížnost</string>
+    <string name="SortingFilteringPriority">priorita</string>
+    <string name="SortingFilteringAmount">počet</string>
+    <string name="SortingFilteringThreshold">rozsah</string>
+    <string name="SortingFilteringValue">hodnota</string>
+    <string name="ClearAll">odebrat vše</string>
+    <string name="Sorting">řazení</string>
+    <string name="Filtering">filtr</string>
+    <string name="Add">přidat</string>
 </resources>

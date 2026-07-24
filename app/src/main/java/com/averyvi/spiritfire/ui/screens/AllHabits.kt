@@ -34,7 +34,6 @@ fun AllHabitsScreen(
             return AllHabitsViewModel(
                 habitRepository = habitRepository,
                 habitFilterViewModel = habitFilterViewModel,
-                habitSortingFiltering =  HabitSortingFiltering.TESTING// todo: temp
 
             ) as T
         }

@@ -29,4 +29,18 @@
     <string name="TestingScreen">Dawnmaker shard</string>
     <string name="AllHabitsScreen">Torches</string>
     <string name="settingsScreen">settings</string>
+    <string name="SortingFilteringName">name</string>
+    <string name="SortingFilteringId">id</string>
+    <string name="SortingFilteringTagsId">ids of used tags</string>
+    <string name="SortingFilteringTagsName">names of used tags</string>
+    <string name="SortingFilteringUrgency">urgency</string>
+    <string name="SortingFilteringDifficulty">difficulty</string>
+    <string name="SortingFilteringPriority">priority</string>
+    <string name="SortingFilteringAmount">amount</string>
+    <string name="SortingFilteringThreshold">threshold</string>
+    <string name="SortingFilteringValue">value</string>
+    <string name="ClearAll">clear all</string>
+    <string name="Sorting">sort</string>
+    <string name="Filtering">filter</string>
+    <string name="Add">add</string>
 </resources>

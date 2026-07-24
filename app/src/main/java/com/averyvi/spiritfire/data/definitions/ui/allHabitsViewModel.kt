@@ -5,17 +5,22 @@ import androidx.lifecycle.viewModelScope
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering
 import com.averyvi.spiritfire.data.sources.HabitRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 
 class AllHabitsViewModel(
     private val habitRepository: HabitRepository,
     private val habitFilterViewModel: HabitFilterViewModel,
-    val habitSortingFiltering: HabitSortingFiltering,
 ) : ViewModel() {
-    private val _allItems: StateFlow<List<HabitRow>> = habitRepository.getFilteredAndSortedHabits(habitSortingFiltering)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _allItems: StateFlow<List<HabitRow>> = habitFilterViewModel.sortingFiltering
+        .flatMapLatest { currentFilters ->
+            habitRepository.getFilteredAndSortedHabits(currentFilters)
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -24,7 +29,7 @@ class AllHabitsViewModel(
 
     val displayedHabits: StateFlow<List<HabitRow>> = combine(
         _allItems,
-        habitFilterViewModel.selectedFilters
+        habitFilterViewModel.selectedHabits
     ) { allHabits, selectedIds ->
         if (selectedIds.isNotEmpty()) {
             allHabits.filter { habit -> selectedIds.contains(habit.id) }

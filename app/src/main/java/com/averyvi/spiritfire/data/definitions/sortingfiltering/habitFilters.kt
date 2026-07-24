@@ -1,5 +1,7 @@
 package com.averyvi.spiritfire.data.definitions.sortingfiltering
 
+import com.averyvi.spiritfire.R
+
 data class HabitSortingFiltering(
     val sorting: List<HabitColumnType>,
     val sortingReverse: List<Boolean>,
@@ -19,16 +21,12 @@ data class HabitSortingFiltering(
                 filterInverse = emptyList(),
             )
 
-            val TESTING =
+        val TESTING =
             HabitSortingFiltering.EMPTY
                 //.addSorting(ColumnType.ID, false)
                 .addSorting(HabitColumnType.PRIORITY, true)
                 .addSorting(HabitColumnType.DIFFICULTY, true)
                 .addSorting(HabitColumnType.NAME, true)
-                .addSorting(HabitColumnType.TAGS_NAME, true)
-                .addSorting(HabitColumnType.TAGS_ID, true)
-                .addSorting(HabitColumnType.ID, true)
-                .addSorting(HabitColumnType.ID, true)
                 .addFilter(HabitFilteringType.AMOUNT, HabitColumnType.NAME, "35", false)
 
         fun HabitSortingFiltering.addSorting(
@@ -84,21 +82,73 @@ data class HabitSortingFiltering(
                 filterInverse = this.filterInverse.plus(inverse),
             )
         }
+
+        fun HabitSortingFiltering.reverseSorting(
+            index: Int
+        ): HabitSortingFiltering {
+            val new = this.sortingReverse.toMutableList()
+            new[index] = !new[index]
+            return this.copy(sortingReverse = new)
+        }
+
+        fun HabitSortingFiltering.inverseFilter(
+            index: Int
+        ): HabitSortingFiltering {
+            val new = this.filterInverse.toMutableList()
+            new[index] = !new[index]
+            return this.copy(filterInverse = new)
+        }
     }
 }
 
-enum class HabitColumnType {
-    NAME,
-    ID,
-    TAGS_ID,
-    TAGS_NAME,
-    URGENCY, // closest next reset
-    DIFFICULTY,
-    PRIORITY,
+enum class HabitColumnType(
+    val uiText: Int,
+    val userSide: Boolean,
+) {
+    NAME(
+        uiText = R.string.SortingFilteringName,
+        userSide = true,
+    ),
+    ID(
+        uiText = R.string.SortingFilteringId,
+        userSide = false,
+    ),
+    TAGS_ID(
+        uiText = R.string.SortingFilteringTagsId,
+        userSide = false,
+    ),
+    TAGS_NAME(
+        uiText = R.string.SortingFilteringTagsName,
+        userSide = true,
+    ),
+    URGENCY(
+        uiText = R.string.SortingFilteringUrgency,
+        userSide = true,
+    ), // closest next reset
+    DIFFICULTY(
+        uiText = R.string.SortingFilteringDifficulty,
+        userSide = true,
+    ),
+    PRIORITY(
+        uiText = R.string.SortingFilteringPriority,
+        userSide = true,
+    ),
 }
 
-enum class HabitFilteringType {
-    AMOUNT, // get certain amount of values
-    THRESHOLD, // the value has to be above or below a certain value (default above)
-    VALUE, // include only one value or exclue only one value (default include)
+enum class HabitFilteringType(
+    val uiText: Int,
+    val userSide: Boolean,
+) {
+    AMOUNT(
+        uiText = R.string.SortingFilteringAmount,
+        userSide = true,
+    ), // get certain amount of values
+    THRESHOLD(
+        uiText = R.string.SortingFilteringThreshold,
+        userSide = true,
+    ), // the value has to be above or below a certain value (default above)
+    VALUE(
+        uiText = R.string.SortingFilteringValue,
+        userSide = true,
+    ), // include only one value or exclue only one value (default include)
 }

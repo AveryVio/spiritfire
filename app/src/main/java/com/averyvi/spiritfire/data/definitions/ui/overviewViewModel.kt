@@ -18,10 +18,13 @@ import kotlinx.coroutines.flow.stateIn
 class OverviewViewModel(
     private val habitRepository: HabitRepository,
     private val habitFilterViewModel: HabitFilterViewModel,
-    val habitSortingFiltering: HabitSortingFiltering,
-    val logSortingFiltering: LogSortingFiltering,
+    var logSortingFiltering: LogSortingFiltering,
 ) : ViewModel() {
-    private val _allItems: StateFlow<List<HabitRow>> = habitRepository.getFilteredAndSortedHabits(habitSortingFiltering)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _allItems: StateFlow<List<HabitRow>> = habitFilterViewModel.sortingFiltering
+        .flatMapLatest { currentFilters ->
+            habitRepository.getFilteredAndSortedHabits(currentFilters)
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -30,7 +33,7 @@ class OverviewViewModel(
 
     val displayedHabits: StateFlow<List<HabitRow>> = combine(
         _allItems,
-        habitFilterViewModel.selectedFilters
+        habitFilterViewModel.selectedHabits
     ) { allHabits, selectedIds ->
         if (selectedIds.isNotEmpty()) {
             allHabits.filter { habit -> selectedIds.contains(habit.id) }
