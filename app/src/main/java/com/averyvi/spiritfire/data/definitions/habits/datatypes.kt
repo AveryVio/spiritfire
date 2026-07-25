@@ -15,52 +15,24 @@ enum class SColour(val color: Color){
     Grey(color = Color.hsv(0f, 0f, 0.32f )),
 }
 
-data class ResetDays(
-    val resetType: ResetDaysType,
-    val resetDays: Int,
-) {
-    companion object {
-        val DAILY =
-            ResetDays(
-                resetType = ResetDaysType.DAILY,
-                resetDays = 1
-            )
-        val WEEKLY =
-            ResetDays(
-                resetType = ResetDaysType.WEEKLY,
-                resetDays = 7
-            )
-        val MOTHLY =
-            ResetDays(
-                resetType = ResetDaysType.MONTHLY,
-                resetDays = 30
-            )
-        val YEARLY =
-            ResetDays(
-                resetType = ResetDaysType.YEARLY,
-                resetDays = 365
-            )
-        val EVERYOTHER =
-            ResetDays(
-                resetType = ResetDaysType.CUSTOM_DAYS,
-                resetDays = 2
-            )
-        val THREE =
-            ResetDays(
-                resetType = ResetDaysType.CUSTOM_DAYS,
-                resetDays = 3
-            )
-    }
-}
-
 enum class ResetDaysType(
-    val uiText: Int
+    val descriptorString: Int,
 ) {
-    DAILY(uiText = R.string.DailyChange),
-    WEEKLY(uiText = R.string.WeekklyChange),
-    MONTHLY(uiText = R.string.MonthlyChange),
-    YEARLY(uiText = R.string.YearlyChange),
-    CUSTOM_DAYS(uiText = R.string.CustomDaysChange),
+    DAILY(
+        descriptorString = R.string.DailyChange,
+    ),
+    WEEKLY(
+        descriptorString = R.string.WeekklyChange,
+    ),
+    MONTHLY(
+        descriptorString = R.string.MonthlyChange,
+    ),
+    YEARLY(
+        descriptorString = R.string.YearlyChange,
+    ),
+    CUSTOM_DAYS(
+        descriptorString = R.string.CustomDaysChange,
+    ),
 }
 
 data class ResetTime(

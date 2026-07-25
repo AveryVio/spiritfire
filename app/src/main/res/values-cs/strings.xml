@@ -13,7 +13,7 @@
     <string name="WeekklyChange">týdně</string>
     <string name="MonthlyChange">měsíčně</string>
     <string name="YearlyChange">ročně</string>
-    <string name="CustomDaysChange">počet dní</string>
+    <string name="CustomDaysChange">dní</string>
     <string name="StepsCard">Kroky</string>
     <string name="StepsAmount">Kroků</string>
     <string name="StepsComplete">Kroků k dokončení</string>
@@ -42,4 +42,13 @@
     <string name="Sorting">řazení</string>
     <string name="Filtering">filtr</string>
     <string name="Add">přidat</string>
+    <string name="ShowPast1">Ukázat poslední</string>
+    <string name="DailyChange2Singular">den</string>
+    <string name="DailyChange2Plural">dní</string>
+    <string name="WeeklyChange2Singular">týden</string>
+    <string name="WeeklyChange2Plural">týdnů</string>
+    <string name="MonthlyChange2Singular">měsíc</string>
+    <string name="MonthlyChange2Plural">měsíců</string>
+    <string name="YearlyChange2Singular">rok</string>
+    <string name="YearlyChange2Plural">let</string>
 </resources>

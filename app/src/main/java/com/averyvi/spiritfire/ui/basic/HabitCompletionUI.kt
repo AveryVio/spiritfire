@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
@@ -20,12 +21,12 @@ fun ShowRowsOfItems(
     item: @Composable (Int) -> Unit,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         var itemsRemaining = 0
         while ( itemsRemaining < itemsCount ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 for (row in (0..<itemsInRow)) {
                     if (itemsRemaining < itemsCount) {
@@ -47,6 +48,7 @@ fun CompletionChip(
         colors = CardDefaults.cardColors().copy(
             containerColor = color
         ),
+        shape = RoundedCornerShape(4.dp),
         modifier = Modifier.size(size)
     ) { }
 }

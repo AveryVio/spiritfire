@@ -11,8 +11,8 @@ data class HabitRow(
     val description: String = "Something to do.",
     val icon: Int = R.drawable.r_outline_dark_mode_2,
     val colour: Color = FColour.Red.color,
-    val resetType: ResetDaysType = ResetDays.DAILY.resetType,
-    val resetDays: Int = ResetDays.DAILY.resetDays,
+    val resetType: ResetDaysType = ResetDaysType.DAILY,
+    val resetDays: Int = 1,
     val resetHour: Int = 0,
     val resetMinute: Int = 0,
     val resetOffset: Int = 0,
@@ -49,8 +49,8 @@ data class HabitBasics(
 
 data class HabitCheckingUI(
     val id: Int = 0,
-    val resetType: ResetDaysType = ResetDays.DAILY.resetType,
-    val resetDays: Int = ResetDays.DAILY.resetDays,
+    val resetType: ResetDaysType = ResetDaysType.DAILY,
+    val resetDays: Int = 1,
     val resetHour: Int = 0,
     val resetMinute: Int = 0,
     val resetOffset: Int = 0,

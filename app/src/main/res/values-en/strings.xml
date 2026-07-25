@@ -42,4 +42,13 @@
     <string name="Sorting">sort</string>
     <string name="Filtering">filter</string>
     <string name="Add">add</string>
+    <string name="ShowPast1">Show past</string>
+    <string name="DailyChange2Singular">day</string>
+    <string name="DailyChange2Plural">days</string>
+    <string name="WeeklyChange2Singular">week</string>
+    <string name="WeeklyChange2Plural">weeks</string>
+    <string name="MonthlyChange2Singular">month</string>
+    <string name="MonthlyChange2Plural">months</string>
+    <string name="YearlyChange2Singular">year</string>
+    <string name="YearlyChange2Plural">years</string>
 </resources>

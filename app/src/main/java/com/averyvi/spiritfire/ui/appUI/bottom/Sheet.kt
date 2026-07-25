@@ -129,9 +129,7 @@ fun FilterBySpecificHabits(
             }
         )
     }
-    Spacer(
-        modifier = Modifier.height(16.dp)
-    )
+
     LazyVerticalGrid(
         columns = GridCells.Adaptive(190.dp)
     ) {
@@ -174,7 +172,9 @@ fun SheetHabitSortingFiltering(
             style = MaterialTheme.typography.bodyLarge
         )
         FlowRow(
-            itemVerticalAlignment = Alignment.CenterVertically
+            itemVerticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             sortingFiltering.sorting.forEachIndexed { index, sort ->
                 FlowPillButton(

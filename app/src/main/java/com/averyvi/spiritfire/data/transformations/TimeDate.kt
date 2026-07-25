@@ -1,7 +1,6 @@
 package com.averyvi.spiritfire.data.transformations
 
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
-import com.averyvi.spiritfire.data.definitions.habits.ResetDays
 import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import java.time.DayOfWeek
 import java.time.Duration
