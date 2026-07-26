@@ -54,4 +54,9 @@
     <string name="DetailedHabitAnalyticsScreen">Ra\'s eye</string>
     <string name="Task">task</string>
     <string name="TaskEvery">task every</string>
+    <string name="Complete">complete</string>
+    <string name="WithinGrace">within grace</string>
+    <string name="NotComplete">not complete</string>
+    <string name="Completion">complete</string>
+    <string name="PeriodToShow">period to show</string>
 </resources>

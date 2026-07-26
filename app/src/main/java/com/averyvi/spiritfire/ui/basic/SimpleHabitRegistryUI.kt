@@ -7,10 +7,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColor
 import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.habits.FColour
+import com.averyvi.spiritfire.data.definitions.habits.SColour
 import com.averyvi.spiritfire.data.definitions.habits.TagUIEntity
 
 @Composable
@@ -26,14 +29,14 @@ fun HabitDPTPills(
     ) {
         if (contractionLevel < 5) {
             IconPillWithValue(
-                icon = R.drawable.ur_mode_heat_24dp_000000_fill0_wght400_grad0_opsz24,
-                value = difficulty,
-                colour = FColour.Red.color,
-            )
-            IconPillWithValue(
                 icon = R.drawable.ur_star_24dp_000000_fill0_wght400_grad0_opsz24,
                 value = priority,
-                colour = FColour.Yellow.color,
+                colour = MaterialTheme.colorScheme.primary,
+            )
+            IconPillWithValue(
+                icon = R.drawable.ur_mode_heat_24dp_000000_fill0_wght400_grad0_opsz24,
+                value = difficulty,
+                colour = MaterialTheme.colorScheme.secondary,
             )
         }
         if(contractionLevel < 2) {
@@ -41,7 +44,9 @@ fun HabitDPTPills(
                 if(contractionLevel == 0) {
                     if (index < 7) {
                         SmallPill(
-                            color = Color(entity.colour)
+                            color = Color(entity.colour).copy(
+                                alpha = Color(entity.colour).alpha * 0.75f ,
+                            ).compositeOver(MaterialTheme.colorScheme.onSurfaceVariant)
                         ) {
                             Text(
                                 text = entity.name
@@ -60,7 +65,9 @@ fun HabitDPTPills(
                 } else {
                     if (index < 3) {
                         SmallPill(
-                            color = Color(entity.colour)
+                            color = Color(entity.colour).copy(
+                                alpha = Color(entity.colour).alpha * 0.75f ,
+                            ).compositeOver(MaterialTheme.colorScheme.onSurfaceVariant)
                         ) {
                             Text(
                                 text = entity.name
@@ -82,7 +89,7 @@ fun HabitDPTPills(
             IconPillWithValue(
                 icon = R.drawable.u_tag_24dp_000000_fill0_wght400_grad0_opsz24,
                 value = tags.size,
-                colour = MaterialTheme.colorScheme.primary,
+                colour = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

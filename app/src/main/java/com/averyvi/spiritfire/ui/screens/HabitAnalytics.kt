@@ -1,6 +1,7 @@
 package com.averyvi.spiritfire.ui.screens
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,8 +21,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -41,6 +47,9 @@ import com.averyvi.spiritfire.data.definitions.ui.ChartData
 import com.averyvi.spiritfire.data.definitions.ui.DetailedHabitAnalyticsViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.ui.basic.HabitDPTPills
+import com.averyvi.spiritfire.ui.basic.SmallPill
+import com.averyvi.spiritfire.ui.basic.SquareChip
+import com.averyvi.spiritfire.ui.basic.periodsToShow
 import com.averyvi.spiritfire.ui.components.PieChartWithLabels
 import kotlin.math.cos
 import kotlin.math.sin
@@ -64,8 +73,11 @@ fun DetailedHabitAnalyticsScreen(
     val habitRow = detailedHabitAnalyticsViewModel.habit.collectAsState().value
 
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp)
+        modifier = Modifier.padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
+        val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -104,12 +116,9 @@ fun DetailedHabitAnalyticsScreen(
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(
-                Modifier.height(8.dp)
+                Modifier.height(4.dp)
             )
         }
-        Spacer(
-            Modifier.height(8.dp)
-        )
         HabitDPTPills(
             contractionLevel = 1,
             difficulty = habitRow.difficulty,
@@ -117,20 +126,91 @@ fun DetailedHabitAnalyticsScreen(
             tags = habitRow.tags
         )
         //motivator lines ig
-        //completion in the past (completion, grace)
-        Row() {
-            val chartDataList = listOf(
-                ChartData(MaterialTheme.colorScheme.primary, 2f),
-                ChartData(MaterialTheme.colorScheme.secondary, 1f),
-                ChartData(MaterialTheme.colorScheme.surfaceContainer, 2f),
+        val timeSelectorScrollState = rememberScrollState()
+        Column(
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.PeriodToShow) + " :",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 2.dp)
             )
-            PieChartWithLabels(
-                data = chartDataList,
-                size = 60f,
-                strokeWith = 10.dp,
-                strokeSpaces = 30f
-            )
-            Text("jfdskl")
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.horizontalScroll(
+                    state = timeSelectorScrollState,
+                )
+            ) {
+                periodsToShow.entries.forEachIndexed { index, pair ->
+                    SmallPill(
+                        onClick = {
+                            showDays.value = pair
+                        }
+                    ) {
+                        val isPlural = pair.amount > 1
+                        Text(
+                            text = pair.amount.toString() + if (isPlural) {
+                                stringResource(pair.type.string2Plural)
+                            } else {
+                                stringResource(pair.type.string2Singular)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                val chartDataList = listOf(
+                    ChartData(MaterialTheme.colorScheme.primary, 2f),
+                    ChartData(MaterialTheme.colorScheme.secondary, 1f),
+                    ChartData(MaterialTheme.colorScheme.surfaceContainer, 2f),
+                )
+                PieChartWithLabels(
+                    data = chartDataList,
+                    size = 66f,
+                    strokeWith = 12.dp,
+                    strokeSpaces = 32f
+                )
+                Column(
+                ) {
+                    chartDataList.forEachIndexed { index, data ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            SquareChip(
+                                color = data.color,
+                                size = 20.dp
+                            )
+                            Text(
+                                text = stringResource(
+                                    when (index) {
+                                        0 -> R.string.Complete
+                                        1 -> R.string.WithinGrace
+                                        else -> R.string.NotComplete
+                                    }
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+            Row() {
+                Text(
+                    text = stringResource(R.string.Completion) + " " + 69 + " %",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
         }
         //period completion UI
         //

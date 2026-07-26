@@ -18,16 +18,13 @@ import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.transformations.determineGrace
 import com.averyvi.spiritfire.data.transformations.getCompletedPeriods
-import com.averyvi.spiritfire.ui.basic.CompletionChip
+import com.averyvi.spiritfire.ui.basic.SquareChip
 import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
 import com.averyvi.spiritfire.ui.basic.ShowRowsOfItems
 import com.averyvi.spiritfire.ui.basic.logDisplayLength
 import com.averyvi.spiritfire.ui.basic.periodsToShow
-import java.time.LocalDate
-import java.time.Month
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.temporal.TemporalField
 import kotlin.time.Duration.Companion.days
 
 @Composable
@@ -102,7 +99,7 @@ fun BigLogDisplayCard(
                 },
                 item = { index ->
                     if (isDone[index]) {
-                        CompletionChip(
+                        SquareChip(
                             color = FColour.Red.color,
                             size = 16.dp
                         )
@@ -114,12 +111,12 @@ fun BigLogDisplayCard(
                         )
 
                         if (isWithinGrace) {
-                            CompletionChip(
+                            SquareChip(
                                 color = FColour.Purple.color,
                                 size = 16.dp
                             )
                         } else {
-                            CompletionChip(
+                            SquareChip(
                                 color = FColour.Blue.color,
                                 size = 16.dp
                             )

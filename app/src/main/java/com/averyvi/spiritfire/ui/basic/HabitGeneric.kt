@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.averyvi.spiritfire.data.definitions.habits.SColour
 
 @Composable
 fun HabitCheckIcon(
@@ -156,4 +157,18 @@ fun IconPillWithValue(
             )
         }
     }
+}
+
+@Composable
+fun SquareChip(
+    color: Color = SColour.Grey.color,
+    size: Dp = 32.dp
+) {
+    Card(
+        colors = CardDefaults.cardColors().copy(
+            containerColor = color
+        ),
+        shape = RoundedCornerShape(4.dp),
+        modifier = Modifier.size(size)
+    ) { }
 }

@@ -54,4 +54,9 @@
     <string name="DetailedHabitAnalyticsScreen">Ra\'s eye</string>
     <string name="Task">úkol</string>
     <string name="TaskEvery">úkol každý</string>
+    <string name="Complete">splněno</string>
+    <string name="WithinGrace">v mezích</string>
+    <string name="NotComplete">nesplněno</string>
+    <string name="Completion">splnění</string>
+    <string name="PeriodToShow">čas na zobrazení</string>
 </resources>
