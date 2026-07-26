@@ -14,6 +14,10 @@ enum class Routes(
         title = R.string.HabitOverviewScreen
     ),
 
+    DetailedHabitAnalytics(
+        title = R.string.DetailedHabitAnalyticsScreen
+    ),
+
     AllHabits(
         title = R.string.AllHabitsScreen
     ),
@@ -40,6 +44,8 @@ fun DecideNextRoute(
             return when(currentRoute){
                 Routes.HabitOverview.name -> { Routes.NewHabit }
                 Routes.NewHabit.name -> { Routes.HabitOverview }
+                Routes.AllHabits.name -> { Routes.DetailedHabitAnalytics }
+                Routes.DetailedHabitAnalytics.name -> { Routes.AllHabits }
                 else -> { Routes.HabitOverview }
             }
         }
@@ -59,6 +65,9 @@ fun DecideNextRoute(
                 }
                 Routes.HabitOverview -> {
                     Routes.HabitOverview
+                }
+                Routes.DetailedHabitAnalytics -> {
+                    Routes.DetailedHabitAnalytics
                 }
                 Routes.NewHabit -> {
                     Routes.NewHabit

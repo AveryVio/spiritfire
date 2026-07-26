@@ -1,6 +1,7 @@
 package com.averyvi.spiritfire.ui.basic
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -12,9 +13,11 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -102,35 +105,30 @@ fun LinearIconifiedProgress(
 fun SmallPill(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onSurface,
+    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    Card(
-        shape = RoundedCornerShape(256.dp),
-        modifier = modifier,
-        colors = CardDefaults.cardColors().copy(
-            contentColor = color,
-            containerColor = color.copy(
+    var modifier = modifier
+        .clip(RoundedCornerShape(256.dp))
+        .background(
+            color.copy(
                 alpha = color.alpha * 0.5f ,
                 red = color.red * 0.8f,
                 blue = color.blue * 0.8f,
                 green = color.green * 0.8f,
-            ),
-            disabledContentColor = color.copy(
-                red = color.red * 0.7f,
-                blue = color.blue * 0.7f,
-                green = color.green * 0.7f,
-            ),
-            disabledContainerColor = color.copy(
-                alpha = color.alpha * 0.5f,
-                red = color.red * 0.7f,
-                blue = color.blue * 0.7f,
-                green = color.green * 0.7f,
             )
         )
+
+    if (onClick != null) {
+        modifier = modifier.clickable(onClick = onClick)
+    }
+
+    modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
     ) {
-        Box(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
-        ) {
+        CompositionLocalProvider(LocalContentColor provides color) {
             content()
         }
     }

@@ -51,4 +51,7 @@
     <string name="MonthlyChange2Plural">months</string>
     <string name="YearlyChange2Singular">year</string>
     <string name="YearlyChange2Plural">years</string>
+    <string name="DetailedHabitAnalyticsScreen">Ra\'s eye</string>
+    <string name="Task">task</string>
+    <string name="TaskEvery">task every</string>
 </resources>

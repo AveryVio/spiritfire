@@ -51,4 +51,7 @@
     <string name="MonthlyChange2Plural">měsíců</string>
     <string name="YearlyChange2Singular">rok</string>
     <string name="YearlyChange2Plural">let</string>
+    <string name="DetailedHabitAnalyticsScreen">Ra\'s eye</string>
+    <string name="Task">úkol</string>
+    <string name="TaskEvery">úkol každý</string>
 </resources>

@@ -31,7 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
-import com.averyvi.spiritfire.ui.basic.FlowPillButton
+import com.averyvi.spiritfire.ui.basic.SmallPill
 import com.averyvi.spiritfire.ui.basic.logDisplayLength
 import com.averyvi.spiritfire.ui.basic.periodsToShow
 import com.averyvi.spiritfire.ui.components.BigLogDisplayCard
@@ -56,40 +56,34 @@ fun HabitOverview(
     val filtredLogs = OverviewViewModel.filtredLogs.collectAsState().value
 
     Column(
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
 
-        Column() {
-            val scrollState = rememberScrollState()
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.horizontalScroll(
-                    state = scrollState,
-                )
-            ) {
-                periodsToShow.entries.forEachIndexed { index, pair ->
-                    FlowPillButton(
-                        onClick = {
-                            showDays.value = pair
-                        }
-                    ) {
-                        val isPlural = pair.amount > 1
-                        Text(
-                            text = pair.amount.toString() + if(isPlural) {
-                                stringResource(pair.type.string2Plural)
-                            } else {
-                                stringResource(pair.type.string2Singular)
-                            }
-                        )
+        val scrollState = rememberScrollState()
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.horizontalScroll(
+                state = scrollState,
+            )
+        ) {
+            periodsToShow.entries.forEachIndexed { index, pair ->
+                SmallPill(
+                    onClick = {
+                        showDays.value = pair
                     }
+                ) {
+                    val isPlural = pair.amount > 1
+                    Text(
+                        text = pair.amount.toString() + if(isPlural) {
+                            stringResource(pair.type.string2Plural)
+                        } else {
+                            stringResource(pair.type.string2Singular)
+                        }
+                    )
                 }
             }
-
-            /*
-            HabitSortingFilteringChipsRow(
-                sortingFiltering = habitFilterViewModel.sortingFiltering.collectAsState().value,
-            )*/
         }
 
         LazyColumn(

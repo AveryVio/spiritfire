@@ -23,6 +23,7 @@ import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
+import com.averyvi.spiritfire.ui.basic.HabitDPTPills
 import com.averyvi.spiritfire.ui.basic.IconPillWithValue
 import com.averyvi.spiritfire.ui.basic.SmallPill
 
@@ -65,41 +66,12 @@ fun BigHabitPropertiesCard(
                 }
             }
             Spacer(modifier = Modifier.height(8.dp + 2.dp))
-            FlowRow(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                IconPillWithValue(
-                    icon = R.drawable.ur_mode_heat_24dp_000000_fill0_wght400_grad0_opsz24,
-                    value = habit.difficulty,
-                    colour = FColour.Red.color,
-                )
-                IconPillWithValue(
-                    icon = R.drawable.ur_star_24dp_000000_fill0_wght400_grad0_opsz24,
-                    value = habit.priority,
-                    colour = FColour.Yellow.color,
-                )
-                habit.tags.forEachIndexed { index, entity ->
-                    if (index < 7) {
-                        SmallPill(
-                            color = Color(entity.colour)
-                        ) {
-                            Text(
-                                text = entity.name
-                            )
-                        }
-                    } else if (index == 7) {
-                        SmallPill(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.u_more_horiz_24dp_000000_fill0_wght400_grad0_opsz24),
-                                contentDescription = null,
-                            )
-                        }
-                    }
-                }
-            }
+            HabitDPTPills(
+                contractionLevel = 0,
+                difficulty = habit.difficulty,
+                priority = habit.priority,
+                tags = habit.tags,
+            )
         }
     }
 }
@@ -140,37 +112,12 @@ fun SmallHabitPropertiesCard(
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-            FlowRow(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                IconPillWithValue(
-                    icon = R.drawable.ur_mode_heat_24dp_000000_fill0_wght400_grad0_opsz24,
-                    value = habit.difficulty,
-                    colour = FColour.Red.color,
-                )
-                IconPillWithValue(
-                    icon = R.drawable.ur_star_24dp_000000_fill0_wght400_grad0_opsz24,
-                    value = habit.priority,
-                    colour = FColour.Yellow.color,
-                )
-                SmallPill(
-                    color = MaterialTheme.colorScheme.primary
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.u_tag_24dp_000000_fill0_wght400_grad0_opsz24),
-                            contentDescription = null,
-                        )
-                        Text(
-                            text = habit.tags.size.toString(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
+            HabitDPTPills(
+                contractionLevel = 3,
+                difficulty = habit.difficulty,
+                priority = habit.priority,
+                tags = habit.tags,
+            )
         }
     }
 }
@@ -198,27 +145,12 @@ fun MinimalHabitPropertiesCard(
                 size = 32.dp
             )
             Spacer(modifier = Modifier.weight(1f))
-            FlowRow(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                SmallPill(
-                    color = MaterialTheme.colorScheme.primary
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.u_tag_24dp_000000_fill0_wght400_grad0_opsz24),
-                            contentDescription = null,
-                        )
-                        Text(
-                            text = habit.tags.size.toString(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
+            HabitDPTPills(
+                contractionLevel = 5,
+                difficulty = habit.difficulty,
+                priority = habit.priority,
+                tags = habit.tags,
+            )
             Spacer(modifier = Modifier.weight(1f))
         }
     }

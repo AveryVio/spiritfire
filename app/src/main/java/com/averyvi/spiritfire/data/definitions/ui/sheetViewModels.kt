@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.averyvi.spiritfire.data.definitions.habits.HabitForList
+import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering.Companion.addFilter
 import com.averyvi.spiritfire.data.sources.HabitRepository
@@ -28,6 +29,9 @@ class HabitFilterViewModel(private val habitRepository: HabitRepository) : ViewM
 
     private val _sortingFiltering = MutableStateFlow(HabitSortingFiltering.TESTING)
     val sortingFiltering = _sortingFiltering.asStateFlow()
+
+    private val _shownDetail = MutableStateFlow(0)
+    val shownDetail = _shownDetail.asStateFlow()
 
     fun toggleFilter(habitId: Int) {
         _selectedHabits.update { currentSelected ->
@@ -65,5 +69,13 @@ class HabitFilterViewModel(private val habitRepository: HabitRepository) : ViewM
 
     fun updateSortingFiltering(newState: HabitSortingFiltering) {
         _sortingFiltering.value = newState
+    }
+
+    fun changeShownDetail(habit: Int) {
+        _shownDetail.value = habit
+    }
+
+    fun resetShownDetaio() {
+        _shownDetail.value = 0
     }
 }

@@ -1,19 +1,14 @@
 package com.averyvi.spiritfire.ui
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberTopAppBarState
@@ -22,10 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -35,7 +26,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.experiments.testingScreenUI
@@ -43,6 +33,7 @@ import com.averyvi.spiritfire.ui.appUI.bottom.AppBottomSheet
 import com.averyvi.spiritfire.ui.appUI.bottom.NavPill
 import com.averyvi.spiritfire.ui.appUI.top.AppBar
 import com.averyvi.spiritfire.ui.screens.AllHabitsScreen
+import com.averyvi.spiritfire.ui.screens.DetailedHabitAnalyticsScreen
 import com.averyvi.spiritfire.ui.screens.HabitOverview
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -143,6 +134,19 @@ fun MainUI(
 
                     composable(route = Routes.AllHabits.name) {
                         AllHabitsScreen(
+                            navigateFunc = { it1, it2 ->
+                                NavControllerNavigate(
+                                    routeNavType = it1,
+                                    intendedDestination = it2
+                                )
+                            },
+                            habitFilterViewModel = habitFilterViewModel,
+                            habitRepository = habitRepository,
+                        )
+                    }
+
+                    composable(route = Routes.DetailedHabitAnalytics.name) {
+                        DetailedHabitAnalyticsScreen(
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
                         )
@@ -150,6 +154,8 @@ fun MainUI(
 
                     composable(route = Routes.NewHabit.name) {
                     }
+
+                    // todo screen with calendar showing what tasks are to do at that day
                 }
             }
         }
@@ -173,12 +179,14 @@ fun MainUI(
                 },
             contentAlignment = Alignment.Center
         ) {
-            NavPill(navigateFunc = { it1, it2 ->
-                NavControllerNavigate(
-                    routeNavType = it1,
-                    intendedDestination = it2
-                )
-            })
+            NavPill(
+                navigateFunc = { it1, it2 ->
+                    NavControllerNavigate(
+                        routeNavType = it1,
+                        intendedDestination = it2
+                    )
+                }
+            )
         }
     }
 }

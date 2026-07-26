@@ -33,7 +33,7 @@ import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering.Companion.inverseFilter
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering.Companion.removeSorting
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.HabitSortingFiltering.Companion.reverseSorting
-import com.averyvi.spiritfire.ui.basic.FlowPillButton
+import com.averyvi.spiritfire.ui.basic.SmallPill
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,6 +67,7 @@ fun AppBottomSheet(
         SheetHabitSortingFiltering(
             habitFilterViewModel = habitFilterViewModel
         )
+        // filter by tags
         FilterBySpecificHabits(
             habitFilterViewModel = habitFilterViewModel,
             selectedAllState = selectedAllState,
@@ -177,7 +178,7 @@ fun SheetHabitSortingFiltering(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             sortingFiltering.sorting.forEachIndexed { index, sort ->
-                FlowPillButton(
+                SmallPill(
                     onClick = {}
                 ) {
                     Row(
@@ -205,7 +206,7 @@ fun SheetHabitSortingFiltering(
                     }
                 }
             }
-            FlowPillButton(
+            SmallPill(
                 onClick = {} // toto add a function to add a sorting
             ) {
                 Icon(
@@ -223,7 +224,7 @@ fun SheetHabitSortingFiltering(
             itemVerticalAlignment = Alignment.CenterVertically
         ) {
             sortingFiltering.filterTypes.forEachIndexed { index, filter ->
-                FlowPillButton(
+                SmallPill(
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -250,7 +251,7 @@ fun SheetHabitSortingFiltering(
                     }
                 }
             }
-            FlowPillButton(
+            SmallPill(
                 onClick = {} // toto add a function to add a sorting
             ) {
                 Icon(

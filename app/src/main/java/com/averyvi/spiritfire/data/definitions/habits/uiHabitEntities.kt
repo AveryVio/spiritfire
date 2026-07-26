@@ -26,7 +26,32 @@ data class HabitRow(
     val cooldownSeconds: Int = 0,
     val difficulty: Int = 0,
     val tags: List<TagUIEntity>
-)
+) {
+    companion object {
+        val NO_HABIT = HabitRow(
+            id = 0,
+            name = "Flame Chase",
+            description = "The Flame Chase was never about destruction. It was about breaking free, and trailblazing!",
+            icon = R.drawable.flame_chase,
+            colour = FColour.Purple.color,
+            resetType = ResetDaysType.DAILY,
+            resetDays = 1,
+            resetHour = 12,
+            resetMinute = 25,
+            resetOffset = 0,
+            checksAmount = 33550336,
+            checksComplete = 12,
+            checksType = checkTypes.COMPLETIONS.stringRef,
+            checksSkipGrace = 2,
+            priority = 10,
+            cooldownHours = 0,
+            cooldownMinutes = 0,
+            cooldownSeconds = 3,
+            difficulty = 10,
+            tags = listOf(),
+        )
+    }
+}
 
 data class HabitForList(
     val id: Int = 0,
