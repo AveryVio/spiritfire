@@ -1,5 +1,6 @@
 package com.averyvi.spiritfire.ui.screens
 
+import android.icu.util.Calendar
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -41,18 +42,31 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.averyvi.spiritfire.R
+import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
+import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
 import com.averyvi.spiritfire.data.definitions.ui.AllHabitsViewModel
 import com.averyvi.spiritfire.data.definitions.ui.ChartData
 import com.averyvi.spiritfire.data.definitions.ui.DetailedHabitAnalyticsViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
+import com.averyvi.spiritfire.data.transformations.determineGrace
+import com.averyvi.spiritfire.data.transformations.getCompletedPeriods
+import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
 import com.averyvi.spiritfire.ui.basic.HabitDPTPills
+import com.averyvi.spiritfire.ui.basic.ShowRowsOfItems
 import com.averyvi.spiritfire.ui.basic.SmallPill
 import com.averyvi.spiritfire.ui.basic.SquareChip
+import com.averyvi.spiritfire.ui.basic.logDisplayLength
 import com.averyvi.spiritfire.ui.basic.periodsToShow
+import com.averyvi.spiritfire.ui.components.BigLogDisplayCard
 import com.averyvi.spiritfire.ui.components.PieChartWithLabels
+import com.averyvi.spiritfire.ui.components.TransparentLogDisplayBlock
+import com.averyvi.spiritfire.ui.components.UICard
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.time.Duration.Companion.days
 
 @Composable
 fun DetailedHabitAnalyticsScreen(
@@ -65,12 +79,13 @@ fun DetailedHabitAnalyticsScreen(
             return DetailedHabitAnalyticsViewModel(
                 habitRepository = habitRepository,
                 habitFilterViewModel = habitFilterViewModel,
-
+                logSortingFiltering = LogSortingFiltering.TESTING
                 ) as T
         }
     }
     val detailedHabitAnalyticsViewModel: DetailedHabitAnalyticsViewModel = viewModel(factory = detailedHabitAnalyticsVMFactory)
     val habitRow = detailedHabitAnalyticsViewModel.habit.collectAsState().value
+    val filtredLogs = detailedHabitAnalyticsViewModel.filtredLogs.collectAsState().value
 
     Column(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -213,6 +228,13 @@ fun DetailedHabitAnalyticsScreen(
             }
         }
         //period completion UI
+        Column() {
+            TransparentLogDisplayBlock(
+                habitRow = habitRow,
+                logsList = filtredLogs,
+                periodsToShow = showDays.value
+            )
+        }
         //
     }
 }

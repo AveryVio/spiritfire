@@ -25,7 +25,7 @@ data class LogSortingFiltering(
                 .addSorting(LogColumnType.TIME, true)
                 .addSorting(LogColumnType.HABIT, true)
                 .addSorting(LogColumnType.CHECKS, true)
-                .addFilter(LogFilteringType.AMOUNT, LogColumnType.TIME, "35", false)
+                .addFilter(LogFilteringType.AMOUNT, LogColumnType.TIME, "60", false)
 
         fun LogSortingFiltering.addSorting(
             habitColumnType: LogColumnType,

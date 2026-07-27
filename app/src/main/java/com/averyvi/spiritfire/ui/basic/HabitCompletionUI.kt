@@ -31,3 +31,27 @@ fun ShowRowsOfItems(
     }
 }
 
+@Composable
+fun ShowColumnsOfItems(
+    itemsCount: Int,
+    itemsInRow: Int,
+    item: @Composable (Int) -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        var itemsRemaining = 0
+        while ( itemsRemaining < itemsCount ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                for (row in (0..<itemsInRow)) {
+                    if (itemsRemaining < itemsCount) {
+                        item(itemsRemaining)
+                        itemsRemaining++
+                    } else { break }
+                }
+            }
+        }
+    }
+}
