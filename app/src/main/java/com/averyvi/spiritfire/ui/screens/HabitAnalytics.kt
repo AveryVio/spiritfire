@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -43,6 +45,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.habits.FColour
+import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
 import com.averyvi.spiritfire.data.definitions.ui.AllHabitsViewModel
@@ -80,10 +83,11 @@ fun DetailedHabitAnalyticsScreen(
                 habitRepository = habitRepository,
                 habitFilterViewModel = habitFilterViewModel,
                 logSortingFiltering = LogSortingFiltering.TESTING
-                ) as T
+            ) as T
         }
     }
-    val detailedHabitAnalyticsViewModel: DetailedHabitAnalyticsViewModel = viewModel(factory = detailedHabitAnalyticsVMFactory)
+    val detailedHabitAnalyticsViewModel: DetailedHabitAnalyticsViewModel =
+        viewModel(factory = detailedHabitAnalyticsVMFactory)
     val habitRow = detailedHabitAnalyticsViewModel.habit.collectAsState().value
     val filtredLogs = detailedHabitAnalyticsViewModel.filtredLogs.collectAsState().value
 
@@ -93,148 +97,208 @@ fun DetailedHabitAnalyticsScreen(
     ) {
         val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter = painterResource(habitRow.icon),
-                modifier = Modifier.size(32.dp),
-                tint = habitRow.colour,
-                contentDescription = null,
-            )
-            Text(
-                text = habitRow.name,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = habitRow.colour
-            )
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = when(habitRow.resetType) {
-                    ResetDaysType.CUSTOM_DAYS -> {
-                        stringResource(R.string.TaskEvery) + " " + habitRow.resetDays + " " + stringResource(
-                            habitRow.resetType.descriptorString
-                        )
-                    }
-                    else -> {
-                        stringResource(habitRow.resetType.descriptorString) + " " + stringResource(R.string.Task)
-                    }
-                },
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        if(habitRow.description.isNotBlank()) {
-            Text(
-                text = habitRow.description,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(
-                Modifier.height(4.dp)
-            )
-        }
-        HabitDPTPills(
-            contractionLevel = 1,
-            difficulty = habitRow.difficulty,
-            priority = habitRow.priority,
-            tags = habitRow.tags
+        AnalyticsHabitNameBlock(
+            habitRow = habitRow
         )
-        //motivator lines ig
-        val timeSelectorScrollState = rememberScrollState()
-        Column(
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.PeriodToShow) + " :",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = 2.dp)
-            )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.horizontalScroll(
-                    state = timeSelectorScrollState,
-                )
-            ) {
-                periodsToShow.entries.forEachIndexed { index, pair ->
-                    SmallPill(
-                        onClick = {
-                            showDays.value = pair
-                        }
-                    ) {
-                        val isPlural = pair.amount > 1
-                        Text(
-                            text = pair.amount.toString() + if (isPlural) {
-                                stringResource(pair.type.string2Plural)
-                            } else {
-                                stringResource(pair.type.string2Singular)
-                            }
-                        )
-                    }
-                }
-            }
-        }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        val variousContentScroll = rememberScrollState()
+        Column(
+            modifier = Modifier.verticalScroll( variousContentScroll ),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                val chartDataList = listOf(
-                    ChartData(MaterialTheme.colorScheme.primary, 2f),
-                    ChartData(MaterialTheme.colorScheme.secondary, 1f),
-                    ChartData(MaterialTheme.colorScheme.surfaceContainer, 2f),
-                )
-                PieChartWithLabels(
-                    data = chartDataList,
-                    size = 66f,
-                    strokeWith = 12.dp,
-                    strokeSpaces = 32f
-                )
-                Column(
-                ) {
-                    chartDataList.forEachIndexed { index, data ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            SquareChip(
-                                color = data.color,
-                                size = 20.dp
-                            )
-                            Text(
-                                text = stringResource(
-                                    when (index) {
-                                        0 -> R.string.Complete
-                                        1 -> R.string.WithinGrace
-                                        else -> R.string.NotComplete
-                                    }
-                                )
-                            )
-                        }
-                    }
+            AnalyticsHabitDescTags(
+                habitRow = habitRow
+            )
+            //motivator lines ig
+
+            // today
+            AnalyticsHabitDayCompletionRundown(
+                habitRow = habitRow
+            )
+            // over time
+            AnalyticsHabitLogPeriodSelector(
+                habitRow = habitRow,
+                showDays = showDays.value,
+                changeShowDays = {
+                    showDays.value = it
                 }
-            }
-            Row() {
-                Text(
-                    text = stringResource(R.string.Completion) + " " + 69 + " %",
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-        }
-        //period completion UI
-        Column() {
+            )
+
+            AnalyticsHabitLogsShortRundown(
+                habitRow = habitRow
+            )
+            //period completion UI
             TransparentLogDisplayBlock(
                 habitRow = habitRow,
                 logsList = filtredLogs,
                 periodsToShow = showDays.value
             )
         }
-        //
+    }
+}
+
+@Composable
+fun AnalyticsHabitNameBlock(
+    habitRow: HabitRow
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(habitRow.icon),
+            modifier = Modifier.size(32.dp),
+            tint = habitRow.colour,
+            contentDescription = null,
+        )
+        Text(
+            text = habitRow.name,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = habitRow.colour
+        )
+        Spacer(Modifier.weight(1f))
+        Text(
+            text = when(habitRow.resetType) {
+                ResetDaysType.CUSTOM_DAYS -> {
+                    stringResource(R.string.TaskEvery) + " " + habitRow.resetDays + " " + stringResource(
+                        habitRow.resetType.descriptorString
+                    )
+                }
+                else -> {
+                    stringResource(habitRow.resetType.descriptorString) + " " + stringResource(R.string.Task)
+                }
+            },
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+fun AnalyticsHabitDescTags(
+    habitRow: HabitRow
+) {
+    if(habitRow.description.isNotBlank()) {
+        Text(
+            text = habitRow.description,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(
+            Modifier.height(4.dp)
+        )
+    }
+    HabitDPTPills(
+        contractionLevel = 1,
+        difficulty = habitRow.difficulty,
+        priority = habitRow.priority,
+        tags = habitRow.tags
+    )
+}
+
+@Composable
+fun AnalyticsHabitDayCompletionRundown(
+    habitRow: HabitRow
+) {
+    Row() {
+        
+    }
+}
+
+@Composable
+fun AnalyticsHabitLogPeriodSelector(
+    habitRow: HabitRow,
+    showDays: periodsToShow,
+    changeShowDays: (periodsToShow) -> Unit
+) {
+    val timeSelectorScrollState = rememberScrollState()
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp + 2.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.PeriodToShow) + " :",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 2.dp)
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.horizontalScroll(
+                state = timeSelectorScrollState,
+            )
+        ) {
+            periodsToShow.entries.forEachIndexed { index, pair ->
+                SmallPill(
+                    color = if(showDays == pair) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    onClick = { changeShowDays(pair) }
+                ) {
+                    val isPlural = pair.amount > 1
+                    Text(
+                        text = pair.amount.toString() + if (isPlural) {
+                            stringResource(pair.type.string2Plural)
+                        } else {
+                            stringResource(pair.type.string2Singular)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AnalyticsHabitLogsShortRundown(
+    habitRow: HabitRow
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            val chartDataList = listOf(
+                ChartData(MaterialTheme.colorScheme.primary, 2f),
+                ChartData(MaterialTheme.colorScheme.secondary, 1f),
+                ChartData(MaterialTheme.colorScheme.surfaceContainer, 2f),
+            )
+            PieChartWithLabels(
+                data = chartDataList,
+                size = 66f,
+                strokeWith = 12.dp,
+                strokeSpaces = 32f
+            )
+            Column(
+            ) {
+                chartDataList.forEachIndexed { index, data ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        SquareChip(
+                            color = data.color,
+                            size = 20.dp
+                        )
+                        Text(
+                            text = stringResource(
+                                when (index) {
+                                    0 -> R.string.Complete
+                                    1 -> R.string.WithinGrace
+                                    else -> R.string.NotComplete
+                                }
+                            )
+                        )
+                    }
+                }
+            }
+        }
+        Row() {
+            Text(
+                text = stringResource(R.string.Completion) + " " + 69 + " %",
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
     }
 }
