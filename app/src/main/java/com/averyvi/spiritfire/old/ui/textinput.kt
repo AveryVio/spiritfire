@@ -1,4 +1,4 @@
-package com.averyvi.spiritfire.ui.elements
+package com.averyvi.spiritfire.old.ui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,7 +22,7 @@ fun FancyTextInput(
     placeholder: @Composable () -> Unit,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     brushColorList: List<Color> = listOf( MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.tertiary ),
     gradientTextStyle: TextStyle = TextStyle(fontSize = TextUnit.Unspecified),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -71,7 +71,7 @@ fun SimpleTextInput(
     placeholder: @Composable () -> Unit,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     maxLines: Int = 1,
 ){
@@ -88,7 +88,7 @@ fun SimpleTextInput(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
-        shape = RoundedCornerShape(24.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
         textStyle = TextStyle().copy(
             fontSize = 18.sp,
         ),
