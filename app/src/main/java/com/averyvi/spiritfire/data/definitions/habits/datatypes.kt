@@ -15,6 +15,19 @@ enum class SColour(val color: Color){
     Grey(color = Color.hsv(0f, 0f, 0.32f )),
 }
 
+enum class FIcon( val res: Int, ){
+    moon(res = R.drawable.r_outline_dark_mode_2),
+    circle(res = R.drawable.r_circle),
+    battery(res = R.drawable.r_outline_battery_android_0_24),
+    flowey(res = R.drawable.r_outline_deceased_24),
+    water(res = R.drawable.r_outline_humidity_low_24),
+    monitor(res = R.drawable.r_outline_jamboard_kiosk_24),
+    music(res = R.drawable.r_outline_music_note_24),
+    pill(res = R.drawable.r_outline_pill_24),
+    fire(res = R.drawable.ur_mode_heat_24dp_000000_fill0_wght400_grad0_opsz24),
+    star(res = R.drawable.ur_star_24dp_000000_fill0_wght400_grad0_opsz24),
+}
+
 enum class ResetDaysType(
     val descriptorString: Int,
 ) {

@@ -15,7 +15,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+/*
 @Composable
 fun FancyTextInput(
     label: @Composable () -> Unit,
@@ -96,4 +96,4 @@ fun SimpleTextInput(
         singleLine = maxLines == 1,
         maxLines = maxLines
     )
-}
+}*/

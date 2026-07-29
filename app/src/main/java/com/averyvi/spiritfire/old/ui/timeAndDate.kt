@@ -29,10 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.averyvi.spiritfire.R
-import com.averyvi.spiritfire.old.data.definitions.ResetDaysIntervalUnit
-import com.averyvi.spiritfire.old.data.definitions.ResetTime
+import com.averyvi.spiritfire.data.definitions.habits.ResetTime
 import java.util.Calendar
-
+/*
 @Composable
 fun timePicker(
     resetTime: ResetTime,
@@ -166,4 +165,4 @@ fun timePickerOverlay(
             }
         }
     }
-}
+}*/
