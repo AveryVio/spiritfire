@@ -1,6 +1,7 @@
 package com.averyvi.spiritfire.ui.screens
 
 import android.icu.util.Calendar
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +41,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import androidx.compose.ui.text.style.TextOverflow
@@ -91,6 +96,16 @@ fun DetailedHabitAnalyticsScreen(
     val habitRow = detailedHabitAnalyticsViewModel.habit.collectAsState().value
     val filtredLogs = detailedHabitAnalyticsViewModel.filtredLogs.collectAsState().value
 
+    val todayData = listOf(
+        ChartData(MaterialTheme.colorScheme.primary, 19f),
+        ChartData(MaterialTheme.colorScheme.surfaceVariant, 11f),
+    )
+    val periodData = listOf(
+        ChartData(MaterialTheme.colorScheme.primary, 2f),
+        ChartData(MaterialTheme.colorScheme.secondary, 1f),
+        ChartData(MaterialTheme.colorScheme.surfaceVariant, 2f),
+    )
+
     Column(
         modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -98,7 +113,8 @@ fun DetailedHabitAnalyticsScreen(
         val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
 
         AnalyticsHabitNameBlock(
-            habitRow = habitRow
+            habitRow = habitRow,
+            data = periodData,
         )
 
         val variousContentScroll = rememberScrollState()
@@ -113,7 +129,8 @@ fun DetailedHabitAnalyticsScreen(
 
             // today
             AnalyticsHabitDayCompletionRundown(
-                habitRow = habitRow
+                habitRow = habitRow,
+                data = todayData,
             )
             // over time
             AnalyticsHabitLogPeriodSelector(
@@ -125,7 +142,8 @@ fun DetailedHabitAnalyticsScreen(
             )
 
             AnalyticsHabitLogsShortRundown(
-                habitRow = habitRow
+                habitRow = habitRow,
+                data = periodData,
             )
             //period completion UI
             TransparentLogDisplayBlock(
@@ -139,7 +157,8 @@ fun DetailedHabitAnalyticsScreen(
 
 @Composable
 fun AnalyticsHabitNameBlock(
-    habitRow: HabitRow
+    habitRow: HabitRow,
+    data: List<ChartData>
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -171,6 +190,30 @@ fun AnalyticsHabitNameBlock(
             },
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        Box(
+            contentAlignment = Alignment.TopEnd
+        ) {
+            val dataHintVisible = remember { mutableStateOf(false) }
+            Card(
+                onClick = { dataHintVisible.value = true },
+            ) {
+                Text(
+                    text = "?",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                )
+            }
+            DropdownMenu(
+                expanded = dataHintVisible.value,
+                onDismissRequest = { dataHintVisible.value = false },
+                containerColor = MaterialTheme.colorScheme.surface
+            ) {
+                AnalyticsHabitComletionHint(
+                    data = data
+                )
+            }
+        }
     }
 }
 
@@ -197,11 +240,51 @@ fun AnalyticsHabitDescTags(
 }
 
 @Composable
+fun AnalyticsHabitComletionHint(
+    data: List<ChartData>
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalAlignment = Alignment.End,
+        modifier = Modifier.padding(8.dp)
+    ) {
+        data.forEachIndexed { index, data ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = stringResource(
+                        when (index) {
+                            0 -> R.string.Complete
+                            1 -> R.string.WithinGrace
+                            else -> R.string.NotComplete
+                        }
+                    ),
+                    fontWeight = FontWeight.SemiBold,
+                    color = data.color
+                )
+                SquareChip(
+                    color = data.color,
+                    size = 20.dp
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun AnalyticsHabitDayCompletionRundown(
-    habitRow: HabitRow
+    data: List<ChartData>,
+    habitRow: HabitRow,
 ) {
     Row() {
-        
+        PieChartWithLabels(
+            data = data,
+            size = 64f,
+            strokeWith = 16.dp,
+            strokeSpaces = 48f
+        )
     }
 }
 
@@ -248,55 +331,25 @@ fun AnalyticsHabitLogPeriodSelector(
 
 @Composable
 fun AnalyticsHabitLogsShortRundown(
-    habitRow: HabitRow
+    data: List<ChartData>,
+    habitRow: HabitRow,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        Box(
+            contentAlignment = Alignment.Center
         ) {
-            val chartDataList = listOf(
-                ChartData(MaterialTheme.colorScheme.primary, 2f),
-                ChartData(MaterialTheme.colorScheme.secondary, 1f),
-                ChartData(MaterialTheme.colorScheme.surfaceContainer, 2f),
-            )
             PieChartWithLabels(
-                data = chartDataList,
-                size = 66f,
-                strokeWith = 12.dp,
+                data = data,
+                size = 122f,
+                strokeWith = 24.dp,
                 strokeSpaces = 32f
             )
-            Column(
-            ) {
-                chartDataList.forEachIndexed { index, data ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        SquareChip(
-                            color = data.color,
-                            size = 20.dp
-                        )
-                        Text(
-                            text = stringResource(
-                                when (index) {
-                                    0 -> R.string.Complete
-                                    1 -> R.string.WithinGrace
-                                    else -> R.string.NotComplete
-                                }
-                            )
-                        )
-                    }
-                }
-            }
-        }
-        Row() {
             Text(
-                text = stringResource(R.string.Completion) + " " + 69 + " %",
+                text = 69.toString() + "%",
                 style = MaterialTheme.typography.titleLarge
             )
         }
