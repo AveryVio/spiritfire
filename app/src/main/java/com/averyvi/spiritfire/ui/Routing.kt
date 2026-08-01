@@ -5,29 +5,48 @@ import com.averyvi.spiritfire.R
 
 enum class Routes(
     @field:StringRes val title: Int,
+    val type: RouteType,
 ){
     TestingScreen(
-        title = R.string.TestingScreen
+        title = R.string.TestingScreen,
+        type = RouteType.SYSTEM
     ),
 
     HabitOverview(
-        title = R.string.HabitOverviewScreen
+        title = R.string.HabitOverviewScreen,
+        type = RouteType.HOME
+    ),
+
+    HabitFields(
+        title = R.string.HabitFieldsScreen,
+        type = RouteType.HABIT
     ),
 
     DetailedHabitAnalytics(
-        title = R.string.DetailedHabitAnalyticsScreen
+        title = R.string.DetailedHabitAnalyticsScreen,
+        type = RouteType.HABIT
     ),
 
     AllHabits(
-        title = R.string.AllHabitsScreen
+        title = R.string.AllHabitsScreen,
+        type = RouteType.GENERIC
     ),
 
     NewHabit(
-        title = R.string.NewHabitScreen
+        title = R.string.NewHabitScreen,
+        type = RouteType.EDITOR
     ),
 }
 
-enum class RouteNavType() {
+enum class RouteType {
+    HOME,
+    SYSTEM,
+    GENERIC,
+    HABIT,
+    EDITOR,
+}
+
+enum class NavigationType() {
     PRIMARY,
     SECONDARY,
     HOME,
@@ -35,44 +54,28 @@ enum class RouteNavType() {
 }
 
 fun DecideNextRoute(
-    currentRoute: String?,
-    routeNavType: RouteNavType,
+    currentRoute: Routes,
+    navigationType: NavigationType,
     intendedDestination: Routes = Routes.HabitOverview
 ): Routes {
-    when(routeNavType){
-        RouteNavType.PRIMARY -> {
+    when(navigationType){
+        NavigationType.PRIMARY -> {
             return when(currentRoute){
-                Routes.HabitOverview.name -> { Routes.NewHabit }
-                Routes.NewHabit.name -> { Routes.HabitOverview }
-                Routes.AllHabits.name -> { Routes.DetailedHabitAnalytics }
-                Routes.DetailedHabitAnalytics.name -> { Routes.AllHabits }
+                Routes.HabitOverview -> { Routes.NewHabit }
+                Routes.NewHabit -> { Routes.HabitOverview }
+                Routes.AllHabits -> { Routes.DetailedHabitAnalytics }
+                Routes.DetailedHabitAnalytics -> { Routes.AllHabits }
                 else -> { Routes.HabitOverview }
             }
         }
-        RouteNavType.SECONDARY -> {
+        NavigationType.SECONDARY -> {
 
         }
-        RouteNavType.HOME -> {
+        NavigationType.HOME -> {
 
         }
-        RouteNavType.CUSTOM -> {
-            return when(intendedDestination) {
-                Routes.TestingScreen -> {
-                    Routes.TestingScreen
-                }
-                Routes.AllHabits -> {
-                    Routes.AllHabits
-                }
-                Routes.HabitOverview -> {
-                    Routes.HabitOverview
-                }
-                Routes.DetailedHabitAnalytics -> {
-                    Routes.DetailedHabitAnalytics
-                }
-                Routes.NewHabit -> {
-                    Routes.NewHabit
-                }
-            }
+        NavigationType.CUSTOM -> {
+            return intendedDestination
         }
         else -> {
 

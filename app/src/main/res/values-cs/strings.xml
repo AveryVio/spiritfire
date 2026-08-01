@@ -59,4 +59,9 @@
     <string name="NotComplete">nesplněno</string>
     <string name="Completion">splnění</string>
     <string name="PeriodToShow">čas na zobrazení</string>
+    <string name="HabitFieldsScreen">Popel</string>
+    <string name="ResetAt">obnovení v</string>
+    <string name="ResetHours">hodin</string>
+    <string name="ResetMinutes">minut</string>
+    <string name="Today">dnes</string>
 </resources>

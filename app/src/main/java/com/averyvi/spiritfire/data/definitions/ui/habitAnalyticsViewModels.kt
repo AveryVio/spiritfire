@@ -20,6 +20,32 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlin.collections.map
 
+class HabitFieldsViewModel(
+    private val habitRepository: HabitRepository,
+    private val habitFilterViewModel: HabitFilterViewModel,
+) : ViewModel() {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val habit: StateFlow<HabitRow> = if(habitFilterViewModel.shownDetail.value != 0) {
+        habitFilterViewModel.shownDetail
+            .flatMapLatest {
+                habitRepository.getSelectHabits(listOf(it)).map { list ->
+                    list.first()
+                }
+            }
+    } else {
+        object : Flow<HabitRow> {
+            override suspend fun collect(collector: FlowCollector<HabitRow>) {
+                HabitRow.NO_HABIT
+            }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = HabitRow.NO_HABIT
+    )
+}
+
+
 class DetailedHabitAnalyticsViewModel(
     private val habitRepository: HabitRepository,
     private val habitFilterViewModel: HabitFilterViewModel,

@@ -15,11 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.ui.AllHabitsViewModel
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
-import com.averyvi.spiritfire.ui.RouteNavType
+import com.averyvi.spiritfire.ui.NavigationType
 import com.averyvi.spiritfire.ui.Routes
 import com.averyvi.spiritfire.ui.components.BigHabitPropertiesCard
 import com.averyvi.spiritfire.ui.components.MinimalHabitPropertiesCard
@@ -27,7 +26,7 @@ import com.averyvi.spiritfire.ui.components.SmallHabitPropertiesCard
 
 @Composable
 fun AllHabitsScreen(
-    navigateFunc: (RouteNavType, Routes) -> Unit,
+    navigateFunc: (NavigationType, Routes) -> Unit,
     habitFilterViewModel: HabitFilterViewModel,
     habitRepository: HabitRepository
 ){
@@ -49,7 +48,7 @@ fun AllHabitsScreen(
 
     val showDetails = { it: Int ->
         habitFilterViewModel.changeShownDetail(it)
-        navigateFunc(RouteNavType.CUSTOM, Routes.DetailedHabitAnalytics)
+        navigateFunc(NavigationType.CUSTOM, Routes.DetailedHabitAnalytics)
     }
 
     LazyVerticalGrid(

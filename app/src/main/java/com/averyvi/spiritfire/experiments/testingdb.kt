@@ -118,7 +118,7 @@ fun generateRandomHabitEntity(): HabitRegistryDBEntity {
     // Restrictions for non-resource integer values
     val restrictedChecksAmount = (1..10).random()
     val restrictedChecksComplete = (0..restrictedChecksAmount).random() // Ensures completions don't exceed the total amount
-    val restrictedPriority = (1..10).random()
+    val restrictedPriority = (1..7).random()
     val restrictedDifficulty = (1..5).random()
     val restrictedCooldownHours = (0..24).random()
     val restrictedSkipGrace = (0..3).random()

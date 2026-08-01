@@ -24,3 +24,14 @@ fun UICard(
     }
 }
 
+@Composable
+fun UIBlock(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+){
+    Box(
+        modifier = modifier
+    ) {
+        content()
+    }
+}

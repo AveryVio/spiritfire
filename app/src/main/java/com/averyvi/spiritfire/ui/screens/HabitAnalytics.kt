@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
@@ -91,8 +92,7 @@ fun DetailedHabitAnalyticsScreen(
             ) as T
         }
     }
-    val detailedHabitAnalyticsViewModel: DetailedHabitAnalyticsViewModel =
-        viewModel(factory = detailedHabitAnalyticsVMFactory)
+    val detailedHabitAnalyticsViewModel: DetailedHabitAnalyticsViewModel = viewModel(factory = detailedHabitAnalyticsVMFactory)
     val habitRow = detailedHabitAnalyticsViewModel.habit.collectAsState().value
     val filtredLogs = detailedHabitAnalyticsViewModel.filtredLogs.collectAsState().value
 
@@ -126,6 +126,46 @@ fun DetailedHabitAnalyticsScreen(
                 habitRow = habitRow
             )
             //motivator lines ig
+            //streak
+
+            /*Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.ResetAt),
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    val resetTime = listOf(
+                        habitRow.resetHour,
+                        habitRow.resetMinute
+                    )
+                    resetTime.forEachIndexed { index, value ->
+                        Card(
+                            modifier = Modifier.padding(4.dp),
+                        ) {
+                            Text(
+                                text = value.toString(),
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontFamily = FontFamily.Monospace, // todo add monospace font
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(4.dp)
+                            )
+                        }
+                        if (index < (resetTime.size - 1)) {
+                            Text(
+                                text = ":",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+            }*/
 
             // today
             AnalyticsHabitDayCompletionRundown(
@@ -151,6 +191,62 @@ fun DetailedHabitAnalyticsScreen(
                 logsList = filtredLogs,
                 periodsToShow = showDays.value
             )
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
+            Text(":")
         }
     }
 }
@@ -161,59 +257,23 @@ fun AnalyticsHabitNameBlock(
     data: List<ChartData>
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
     ) {
         Icon(
             painter = painterResource(habitRow.icon),
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier.size(48.dp),
             tint = habitRow.colour,
             contentDescription = null,
         )
-        Text(
-            text = habitRow.name,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = habitRow.colour
-        )
-        Spacer(Modifier.weight(1f))
-        Text(
-            text = when(habitRow.resetType) {
-                ResetDaysType.CUSTOM_DAYS -> {
-                    stringResource(R.string.TaskEvery) + " " + habitRow.resetDays + " " + stringResource(
-                        habitRow.resetType.descriptorString
-                    )
-                }
-                else -> {
-                    stringResource(habitRow.resetType.descriptorString) + " " + stringResource(R.string.Task)
-                }
-            },
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Box(
-            contentAlignment = Alignment.TopEnd
-        ) {
-            val dataHintVisible = remember { mutableStateOf(false) }
-            Card(
-                onClick = { dataHintVisible.value = true },
-            ) {
-                Text(
-                    text = "?",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                )
-            }
-            DropdownMenu(
-                expanded = dataHintVisible.value,
-                onDismissRequest = { dataHintVisible.value = false },
-                containerColor = MaterialTheme.colorScheme.surface
-            ) {
-                AnalyticsHabitComletionHint(
-                    data = data
-                )
-            }
+        Column() {
+            Text(
+                text = habitRow.name,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+            )
         }
+        // todo edit button
     }
 }
 
@@ -224,6 +284,7 @@ fun AnalyticsHabitDescTags(
     if(habitRow.description.isNotBlank()) {
         Text(
             text = habitRow.description,
+            style = MaterialTheme.typography.bodyLarge,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis
         )
@@ -243,31 +304,52 @@ fun AnalyticsHabitDescTags(
 fun AnalyticsHabitComletionHint(
     data: List<ChartData>
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalAlignment = Alignment.End,
-        modifier = Modifier.padding(8.dp)
+    Box(
+        contentAlignment = Alignment.TopEnd
     ) {
-        data.forEachIndexed { index, data ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+        val dataHintVisible = remember { mutableStateOf(false) }
+        Card(
+            onClick = { dataHintVisible.value = true },
+        ) {
+            Text(
+                text = "?",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+            )
+        }
+        DropdownMenu(
+            expanded = dataHintVisible.value,
+            onDismissRequest = { dataHintVisible.value = false },
+            containerColor = MaterialTheme.colorScheme.surface
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier.padding(8.dp)
             ) {
-                Text(
-                    text = stringResource(
-                        when (index) {
-                            0 -> R.string.Complete
-                            1 -> R.string.WithinGrace
-                            else -> R.string.NotComplete
-                        }
-                    ),
-                    fontWeight = FontWeight.SemiBold,
-                    color = data.color
-                )
-                SquareChip(
-                    color = data.color,
-                    size = 20.dp
-                )
+                data.forEachIndexed { index, data ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(
+                                when (index) {
+                                    0 -> R.string.Complete
+                                    1 -> R.string.WithinGrace
+                                    else -> R.string.NotComplete
+                                }
+                            ),
+                            fontWeight = FontWeight.SemiBold,
+                            color = data.color
+                        )
+                        SquareChip(
+                            color = data.color,
+                            size = 20.dp
+                        )
+                    }
+                }
             }
         }
     }
@@ -278,13 +360,38 @@ fun AnalyticsHabitDayCompletionRundown(
     data: List<ChartData>,
     habitRow: HabitRow,
 ) {
-    Row() {
-        PieChartWithLabels(
-            data = data,
-            size = 64f,
-            strokeWith = 16.dp,
-            strokeSpaces = 48f
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.Complete) + " " + stringResource(R.string.Today),
+            style = MaterialTheme.typography.bodyLarge,
         )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                PieChartWithLabels(
+                    data = data,
+                    size = 64f + 16f,
+                    strokeWith = 16.dp,
+                    strokeSpaces = 32f + 2f + 1f
+                )
+                Text(
+                    text = 69.toString() + "%",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            Text(
+                text = "jfkdlsfj",
+            )
+            AnalyticsHabitComletionHint(
+                data = data
+            )
+        }
     }
 }
 
@@ -353,5 +460,9 @@ fun AnalyticsHabitLogsShortRundown(
                 style = MaterialTheme.typography.titleLarge
             )
         }
+
+        AnalyticsHabitComletionHint(
+            data = data
+        )
     }
 }

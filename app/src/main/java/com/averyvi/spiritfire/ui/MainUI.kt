@@ -34,6 +34,7 @@ import com.averyvi.spiritfire.ui.appUI.bottom.NavPill
 import com.averyvi.spiritfire.ui.appUI.top.AppBar
 import com.averyvi.spiritfire.ui.screens.AllHabitsScreen
 import com.averyvi.spiritfire.ui.screens.DetailedHabitAnalyticsScreen
+import com.averyvi.spiritfire.ui.screens.HabitFields
 import com.averyvi.spiritfire.ui.screens.HabitOverview
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -55,16 +56,16 @@ fun MainUI(
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val currentRoute = Routes.valueOf(navBackStackEntry?.destination?.route?: Routes.HabitOverview.name)
 
     fun NavControllerNavigate(
-        routeNavType: RouteNavType,
+        navigationType: NavigationType,
         intendedDestination: Routes
     ){
         navController.navigate(
             route = DecideNextRoute(
                 currentRoute,
-                routeNavType,
+                navigationType,
                 intendedDestination
             ).name
         )
@@ -111,7 +112,7 @@ fun MainUI(
 
                 NavHost(
                     navController = navController,
-                    startDestination = Routes.AllHabits.name,
+                    startDestination = Routes.HabitOverview.name,
                 ) {
 
                     val onRouteButtonClicked = { route: Routes ->
@@ -136,10 +137,17 @@ fun MainUI(
                         AllHabitsScreen(
                             navigateFunc = { it1, it2 ->
                                 NavControllerNavigate(
-                                    routeNavType = it1,
+                                    navigationType = it1,
                                     intendedDestination = it2
                                 )
                             },
+                            habitFilterViewModel = habitFilterViewModel,
+                            habitRepository = habitRepository,
+                        )
+                    }
+
+                    composable(route = Routes.HabitFields.name) {
+                        HabitFields(
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
                         )
@@ -177,15 +185,16 @@ fun MainUI(
                         y = if (sheetOffsetY == Int.MAX_VALUE) 0 else sheetOffsetY - yOffsetAdjustment
                     )
                 },
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.BottomCenter
         ) {
             NavPill(
                 navigateFunc = { it1, it2 ->
                     NavControllerNavigate(
-                        routeNavType = it1,
+                        navigationType = it1,
                         intendedDestination = it2
                     )
-                }
+                },
+                currentRoute = currentRoute
             )
         }
     }

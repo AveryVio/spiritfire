@@ -60,4 +60,9 @@
     <string name="NotComplete">not complete</string>
     <string name="Completion">complete</string>
     <string name="PeriodToShow">period to show</string>
+    <string name="HabitFieldsScreen">Ashes</string>
+    <string name="ResetAt">reset at</string>
+    <string name="ResetHours">hours</string>
+    <string name="ResetMinutes">minutes</string>
+    <string name="Today">today</string>
 </resources>

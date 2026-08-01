@@ -2,8 +2,11 @@ package com.averyvi.spiritfire.ui.basic
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -15,17 +18,23 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toColorLong
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.averyvi.spiritfire.data.definitions.habits.SColour
@@ -88,16 +97,39 @@ fun LinearIconifiedProgress(
     icon: Int,
     value: Int,
     colour: Color,
-    size: Dp
+    size: Dp,
+    onClickItem: () -> Unit = {}
 ) {
-    Row() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
         for (currentIcon in 1..iconCount){
-            Icon(
-                painter = painterResource(icon),
-                modifier = Modifier.padding((size.value * 0.1).dp).size(size),
-                tint = if(value < currentIcon) MaterialTheme.colorScheme.onSurfaceVariant else colour,
-                contentDescription = null
-            )
+            val currentColor = if(value < currentIcon) MaterialTheme.colorScheme.onSurfaceVariant else colour
+
+            Card(
+                modifier = Modifier.weight(1f),
+                colors = CardDefaults.cardColors().copy(
+                    containerColor = currentColor.copy(
+                        red = currentColor.red * 0.5f,
+                        green = currentColor.green * 0.5f,
+                        blue = currentColor.blue * 0.5f,
+                    ),
+                    contentColor = currentColor
+                ),
+                onClick = onClickItem
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(icon),
+                        modifier = Modifier.padding((size.value * 0.1).dp).size(size),
+                        contentDescription = null
+                    )
+                }
+            }
         }
     }
 }
