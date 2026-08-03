@@ -22,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,6 +69,7 @@ import com.averyvi.spiritfire.ui.basic.SquareChip
 import com.averyvi.spiritfire.ui.basic.logDisplayLength
 import com.averyvi.spiritfire.ui.basic.periodsToShow
 import com.averyvi.spiritfire.ui.components.BigLogDisplayCard
+import com.averyvi.spiritfire.ui.components.LinearChart
 import com.averyvi.spiritfire.ui.components.PieChartWithLabels
 import com.averyvi.spiritfire.ui.components.TransparentLogDisplayBlock
 import com.averyvi.spiritfire.ui.components.UICard
@@ -106,10 +108,7 @@ fun DetailedHabitAnalyticsScreen(
         ChartData(MaterialTheme.colorScheme.surfaceVariant, 2f),
     )
 
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
+    Column() {
         val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
 
         AnalyticsHabitNameBlock(
@@ -119,71 +118,38 @@ fun DetailedHabitAnalyticsScreen(
 
         val variousContentScroll = rememberScrollState()
         Column(
-            modifier = Modifier.verticalScroll( variousContentScroll ),
+            modifier = Modifier.verticalScroll( variousContentScroll ).padding(top = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             AnalyticsHabitDescTags(
                 habitRow = habitRow
             )
-            //motivator lines ig
-            //streak
 
-            /*Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.ResetAt),
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    val resetTime = listOf(
-                        habitRow.resetHour,
-                        habitRow.resetMinute
-                    )
-                    resetTime.forEachIndexed { index, value ->
-                        Card(
-                            modifier = Modifier.padding(4.dp),
-                        ) {
-                            Text(
-                                text = value.toString(),
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontFamily = FontFamily.Monospace, // todo add monospace font
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(4.dp)
-                            )
-                        }
-                        if (index < (resetTime.size - 1)) {
-                            Text(
-                                text = ":",
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-                }
-            }*/
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+            )
 
             // today
             AnalyticsHabitDayCompletionRundown(
                 habitRow = habitRow,
                 data = todayData,
             )
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+            )
+
+            //streak
+
             // over time
-            AnalyticsHabitLogPeriodSelector(
+            AnalyticsHabitLogsShortRundown(
                 habitRow = habitRow,
+                data = periodData,
                 showDays = showDays.value,
                 changeShowDays = {
                     showDays.value = it
                 }
-            )
-
-            AnalyticsHabitLogsShortRundown(
-                habitRow = habitRow,
-                data = periodData,
             )
             //period completion UI
             TransparentLogDisplayBlock(
@@ -256,24 +222,32 @@ fun AnalyticsHabitNameBlock(
     habitRow: HabitRow,
     data: List<ChartData>
 ) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Icon(
-            painter = painterResource(habitRow.icon),
-            modifier = Modifier.size(48.dp),
-            tint = habitRow.colour,
-            contentDescription = null,
-        )
-        Column() {
-            Text(
-                text = habitRow.name,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        ) {
+            Icon(
+                painter = painterResource(habitRow.icon),
+                modifier = Modifier.size(48.dp),
+                tint = habitRow.colour,
+                contentDescription = null,
             )
+            Column() {
+                Text(
+                    text = habitRow.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            // todo edit button
         }
-        // todo edit button
+
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        )
     }
 }
 
@@ -361,33 +335,64 @@ fun AnalyticsHabitDayCompletionRundown(
     habitRow: HabitRow,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(R.string.Complete) + " " + stringResource(R.string.Today),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold
+        )
+        LinearChart(
+            data = data,
+            size = 256f,
+            strokeWith = 32.dp,
+            strokeSpaces = 64f + 32f + 8f + 4f,
+            labels = true
         )
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
-                PieChartWithLabels(
-                    data = data,
-                    size = 64f + 16f,
-                    strokeWith = 16.dp,
-                    strokeSpaces = 32f + 2f + 1f
-                )
-                Text(
-                    text = 69.toString() + "%",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            Spacer(modifier = Modifier.weight(1f))
+            Column() {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.ResetAt),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Normal
+                    )
+                    val resetTime = listOf(
+                        habitRow.resetHour,
+                        habitRow.resetMinute
+                    )
+                    resetTime.forEachIndexed { index, value ->
+                        Card(
+                            modifier = Modifier.padding(2.dp),
+                        ) {
+                            Text(
+                                text = value.toString(),
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontFamily = FontFamily.Monospace, // todo add monospace font
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.padding(2.dp)
+                            )
+                        }
+                        if (index < (resetTime.size - 1)) {
+                            Text(
+                                text = ":",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Normal
+                            )
+                        }
+                    }
+                }
+                // todo time until reset
             }
-            Text(
-                text = "jfkdlsfj",
-            )
+            Spacer(Modifier.weight(2f))
             AnalyticsHabitComletionHint(
                 data = data
             )
@@ -402,35 +407,25 @@ fun AnalyticsHabitLogPeriodSelector(
     changeShowDays: (periodsToShow) -> Unit
 ) {
     val timeSelectorScrollState = rememberScrollState()
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp + 2.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.PeriodToShow) + " :",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 2.dp)
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier.horizontalScroll(
+            state = timeSelectorScrollState,
         )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.horizontalScroll(
-                state = timeSelectorScrollState,
-            )
-        ) {
-            periodsToShow.entries.forEachIndexed { index, pair ->
-                SmallPill(
-                    color = if(showDays == pair) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                    onClick = { changeShowDays(pair) }
-                ) {
-                    val isPlural = pair.amount > 1
-                    Text(
-                        text = pair.amount.toString() + if (isPlural) {
-                            stringResource(pair.type.string2Plural)
-                        } else {
-                            stringResource(pair.type.string2Singular)
-                        }
-                    )
-                }
+    ) {
+        periodsToShow.entries.forEachIndexed { index, pair ->
+            SmallPill(
+                color = if(showDays == pair) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                onClick = { changeShowDays(pair) }
+            ) {
+                val isPlural = pair.amount > 1
+                Text(
+                    text = pair.amount.toString() + " " + if (isPlural) {
+                        stringResource(pair.type.string2Plural)
+                    } else {
+                        stringResource(pair.type.string2Singular)
+                    }
+                )
             }
         }
     }
@@ -440,29 +435,48 @@ fun AnalyticsHabitLogPeriodSelector(
 fun AnalyticsHabitLogsShortRundown(
     data: List<ChartData>,
     habitRow: HabitRow,
+    showDays: periodsToShow,
+    changeShowDays: (periodsToShow) -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp + 2.dp)
     ) {
-        Box(
-            contentAlignment = Alignment.Center
+        Text(
+            text = stringResource(R.string.Complete) + " " + stringResource(R.string.WithinPeriod),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold
+        )
+        AnalyticsHabitLogPeriodSelector(
+            habitRow = habitRow,
+            showDays = showDays,
+            changeShowDays = changeShowDays
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            PieChartWithLabels(
-                data = data,
-                size = 122f,
-                strokeWith = 24.dp,
-                strokeSpaces = 32f
-            )
-            Text(
-                text = 69.toString() + "%",
-                style = MaterialTheme.typography.titleLarge
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                PieChartWithLabels(
+                    data = data,
+                    size = 122f,
+                    strokeWith = 24.dp,
+                    strokeSpaces = 32f
+                )
+                Text(
+                    text = 69.toString() + "%",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+
+            // todo add something
+
+            AnalyticsHabitComletionHint(
+                data = data
             )
         }
-
-        AnalyticsHabitComletionHint(
-            data = data
-        )
     }
 }

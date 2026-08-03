@@ -188,6 +188,8 @@ fun MainUI(
             contentAlignment = Alignment.BottomCenter
         ) {
             NavPill(
+                habitFilterViewModel = habitFilterViewModel,
+                habitRepository = habitRepository,
                 navigateFunc = { it1, it2 ->
                     NavControllerNavigate(
                         navigationType = it1,
