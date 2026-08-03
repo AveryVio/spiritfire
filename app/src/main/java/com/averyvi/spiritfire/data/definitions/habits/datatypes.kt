@@ -13,6 +13,7 @@ enum class FColour(val color: Color){
 
 enum class SColour(val color: Color){
     Grey(color = Color.hsv(0f, 0f, 0.32f )),
+    JaOrange(color = Color.hsv(24f, 0.24f, 0.54f )),
 }
 
 enum class FIcon( val res: Int, ){
