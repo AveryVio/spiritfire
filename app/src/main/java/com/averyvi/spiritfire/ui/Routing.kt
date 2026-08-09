@@ -17,11 +17,6 @@ enum class Routes(
         type = RouteType.HOME
     ),
 
-    HabitFields(
-        title = R.string.HabitFieldsScreen,
-        type = RouteType.HABIT
-    ),
-
     DetailedHabitAnalytics(
         title = R.string.DetailedHabitAnalyticsScreen,
         type = RouteType.HABIT

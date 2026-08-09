@@ -121,12 +121,25 @@ fun NavPill(
                 }
             }
             Routes.entries.filter { it.type == RouteType.HOME }.forEachIndexed { index, route ->
-
-                NavPillButton(
-                    route = route,
-                    navigateFunc = navigateFunc,
-                    color = MaterialTheme.colorScheme.tertiary
-                )
+                Card(
+                    colors = CardDefaults.cardColors().copy(
+                        containerColor = MaterialTheme.colorScheme.tertiary.copy(
+                            red = MaterialTheme.colorScheme.tertiary.red * 0.5f,
+                            green = MaterialTheme.colorScheme.tertiary.green * 0.5f,
+                            blue = MaterialTheme.colorScheme.tertiary.blue * 0.5f,
+                        )
+                    )
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        NavPillButton(
+                            route = route,
+                            navigateFunc = navigateFunc,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                }
             }
             AnimatedVisibility(currentRoute.type == RouteType.HABIT || currentRoute.type == RouteType.HOME) {
                 Card(

@@ -43,11 +43,11 @@ data class HabitRow(
             checksComplete = 12,
             checksType = checkTypes.COMPLETIONS.stringRef,
             checksSkipGrace = 2,
-            priority = 10,
+            priority = 7,
             cooldownHours = 0,
             cooldownMinutes = 0,
             cooldownSeconds = 3,
-            difficulty = 10,
+            difficulty = 5,
             tags = listOf(),
         )
     }

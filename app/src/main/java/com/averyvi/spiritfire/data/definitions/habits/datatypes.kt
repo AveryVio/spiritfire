@@ -27,6 +27,7 @@ enum class FIcon( val res: Int, ){
     pill(res = R.drawable.r_outline_pill_24),
     fire(res = R.drawable.ur_mode_heat_24dp_000000_fill0_wght400_grad0_opsz24),
     star(res = R.drawable.ur_star_24dp_000000_fill0_wght400_grad0_opsz24),
+    pencil(res = R.drawable.ur_edit_24dp_000000_fill0_wght400_grad0_opsz24),
 }
 
 enum class ResetDaysType(
@@ -76,3 +77,22 @@ enum class checkTypes(
     STEPS(stringRef = R.string.ChecksSteps),
 }
 
+object EmojiType {
+    val difficultEmojis: List<String> = listOf("\uD83D\uDC80", "\uD83D\uDE21","\uD83D\uDE23", "\uD83D\uDC2D", "\uD83E\uDD8A") // 💀😡😣🐭🦊
+    val normalEmojis: List<String> = listOf("\uD83D\uDE23", "\uD83D\uDE10","\uD83D\uDC36", "\uD83D\uDE3A", "\uD83D\uDC38") // 😣😐🐶😺🐸
+    val easyEmojis: List<String> = listOf("\uD83D\uDE14", "\uD83D\uDC2E","\uD83D\uDC30", "\uD83E\uDDAD", "\uD83E\uDD80") // 😔🐮🐰🦭🦀
+
+    fun EmojiType.getEmoji(
+        completionPercentage: Int,
+        difficulty: Int
+    ): String {
+        val completionIndex = (completionPercentage / 20).coerceAtMost(4)
+        return if(difficulty > 5) {
+            difficultEmojis[completionIndex]
+        } else if(difficulty > 2) {
+            normalEmojis[completionIndex]
+        } else {
+            easyEmojis[completionIndex]
+        }
+    }
+}

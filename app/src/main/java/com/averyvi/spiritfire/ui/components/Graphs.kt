@@ -101,8 +101,9 @@ fun LinearChart(
     size: Float,
     strokeWith: Dp,
     strokeSpaces: Float,
+    modifier: Modifier = Modifier,
     vertical: Boolean = false,
-    labels: Boolean = false
+    labels: Boolean = false,
 ) {
     val textMeasurer = rememberTextMeasurer()
     val textStyle = MaterialTheme.typography.bodyLarge.copy(
@@ -112,7 +113,7 @@ fun LinearChart(
     val dataSum = data.sumOf { it.data.toInt() }
 
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .width((size).dp).height(strokeWith)
     ) {
         val strokeWidthPx = strokeWith.toPx()

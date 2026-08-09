@@ -65,4 +65,5 @@
     <string name="ResetMinutes">minut</string>
     <string name="Today">dnes</string>
     <string name="WithinPeriod">ve vybraném čase</string>
+    <string name="Edit">upravit</string>
 </resources>

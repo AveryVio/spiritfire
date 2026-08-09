@@ -3,6 +3,7 @@ package com.averyvi.spiritfire.ui.screens
 import android.icu.util.Calendar
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,13 +11,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -51,7 +57,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.averyvi.spiritfire.R
+import com.averyvi.spiritfire.data.definitions.habits.EmojiType
+import com.averyvi.spiritfire.data.definitions.habits.EmojiType.getEmoji
 import com.averyvi.spiritfire.data.definitions.habits.FColour
+import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
@@ -118,16 +127,11 @@ fun DetailedHabitAnalyticsScreen(
 
         val variousContentScroll = rememberScrollState()
         Column(
-            modifier = Modifier.verticalScroll( variousContentScroll ).padding(top = 8.dp),
+            modifier = Modifier.verticalScroll( variousContentScroll ).padding(top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             AnalyticsHabitDescTags(
                 habitRow = habitRow
-            )
-
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
             )
 
             // today
@@ -152,67 +156,19 @@ fun DetailedHabitAnalyticsScreen(
                 }
             )
             //period completion UI
+            AnalyticsHabitLogsGrid(
+                habitRow = habitRow,
+                logsList = filtredLogs,
+                periodsToShow = showDays.value
+            )
+
             TransparentLogDisplayBlock(
                 habitRow = habitRow,
                 logsList = filtredLogs,
                 periodsToShow = showDays.value
             )
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
-            Text(":")
+
+            Spacer(modifier = Modifier.height(128.dp + 32.dp))
         }
     }
 }
@@ -223,26 +179,35 @@ fun AnalyticsHabitNameBlock(
     data: List<ChartData>
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        Box(
+            modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth(),
         ) {
             Icon(
                 painter = painterResource(habitRow.icon),
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(48.dp).align(Alignment.CenterStart),
                 tint = habitRow.colour,
                 contentDescription = null,
             )
-            Column() {
+            Column(
+                modifier = Modifier.align(Alignment.Center)
+            ) {
                 Text(
                     text = habitRow.name,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                 )
             }
-            // todo edit button
+            Button(
+                onClick = {},
+                modifier = Modifier.width(64.dp + 8.dp).align(Alignment.CenterEnd)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ur_edit_24dp_000000_fill0_wght400_grad0_opsz24),
+                    contentDescription = stringResource(R.string.Edit)
+                )
+            }
         }
 
         HorizontalDivider(
@@ -255,31 +220,38 @@ fun AnalyticsHabitNameBlock(
 fun AnalyticsHabitDescTags(
     habitRow: HabitRow
 ) {
-    if(habitRow.description.isNotBlank()) {
-        Text(
-            text = habitRow.description,
-            style = MaterialTheme.typography.bodyLarge,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
-        Spacer(
-            Modifier.height(4.dp)
+    Column(
+        modifier = Modifier.padding(horizontal = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        if (habitRow.description.isNotBlank()) {
+            Text(
+                text = habitRow.description,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(
+                Modifier.height(8.dp)
+            )
+        }
+        HabitDPTPills(
+            contractionLevel = 1,
+            difficulty = habitRow.difficulty,
+            priority = habitRow.priority,
+            tags = habitRow.tags
         )
     }
-    HabitDPTPills(
-        contractionLevel = 1,
-        difficulty = habitRow.difficulty,
-        priority = habitRow.priority,
-        tags = habitRow.tags
-    )
 }
 
 @Composable
 fun AnalyticsHabitComletionHint(
-    data: List<ChartData>
+    data: List<ChartData>,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        contentAlignment = Alignment.TopEnd
+        contentAlignment = Alignment.TopEnd,
+        modifier = modifier,
     ) {
         val dataHintVisible = remember { mutableStateOf(false) }
         Card(
@@ -295,7 +267,8 @@ fun AnalyticsHabitComletionHint(
         DropdownMenu(
             expanded = dataHintVisible.value,
             onDismissRequest = { dataHintVisible.value = false },
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(16.dp)
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -335,68 +308,32 @@ fun AnalyticsHabitDayCompletionRundown(
     habitRow: HabitRow,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.spacedBy(4.dp + 2.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).padding(horizontal = 8.dp).fillMaxWidth()
     ) {
-        Text(
-            text = stringResource(R.string.Complete) + " " + stringResource(R.string.Today),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold
-        )
-        LinearChart(
-            data = data,
-            size = 256f,
-            strokeWith = 32.dp,
-            strokeSpaces = 64f + 32f + 8f + 4f,
-            labels = true
-        )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
+        Box(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Spacer(modifier = Modifier.weight(1f))
-            Column() {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.ResetAt),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Normal
-                    )
-                    val resetTime = listOf(
-                        habitRow.resetHour,
-                        habitRow.resetMinute
-                    )
-                    resetTime.forEachIndexed { index, value ->
-                        Card(
-                            modifier = Modifier.padding(2.dp),
-                        ) {
-                            Text(
-                                text = value.toString(),
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontFamily = FontFamily.Monospace, // todo add monospace font
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(2.dp)
-                            )
-                        }
-                        if (index < (resetTime.size - 1)) {
-                            Text(
-                                text = ":",
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Normal
-                            )
-                        }
-                    }
-                }
-                // todo time until reset
-            }
-            Spacer(Modifier.weight(2f))
+            Text(
+                text = stringResource(R.string.Complete) + " " + stringResource(R.string.Today),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.align(Alignment.Center)
+            )
             AnalyticsHabitComletionHint(
-                data = data
+                data = data,
+                modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
+        LinearChart(
+            data = data,
+            size = 256f + 64f,
+            strokeWith = 32.dp + 2.dp,
+            strokeSpaces = 64f + 32f + 16f + 4f,
+            labels = true,
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
 
@@ -440,43 +377,90 @@ fun AnalyticsHabitLogsShortRundown(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp + 2.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp)
     ) {
-        Text(
-            text = stringResource(R.string.Complete) + " " + stringResource(R.string.WithinPeriod),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold
-        )
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = stringResource(R.string.Complete) + " " + stringResource(R.string.WithinPeriod),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.align(Alignment.Center)
+            )
+            AnalyticsHabitComletionHint(
+                data = data,
+                modifier = Modifier.align(Alignment.CenterEnd)
+            )
+        }
         AnalyticsHabitLogPeriodSelector(
             habitRow = habitRow,
             showDays = showDays,
             changeShowDays = changeShowDays
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
             Box(
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 PieChartWithLabels(
                     data = data,
-                    size = 122f,
-                    strokeWith = 24.dp,
-                    strokeSpaces = 32f
+                    size = 128f + 16f + 8f,
+                    strokeWith = 32.dp,
+                    strokeSpaces = 32f + 4f
                 )
                 Text(
                     text = 69.toString() + "%",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.headlineMedium
                 )
             }
-
-            // todo add something
-
-            AnalyticsHabitComletionHint(
-                data = data
-            )
         }
+    }
+}
+
+@Composable
+fun AnalyticsHabitLogsGrid(
+    habitRow: HabitRow,
+    logsList: List<HabitLogItem>,
+    periodsToShow: periodsToShow,
+) {
+    Text("jfdksljfls")
+}
+
+@Composable
+fun AnalyticsHabitCompletionRating(
+    completionPercent: Float,
+    difficulty: Int,
+    priority: Int,
+    fineTuning: Float,
+    modifier: Modifier = Modifier,
+) {
+    var result = 0f
+    result = completionPercent * (difficulty.toFloat() + priority.toFloat() * 2) / ( fineTuning * 19)
+
+    val resultingPercentage = (result * 100).toInt()
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = EmojiType.getEmoji(
+                completionPercentage = resultingPercentage,
+                difficulty = difficulty
+            ),
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Text(
+            text = resultingPercentage.toString(),
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.SemiBold
+        )
+
     }
 }

@@ -34,7 +34,6 @@ import com.averyvi.spiritfire.ui.appUI.bottom.NavPill
 import com.averyvi.spiritfire.ui.appUI.top.AppBar
 import com.averyvi.spiritfire.ui.screens.AllHabitsScreen
 import com.averyvi.spiritfire.ui.screens.DetailedHabitAnalyticsScreen
-import com.averyvi.spiritfire.ui.screens.HabitFields
 import com.averyvi.spiritfire.ui.screens.HabitOverview
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -141,13 +140,6 @@ fun MainUI(
                                     intendedDestination = it2
                                 )
                             },
-                            habitFilterViewModel = habitFilterViewModel,
-                            habitRepository = habitRepository,
-                        )
-                    }
-
-                    composable(route = Routes.HabitFields.name) {
-                        HabitFields(
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
                         )

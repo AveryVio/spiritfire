@@ -66,4 +66,5 @@
     <string name="ResetMinutes">minutes</string>
     <string name="Today">today</string>
     <string name="WithinPeriod">in selected time</string>
+    <string name="Edit">edit</string>
 </resources>
