@@ -204,3 +204,18 @@ fun SquareChip(
         modifier = Modifier.size(size)
     ) { }
 }
+
+@Composable
+fun WidthFlexibleChip(
+    color: Color = SColour.Grey.color,
+    height: Dp = 32.dp,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        colors = CardDefaults.cardColors().copy(
+            containerColor = color
+        ),
+        shape = RoundedCornerShape(16.dp),
+        modifier = modifier.height(height)
+    ) { }
+}

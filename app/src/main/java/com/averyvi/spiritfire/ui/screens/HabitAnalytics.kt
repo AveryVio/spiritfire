@@ -4,9 +4,13 @@ import android.icu.util.Calendar
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,9 +38,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -45,6 +53,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.approachLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -53,6 +63,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -68,6 +79,7 @@ import com.averyvi.spiritfire.data.definitions.ui.AllHabitsViewModel
 import com.averyvi.spiritfire.data.definitions.ui.ChartData
 import com.averyvi.spiritfire.data.definitions.ui.DetailedHabitAnalyticsViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
+import com.averyvi.spiritfire.data.transformations.contractPeriods
 import com.averyvi.spiritfire.data.transformations.determineGrace
 import com.averyvi.spiritfire.data.transformations.getCompletedPeriods
 import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
@@ -75,6 +87,7 @@ import com.averyvi.spiritfire.ui.basic.HabitDPTPills
 import com.averyvi.spiritfire.ui.basic.ShowRowsOfItems
 import com.averyvi.spiritfire.ui.basic.SmallPill
 import com.averyvi.spiritfire.ui.basic.SquareChip
+import com.averyvi.spiritfire.ui.basic.WidthFlexibleChip
 import com.averyvi.spiritfire.ui.basic.logDisplayLength
 import com.averyvi.spiritfire.ui.basic.periodsToShow
 import com.averyvi.spiritfire.ui.components.BigLogDisplayCard
@@ -82,6 +95,7 @@ import com.averyvi.spiritfire.ui.components.LinearChart
 import com.averyvi.spiritfire.ui.components.PieChartWithLabels
 import com.averyvi.spiritfire.ui.components.TransparentLogDisplayBlock
 import com.averyvi.spiritfire.ui.components.UICard
+import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.math.cos
@@ -120,19 +134,51 @@ fun DetailedHabitAnalyticsScreen(
     Column() {
         val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
 
+        val scope = rememberCoroutineScope()
+
+        val variousContentScroll = rememberScrollState()
+        val descBlockedVisible = remember { mutableStateOf(false) }
+        val isDragged by variousContentScroll.interactionSource.collectIsDraggedAsState()
+
+        LaunchedEffect(isDragged) {
+            if (isDragged && descBlockedVisible.value) {
+                descBlockedVisible.value = false
+            }
+        }
+
         AnalyticsHabitNameBlock(
             habitRow = habitRow,
             data = periodData,
+            onClick = {
+                scope.launch {
+                    descBlockedVisible.value = !descBlockedVisible.value
+                    variousContentScroll.animateScrollTo(0)
+                }
+                      },
         )
 
-        val variousContentScroll = rememberScrollState()
         Column(
-            modifier = Modifier.verticalScroll( variousContentScroll ).padding(top = 16.dp),
+            modifier = Modifier
+                .verticalScroll(variousContentScroll)
+                .padding(top = 8.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {
+                            if (descBlockedVisible.value) {
+                                descBlockedVisible.value = false
+                            }
+                        }
+                    )
+                },
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            AnalyticsHabitDescTags(
-                habitRow = habitRow
-            )
+            AnimatedVisibility(
+                visible = descBlockedVisible.value
+            ) {
+                AnalyticsHabitDescTags(
+                    habitRow = habitRow
+                )
+            }
 
             // today
             AnalyticsHabitDayCompletionRundown(
@@ -162,12 +208,6 @@ fun DetailedHabitAnalyticsScreen(
                 periodsToShow = showDays.value
             )
 
-            TransparentLogDisplayBlock(
-                habitRow = habitRow,
-                logsList = filtredLogs,
-                periodsToShow = showDays.value
-            )
-
             Spacer(modifier = Modifier.height(128.dp + 32.dp))
         }
     }
@@ -176,17 +216,22 @@ fun DetailedHabitAnalyticsScreen(
 @Composable
 fun AnalyticsHabitNameBlock(
     habitRow: HabitRow,
-    data: List<ChartData>
+    data: List<ChartData>,
+    onClick: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Box(
-            modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .fillMaxWidth(),
         ) {
             Icon(
                 painter = painterResource(habitRow.icon),
-                modifier = Modifier.size(48.dp).align(Alignment.CenterStart),
+                modifier = Modifier
+                    .size(48.dp)
+                    .align(Alignment.CenterStart),
                 tint = habitRow.colour,
                 contentDescription = null,
             )
@@ -197,11 +242,17 @@ fun AnalyticsHabitNameBlock(
                     text = habitRow.name,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable(
+                        enabled = true,
+                        onClick = onClick
+                    )
                 )
             }
             Button(
                 onClick = {},
-                modifier = Modifier.width(64.dp + 8.dp).align(Alignment.CenterEnd)
+                modifier = Modifier
+                    .width(64.dp + 8.dp)
+                    .align(Alignment.CenterEnd)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ur_edit_24dp_000000_fill0_wght400_grad0_opsz24),
@@ -310,7 +361,9 @@ fun AnalyticsHabitDayCompletionRundown(
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp + 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).padding(horizontal = 8.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .fillMaxWidth()
     ) {
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -401,7 +454,9 @@ fun AnalyticsHabitLogsShortRundown(
             changeShowDays = changeShowDays
         )
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -429,7 +484,134 @@ fun AnalyticsHabitLogsGrid(
     logsList: List<HabitLogItem>,
     periodsToShow: periodsToShow,
 ) {
-    Text("jfdksljfls")
+    val beginingOfPeriods = 0
+    val now = ZonedDateTime.now(ZoneId.systemDefault())
+    val shownItems = periodsToShow.amount * when (periodsToShow.type) {
+        logDisplayLength.DAYS -> 1
+        logDisplayLength.WEEKS -> 7
+        logDisplayLength.MONTHS -> {
+            now.month.length(now.toLocalDate().isLeapYear)
+        }
+
+        logDisplayLength.YEARS -> { // todo fix
+            if (now.toLocalDate().isLeapYear) 366 else 365
+        }
+    }
+
+    val isDone: MutableList<Boolean> = getCompletedPeriods(
+        beginingOfPeriods = beginingOfPeriods,
+        shownItems = shownItems,
+        habitRow = habitRow,
+        logsList = logsList,
+    )
+
+    val graceGroup = mutableListOf<Boolean>()
+    isDone.forEachIndexed { index, bool ->
+        if(bool) {
+            graceGroup.add(false)
+        }
+        else {
+            graceGroup.add(determineGrace(
+                completionArrayIndex = index,
+                completionArray = isDone,
+                skipGrace = habitRow.checksSkipGrace,
+            ))
+        }
+    }
+
+    val combinedPeriods = contractPeriods(
+        isDone = isDone,
+        graceGroup = graceGroup,
+        periodsToShow = periodsToShow,
+    )
+
+    var itemsRemaining = 0
+    val chipSize = 52.dp
+    
+    val chipsInRow = when(habitRow.resetType) {
+        ResetDaysType.DAILY -> 7
+        ResetDaysType.WEEKLY -> 7
+        ResetDaysType.MONTHLY -> 4
+        ResetDaysType.YEARLY -> 8
+        ResetDaysType.CUSTOM_DAYS -> 7
+    }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier.padding(horizontal = 8.dp).padding(top = 16.dp)
+    ) {
+        var itemsRemaining = 0
+        while ( itemsRemaining < combinedPeriods.size ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                for (row in (0..<chipsInRow)) {
+                    if (itemsRemaining < combinedPeriods.size) {
+                        if (combinedPeriods[itemsRemaining]) {
+                            WidthFlexibleChip(
+                                color = MaterialTheme.colorScheme.primary,
+                                height = chipSize,
+                                modifier = Modifier.weight(1f)
+                            )
+                        } else {
+                            when(periodsToShow.type) {
+                                logDisplayLength.DAYS -> {
+                                    val isWithinGrace = determineGrace(
+                                        completionArrayIndex = itemsRemaining,
+                                        completionArray = combinedPeriods,
+                                        skipGrace = habitRow.checksSkipGrace,
+                                    )
+
+                                    if (isWithinGrace) {
+                                        WidthFlexibleChip(
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            height = chipSize,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    } else {
+                                        WidthFlexibleChip(
+                                            color = MaterialTheme.colorScheme.surfaceVariant,
+                                            height = chipSize,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                }
+                                logDisplayLength.WEEKS -> {
+                                    val isWithinGrace = determineGrace(
+                                        completionArrayIndex = itemsRemaining,
+                                        completionArray = combinedPeriods,
+                                        skipGrace = habitRow.checksSkipGrace,
+                                    )
+
+                                    if (isWithinGrace) {
+                                        WidthFlexibleChip(
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            height = chipSize,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    } else {
+                                        WidthFlexibleChip(
+                                            color = MaterialTheme.colorScheme.surfaceVariant,
+                                            height = chipSize,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                }
+                                else -> {
+                                    WidthFlexibleChip(
+                                        color = MaterialTheme.colorScheme.surfaceVariant,
+                                        height = chipSize,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                            }
+                        }
+                        itemsRemaining++
+                    } else { break }
+                }
+            }
+        }
+    }
 }
 
 @Composable

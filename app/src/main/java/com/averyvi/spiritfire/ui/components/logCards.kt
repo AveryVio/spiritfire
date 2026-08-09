@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
+import com.averyvi.spiritfire.data.transformations.contractPeriods
 import com.averyvi.spiritfire.data.transformations.determineGrace
 import com.averyvi.spiritfire.data.transformations.getCompletedPeriods
 import com.averyvi.spiritfire.ui.basic.SquareChip
@@ -174,41 +175,11 @@ fun TransparentLogDisplayBlock(
         }
     }
 
-    val combinedPeriods = when(periodsToShow.type) { // todo make the logic configurable
-        logDisplayLength.MONTHS -> { // combine into weeks
-            val isDoneContracted = mutableListOf<Boolean>()
-            var index = 0
-            while (index < isDone.size) {
-                var group = 0
-                val maxPos = minOf(index + 7, isDone.size)
-                for (logPos in index until maxPos) {
-                    if (isDone[logPos]) group += 2
-                    else if (graceGroup[logPos]) group++
-                } // max value = 14 ; acceptable = 9
-                isDoneContracted.add(group >= 9)
-                index += 7 // Increment to advance loop
-            }
-            isDoneContracted
-        }
-        logDisplayLength.YEARS -> { // combine into weeks
-            val isDoneContracted = mutableListOf<Boolean>()
-            var index = 0
-            while (index < isDone.size) {
-                var group = 0
-                val maxPos = minOf(index + 7, isDone.size)
-                for (logPos in index until maxPos) {
-                    if (isDone[logPos]) group += 2
-                    else if (graceGroup[logPos]) group++
-                } // max value = 104 ; acceptable = 66
-                isDoneContracted.add(group >= 66)
-                index += 7 // Increment to advance loop
-            }
-            isDoneContracted
-        }
-        else -> {
-            isDone
-        }
-    }
+    val combinedPeriods = contractPeriods(
+        isDone = isDone,
+        graceGroup = graceGroup,
+        periodsToShow = periodsToShow,
+    )
 
     Column(
         modifier = Modifier.padding(8.dp),
