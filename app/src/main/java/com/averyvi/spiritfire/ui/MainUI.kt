@@ -31,7 +31,6 @@ import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.experiments.testingScreenUI
 import com.averyvi.spiritfire.ui.appUI.bottom.AppBottomSheet
 import com.averyvi.spiritfire.ui.appUI.bottom.NavPill
-import com.averyvi.spiritfire.ui.appUI.top.AppBar
 import com.averyvi.spiritfire.ui.screens.AllHabitsScreen
 import com.averyvi.spiritfire.ui.screens.DetailedHabitAnalyticsScreen
 import com.averyvi.spiritfire.ui.screens.HabitOverview
@@ -94,16 +93,13 @@ fun MainUI(
             scaffoldState = scaffoldState,
             //modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-            topBar = {
-                AppBar()
-            },
             sheetPeekHeight = 64.dp + 16.dp,
             sheetContent = @Composable {
                 AppBottomSheet(
                     habitFilterViewModel = habitFilterViewModel
                 )
             }
-        ) { innerPadding ->
+        ) { outerPadding ->
             Box(
                 modifier = Modifier.fillMaxSize().padding(top = 4.dp)
             ) {
@@ -122,6 +118,7 @@ fun MainUI(
                         testingScreenUI(
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
+                            outerPadding = outerPadding
                         )
                     }
 
@@ -129,6 +126,7 @@ fun MainUI(
                         HabitOverview(
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
+                            outerPadding = outerPadding
                         )
                     }
 
@@ -142,6 +140,7 @@ fun MainUI(
                             },
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
+                            outerPadding = outerPadding,
                         )
                     }
 
@@ -149,6 +148,7 @@ fun MainUI(
                         DetailedHabitAnalyticsScreen(
                             habitFilterViewModel = habitFilterViewModel,
                             habitRepository = habitRepository,
+                            outerPadding = outerPadding
                         )
                     }
 

@@ -127,9 +127,9 @@ fun generateRandomHabitEntity(): HabitRegistryDBEntity {
 
      val offset = when (resetType) {
          ResetDaysType.DAILY -> 0
-         ResetDaysType.WEEKLY -> (0..7).random()
-         ResetDaysType.MONTHLY -> (0..30).random()
-         ResetDaysType.YEARLY -> (0..365).random()
+         ResetDaysType.WEEKLY -> (1..7).random()
+         ResetDaysType.MONTHLY -> (1..30).random()
+         ResetDaysType.YEARLY -> (1..365).random()
          ResetDaysType.CUSTOM_DAYS -> (0..1225).random()
      }
 

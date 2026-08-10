@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -20,6 +22,7 @@ import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.ui.NavigationType
 import com.averyvi.spiritfire.ui.Routes
+import com.averyvi.spiritfire.ui.appUI.top.GeneralAppBar
 import com.averyvi.spiritfire.ui.components.BigHabitPropertiesCard
 import com.averyvi.spiritfire.ui.components.MinimalHabitPropertiesCard
 import com.averyvi.spiritfire.ui.components.SmallHabitPropertiesCard
@@ -28,8 +31,9 @@ import com.averyvi.spiritfire.ui.components.SmallHabitPropertiesCard
 fun AllHabitsScreen(
     navigateFunc: (NavigationType, Routes) -> Unit,
     habitFilterViewModel: HabitFilterViewModel,
-    habitRepository: HabitRepository
-){
+    habitRepository: HabitRepository,
+    outerPadding: PaddingValues
+) {
     val AllHabitsVMfactory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -37,7 +41,7 @@ fun AllHabitsScreen(
                 habitRepository = habitRepository,
                 habitFilterViewModel = habitFilterViewModel,
 
-            ) as T
+                ) as T
         }
     }
     val AllHabitsViewModel: AllHabitsViewModel = viewModel(factory = AllHabitsVMfactory)
@@ -51,52 +55,60 @@ fun AllHabitsScreen(
         navigateFunc(NavigationType.CUSTOM, Routes.DetailedHabitAnalytics)
     }
 
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(125.dp),
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(
-            count = firstGroupSize,
-            span = { GridItemSpan(3) },
-        ) { viewPosition ->
-            val habitRow = displayedHabits[viewPosition]
 
-            BigHabitPropertiesCard(
-                habit = habitRow,
-                onCompleteClick = { showDetails(habitRow.id) },
-            )
+    Scaffold(
+        modifier = Modifier.padding(outerPadding),
+        topBar = {
+            GeneralAppBar()
+        },
+    ) { innerPadding ->
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(125.dp),
+            modifier = Modifier.fillMaxWidth().padding(innerPadding),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            items(
+                count = firstGroupSize,
+                span = { GridItemSpan(3) },
+            ) { viewPosition ->
+                val habitRow = displayedHabits[viewPosition]
+
+                BigHabitPropertiesCard(
+                    habit = habitRow,
+                    onCompleteClick = { showDetails(habitRow.id) },
+                )
+            }
+
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Spacer(Modifier.height(16.dp))
+            }
+
+            items(
+                count = secondGroupSize,
+                span = { GridItemSpan(3) },
+            ) { viewPosition ->
+                val habitRow = displayedHabits[viewPosition + firstGroupSize]
+
+                SmallHabitPropertiesCard(
+                    habit = habitRow,
+                    onCompleteClick = { showDetails(habitRow.id) },
+                )
+            }
+
+            items(
+                count = displayedHabits.size - firstGroupSize - secondGroupSize,
+                span = { GridItemSpan(1) },
+            ) { viewPosition ->
+                val habitRow = displayedHabits[viewPosition + firstGroupSize + secondGroupSize]
+
+                MinimalHabitPropertiesCard(
+                    habit = habitRow,
+                    onCompleteClick = { showDetails(habitRow.id) },
+                )
+            }
+
         }
-
-        item( span = { GridItemSpan(maxLineSpan) } ) {
-            Spacer(Modifier.height(16.dp))
-        }
-
-        items(
-            count = secondGroupSize,
-            span = { GridItemSpan(3) },
-        ) { viewPosition ->
-            val habitRow = displayedHabits[viewPosition + firstGroupSize]
-
-            SmallHabitPropertiesCard(
-                habit = habitRow,
-                onCompleteClick = { showDetails(habitRow.id) },
-            )
-        }
-
-        items(
-            count = displayedHabits.size - firstGroupSize - secondGroupSize,
-            span = { GridItemSpan(1) },
-        ) { viewPosition ->
-            val habitRow = displayedHabits[viewPosition + firstGroupSize + secondGroupSize]
-
-            MinimalHabitPropertiesCard(
-                habit = habitRow,
-                onCompleteClick = { showDetails(habitRow.id) },
-            )
-        }
-
     }
 }

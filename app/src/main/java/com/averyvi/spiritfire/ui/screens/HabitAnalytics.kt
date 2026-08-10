@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -35,6 +36,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -82,6 +84,7 @@ import com.averyvi.spiritfire.data.sources.HabitRepository
 import com.averyvi.spiritfire.data.transformations.contractPeriods
 import com.averyvi.spiritfire.data.transformations.determineGrace
 import com.averyvi.spiritfire.data.transformations.getCompletedPeriods
+import com.averyvi.spiritfire.ui.appUI.top.HabitAppBar
 import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
 import com.averyvi.spiritfire.ui.basic.HabitDPTPills
 import com.averyvi.spiritfire.ui.basic.ShowRowsOfItems
@@ -105,7 +108,8 @@ import kotlin.time.Duration.Companion.days
 @Composable
 fun DetailedHabitAnalyticsScreen(
     habitFilterViewModel: HabitFilterViewModel,
-    habitRepository: HabitRepository
+    habitRepository: HabitRepository,
+    outerPadding: PaddingValues
 ) {
     val detailedHabitAnalyticsVMFactory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
@@ -117,7 +121,8 @@ fun DetailedHabitAnalyticsScreen(
             ) as T
         }
     }
-    val detailedHabitAnalyticsViewModel: DetailedHabitAnalyticsViewModel = viewModel(factory = detailedHabitAnalyticsVMFactory)
+    val detailedHabitAnalyticsViewModel: DetailedHabitAnalyticsViewModel =
+        viewModel(factory = detailedHabitAnalyticsVMFactory)
     val habitRow = detailedHabitAnalyticsViewModel.habit.collectAsState().value
     val filtredLogs = detailedHabitAnalyticsViewModel.filtredLogs.collectAsState().value
 
@@ -131,34 +136,42 @@ fun DetailedHabitAnalyticsScreen(
         ChartData(MaterialTheme.colorScheme.surfaceVariant, 2f),
     )
 
-    Column() {
-        val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
+    val scope = rememberCoroutineScope()
 
-        val scope = rememberCoroutineScope()
+    val variousContentScroll = rememberScrollState()
+    val isDragged by variousContentScroll.interactionSource.collectIsDraggedAsState()
 
-        val variousContentScroll = rememberScrollState()
-        val descBlockedVisible = remember { mutableStateOf(false) }
-        val isDragged by variousContentScroll.interactionSource.collectIsDraggedAsState()
+    val descBlockedVisible = remember { mutableStateOf(false) }
+    val daysBlockedVisible = remember { mutableStateOf(false) }
 
-        LaunchedEffect(isDragged) {
-            if (isDragged && descBlockedVisible.value) {
-                descBlockedVisible.value = false
-            }
+    val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
+
+    LaunchedEffect(isDragged) {
+        if (isDragged && descBlockedVisible.value) {
+            descBlockedVisible.value = false
+            daysBlockedVisible.value = false
         }
+    }
 
-        AnalyticsHabitNameBlock(
-            habitRow = habitRow,
-            data = periodData,
-            onClick = {
-                scope.launch {
-                    descBlockedVisible.value = !descBlockedVisible.value
-                    variousContentScroll.animateScrollTo(0)
-                }
-                      },
-        )
+    Scaffold(
+        modifier = Modifier.padding(outerPadding),
+        topBar = {
+            HabitAppBar(
 
+                habitRow = habitRow,
+                data = periodData,
+                onNameClick = {
+                    scope.launch {
+                        descBlockedVisible.value = !descBlockedVisible.value
+                        variousContentScroll.animateScrollTo(0)
+                    }
+                },
+            )
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
+                .padding(innerPadding)
                 .verticalScroll(variousContentScroll)
                 .padding(top = 8.dp)
                 .pointerInput(Unit) {
@@ -199,71 +212,27 @@ fun DetailedHabitAnalyticsScreen(
                 showDays = showDays.value,
                 changeShowDays = {
                     showDays.value = it
+                },
+                onChartClick = {
+                    scope.launch {
+                        daysBlockedVisible.value = !daysBlockedVisible.value
+                        variousContentScroll.animateScrollTo(0)
+                    }
                 }
             )
             //period completion UI
-            AnalyticsHabitLogsGrid(
-                habitRow = habitRow,
-                logsList = filtredLogs,
-                periodsToShow = showDays.value
-            )
+            AnimatedVisibility(
+                visible = daysBlockedVisible.value
+            ) {
+                AnalyticsHabitLogsGrid(
+                    habitRow = habitRow,
+                    logsList = filtredLogs,
+                    periodsToShow = showDays.value,
+                )
+            }
 
             Spacer(modifier = Modifier.height(128.dp + 32.dp))
         }
-    }
-}
-
-@Composable
-fun AnalyticsHabitNameBlock(
-    habitRow: HabitRow,
-    data: List<ChartData>,
-    onClick: () -> Unit,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .fillMaxWidth(),
-        ) {
-            Icon(
-                painter = painterResource(habitRow.icon),
-                modifier = Modifier
-                    .size(48.dp)
-                    .align(Alignment.CenterStart),
-                tint = habitRow.colour,
-                contentDescription = null,
-            )
-            Column(
-                modifier = Modifier.align(Alignment.Center)
-            ) {
-                Text(
-                    text = habitRow.name,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable(
-                        enabled = true,
-                        onClick = onClick
-                    )
-                )
-            }
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .width(64.dp + 8.dp)
-                    .align(Alignment.CenterEnd)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ur_edit_24dp_000000_fill0_wght400_grad0_opsz24),
-                    contentDescription = stringResource(R.string.Edit)
-                )
-            }
-        }
-
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        )
     }
 }
 
@@ -426,7 +395,8 @@ fun AnalyticsHabitLogsShortRundown(
     data: List<ChartData>,
     habitRow: HabitRow,
     showDays: periodsToShow,
-    changeShowDays: (periodsToShow) -> Unit
+    changeShowDays: (periodsToShow) -> Unit,
+    onChartClick: () -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -462,6 +432,10 @@ fun AnalyticsHabitLogsShortRundown(
         ) {
             Box(
                 contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .clickable(
+                        onClick = onChartClick
+                    ),
             ) {
                 PieChartWithLabels(
                     data = data,
