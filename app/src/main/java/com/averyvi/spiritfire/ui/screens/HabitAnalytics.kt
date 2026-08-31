@@ -127,13 +127,13 @@ fun DetailedHabitAnalyticsScreen(
     val filtredLogs = detailedHabitAnalyticsViewModel.filtredLogs.collectAsState().value
 
     val todayData = listOf(
-        ChartData(MaterialTheme.colorScheme.primary, 19f),
-        ChartData(MaterialTheme.colorScheme.surfaceVariant, 11f),
+        ChartData(MaterialTheme.colorScheme.primary, 19f, stringResource(R.string.Complete)),
+        ChartData(MaterialTheme.colorScheme.surfaceVariant, 11f, stringResource(R.string.NotComplete)),
     )
     val periodData = listOf(
-        ChartData(MaterialTheme.colorScheme.primary, 2f),
-        ChartData(MaterialTheme.colorScheme.secondary, 1f),
-        ChartData(MaterialTheme.colorScheme.surfaceVariant, 2f),
+        ChartData(MaterialTheme.colorScheme.primary, 2f, stringResource(R.string.Complete)),
+        ChartData(MaterialTheme.colorScheme.secondary, 1f, stringResource(R.string.WithinGrace)),
+        ChartData(MaterialTheme.colorScheme.surfaceVariant, 2f, stringResource(R.string.NotComplete)),
     )
 
     val scope = rememberCoroutineScope()
@@ -301,13 +301,7 @@ fun AnalyticsHabitComletionHint(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = stringResource(
-                                when (index) {
-                                    0 -> R.string.Complete
-                                    1 -> R.string.WithinGrace
-                                    else -> R.string.NotComplete
-                                }
-                            ),
+                            text = data.name,
                             fontWeight = FontWeight.SemiBold,
                             color = data.color
                         )
@@ -502,12 +496,11 @@ fun AnalyticsHabitLogsGrid(
     var itemsRemaining = 0
     val chipSize = 52.dp
     
-    val chipsInRow = when(habitRow.resetType) {
-        ResetDaysType.DAILY -> 7
-        ResetDaysType.WEEKLY -> 7
-        ResetDaysType.MONTHLY -> 4
-        ResetDaysType.YEARLY -> 8
-        ResetDaysType.CUSTOM_DAYS -> 7
+    val chipsInRow = when(periodsToShow.type) {
+        logDisplayLength.DAYS -> 7
+        logDisplayLength.WEEKS -> 7
+        logDisplayLength.MONTHS -> 4
+        logDisplayLength.YEARS -> 4
     }
 
     Column(

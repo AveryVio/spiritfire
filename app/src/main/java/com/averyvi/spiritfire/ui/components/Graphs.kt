@@ -37,7 +37,7 @@ fun PieChartWithLabels(
 ) {
     val dataSum = data.sumOf { it.data.toInt() }
     var dataAsAngles = listOf<ChartData>()
-    data.forEach { dataAsAngles = dataAsAngles.plus( ChartData(it.color, (it.data / dataSum) * 360 ) ) }
+    data.forEach { dataAsAngles = dataAsAngles.plus( ChartData(it.color, (it.data / dataSum) * 360, "test" ) ) }
 
     Box(
         modifier = Modifier,
