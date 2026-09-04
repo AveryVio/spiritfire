@@ -1,12 +1,8 @@
 package com.averyvi.spiritfire.ui.screens
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,16 +23,14 @@ import com.averyvi.spiritfire.data.sources.HabitRepository
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
 import com.averyvi.spiritfire.ui.appUI.top.GeneralAppBar
 import com.averyvi.spiritfire.ui.basic.SmallPill
-import com.averyvi.spiritfire.ui.basic.logDisplayLength
 import com.averyvi.spiritfire.ui.basic.periodsToShow
 import com.averyvi.spiritfire.ui.components.BigLogDisplayCard
+import com.averyvi.spiritfire.ui.components.OldBigLogDisplayCard
 
 @Composable
 fun HabitOverview(
@@ -73,6 +66,9 @@ fun HabitOverview(
             val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
 
             val scrollState = rememberScrollState()
+
+
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.horizontalScroll(
@@ -107,6 +103,11 @@ fun HabitOverview(
                     val logsList = filtredLogs.filter { it.habit == habitRow.id }
 
                     BigLogDisplayCard(
+                        habitRow = habitRow,
+                        logsList = logsList,
+                        periodsToShow = showDays.value,
+                    )
+                    OldBigLogDisplayCard(
                         habitRow = habitRow,
                         logsList = logsList,
                         periodsToShow = showDays.value

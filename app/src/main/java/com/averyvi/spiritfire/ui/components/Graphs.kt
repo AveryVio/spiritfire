@@ -37,7 +37,9 @@ fun PieChartWithLabels(
 ) {
     val dataSum = data.sumOf { it.data.toInt() }
     var dataAsAngles = listOf<ChartData>()
-    data.forEach { dataAsAngles = dataAsAngles.plus( ChartData(it.color, (it.data / dataSum) * 360, "test" ) ) }
+    data.forEach {
+        if(it.data != 0f) dataAsAngles = dataAsAngles.plus( ChartData(it.color, (it.data / dataSum) * 360, "test" ) )
+    }
 
     Box(
         modifier = Modifier,
@@ -129,7 +131,7 @@ fun LinearChart(
         )
 
         for (index in data.indices) {
-
+            if (data[index].data == 0f) continue
             val chartData = data[index]
             val segmentLength = (chartData.data / dataSum) * availableLengthPx
             val endOffset = startOffset.plus(
@@ -162,6 +164,78 @@ fun LinearChart(
                 if (vertical) Offset(x = 0f, y = strokeSpaces)
                 else Offset(x = strokeSpaces, y = 0f)
             )
+        }
+    }
+}
+
+@Composable
+fun ArcChart(
+    modifier: Modifier = Modifier,
+    data: List<ChartData>,
+    size: Float,
+    strokeWith: Dp,
+    strokeSpaces: Float,
+    startAngle: Float = -90f,
+    arcAngle: Int = 180,
+) {
+    val dataSum = data.sumOf { it.data.toInt() }
+    var dataAsAngles = listOf<ChartData>()
+    data.forEach {
+        if(it.data != 0f) dataAsAngles = dataAsAngles.plus( ChartData(it.color, (it.data / dataSum.toFloat()) * arcAngle, "test" ) )
+    }
+
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(
+            modifier = Modifier
+                .size((size).dp)
+                .aspectRatio(1f)
+        ) {
+            val width = size * 3
+            val radius = width / 2f
+            val strokeWidth = strokeWith.toPx()
+
+            var startAngle = startAngle
+
+            for (index in dataAsAngles.indices) {
+
+                val chartData = dataAsAngles[index]
+                val sweepAngle = chartData.data - strokeSpaces
+                val angleInRadians = (startAngle + sweepAngle / 2).degreeToAngle
+
+
+                drawArc(
+                    color = chartData.color,
+                    startAngle = startAngle,
+                    sweepAngle = sweepAngle,
+                    useCenter = false,
+                    topLeft = Offset(x = strokeWidth / 2, y = strokeWidth / 2),
+                    size = Size(width = width - strokeWidth, height = width - strokeWidth),
+                    style = Stroke(
+                        width = strokeWidth,
+                        cap = StrokeCap.Round
+                    )
+                )
+
+
+                /*val rectWidth = 20.dp.toPx()
+                drawRect(
+                    color = Color.Red,
+                    size = Size(rectWidth, rectWidth),
+                    topLeft = Offset(
+                        -rectWidth / 2 + center.x + (radius + strokeWidth) * cos(
+                            angleInRadians
+                        ),
+                        -rectWidth / 2 + center.y + (radius + strokeWidth) * sin(
+                            angleInRadians
+                        )
+                    )
+                )*/
+
+                startAngle += sweepAngle + strokeSpaces
+            }
         }
     }
 }

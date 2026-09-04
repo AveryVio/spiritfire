@@ -67,4 +67,5 @@
     <string name="Today">today</string>
     <string name="WithinPeriod">in selected time</string>
     <string name="Edit">edit</string>
+    <string name="OverDone">fully complete</string>
 </resources>

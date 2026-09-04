@@ -1,45 +1,31 @@
 package com.averyvi.spiritfire.ui.screens
 
-import android.icu.util.Calendar
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,36 +34,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.approachLayout
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.averyvi.spiritfire.data.definitions.ui.HabitFilterViewModel
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.DpOffset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.habits.EmojiType
 import com.averyvi.spiritfire.data.definitions.habits.EmojiType.getEmoji
-import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
-import com.averyvi.spiritfire.data.definitions.habits.ResetDaysType
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
-import com.averyvi.spiritfire.data.definitions.ui.AllHabitsViewModel
 import com.averyvi.spiritfire.data.definitions.ui.ChartData
 import com.averyvi.spiritfire.data.definitions.ui.DetailedHabitAnalyticsViewModel
 import com.averyvi.spiritfire.data.sources.HabitRepository
@@ -85,25 +56,16 @@ import com.averyvi.spiritfire.data.transformations.contractPeriods
 import com.averyvi.spiritfire.data.transformations.determineGrace
 import com.averyvi.spiritfire.data.transformations.getCompletedPeriods
 import com.averyvi.spiritfire.ui.appUI.top.HabitAppBar
-import com.averyvi.spiritfire.ui.basic.HabitCheckIcon
 import com.averyvi.spiritfire.ui.basic.HabitDPTPills
-import com.averyvi.spiritfire.ui.basic.ShowRowsOfItems
 import com.averyvi.spiritfire.ui.basic.SmallPill
-import com.averyvi.spiritfire.ui.basic.SquareChip
 import com.averyvi.spiritfire.ui.basic.WidthFlexibleChip
 import com.averyvi.spiritfire.ui.basic.logDisplayLength
 import com.averyvi.spiritfire.ui.basic.periodsToShow
-import com.averyvi.spiritfire.ui.components.BigLogDisplayCard
 import com.averyvi.spiritfire.ui.components.LinearChart
 import com.averyvi.spiritfire.ui.components.PieChartWithLabels
-import com.averyvi.spiritfire.ui.components.TransparentLogDisplayBlock
-import com.averyvi.spiritfire.ui.components.UICard
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.time.Duration.Companion.days
 
 @Composable
 fun DetailedHabitAnalyticsScreen(
@@ -305,10 +267,13 @@ fun AnalyticsHabitComletionHint(
                             fontWeight = FontWeight.SemiBold,
                             color = data.color
                         )
-                        SquareChip(
-                            color = data.color,
-                            size = 20.dp
-                        )
+                        Card(
+                            colors = CardDefaults.cardColors().copy(
+                                containerColor = data.color
+                            ),
+                            shape = RoundedCornerShape(4.dp),
+                            modifier = Modifier.size(20.dp)
+                        ) { }
                     }
                 }
             }

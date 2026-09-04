@@ -29,6 +29,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toColorLong
 import androidx.compose.ui.res.painterResource
@@ -44,14 +45,17 @@ fun HabitCheckIcon(
     icon: Int,
     colour: Color,
     complete: Boolean = false,
+    filled: Boolean = true,
     onClick: () -> Unit = {},
     size: Dp,
 ) {
     Card(
         shape = CircleShape,
         colors = CardDefaults.cardColors().copy(
-            contentColor = if (complete) MaterialTheme.colorScheme.surface else colour ,
-            containerColor = if (complete) colour else  MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = if (filled) { if (complete) MaterialTheme.colorScheme.surface else colour }
+            else { if (complete) colour else colour.copy(alpha = colour.alpha * 0.3f ,).compositeOver(MaterialTheme.colorScheme.onSurface) },
+            containerColor = if (filled) if (complete) colour else  MaterialTheme.colorScheme.surfaceContainer
+            else Color.Transparent,
         ),
         modifier = Modifier.size(size),
         onClick = onClick,
@@ -86,7 +90,7 @@ fun CircularHabitProgress(
         CircularProgressIndicator(
             progress = { progress },
             strokeWidth = (size.value * 0.1).dp,
-            modifier = Modifier.size((size.value * 1.55).dp)
+            modifier = Modifier.size((size.value * 1.1).dp)
         )
     }
 }
@@ -189,20 +193,6 @@ fun IconPillWithValue(
             )
         }
     }
-}
-
-@Composable
-fun SquareChip(
-    color: Color = SColour.Grey.color,
-    size: Dp = 32.dp
-) {
-    Card(
-        colors = CardDefaults.cardColors().copy(
-            containerColor = color
-        ),
-        shape = RoundedCornerShape(4.dp),
-        modifier = Modifier.size(size)
-    ) { }
 }
 
 @Composable
