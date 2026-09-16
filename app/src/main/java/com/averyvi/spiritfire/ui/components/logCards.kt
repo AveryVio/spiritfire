@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,6 +32,7 @@ import com.averyvi.spiritfire.data.definitions.habits.FColour
 import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.data.definitions.ui.ChartData
+import com.averyvi.spiritfire.data.definitions.ui.OverviewViewModel
 import com.averyvi.spiritfire.data.transformations.determineGrace
 import com.averyvi.spiritfire.data.transformations.getCompletedPeriods
 import com.averyvi.spiritfire.data.transformations.isWithinPeriod
@@ -46,96 +49,14 @@ import kotlin.time.Duration.Companion.days
 
 @Composable
 fun BigLogDisplayCard(
-    habitRow: HabitRow,
-    logsList: List<HabitLogItem>,
-    periodsToShow: periodsToShow,
+    habitCardUiState: OverviewViewModel.HabitCardUiState
 ) {
+    val isDone = habitCardUiState.isDone
+    val withinGrace = habitCardUiState.withinGrace
+    val todayChecks = habitCardUiState.todayChecks
 
-
-
-
-    /* todo
-    something is making this function incredibly laggy and simple paralelism does not work, its awful
-
-    this needs priority fixing otherwise the screen is borderline unusable
-
-    my flagship phone cannot handle it without stuttering, not to mention the 6 yo testing phone
-
-    this is awful
-     */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    val beginingOfPeriods = 0
-    val now = ZonedDateTime.now(ZoneId.systemDefault())
-
-    var isDone by remember { mutableStateOf<List<Boolean>>(emptyList()) }
-    var withinGrace by remember { mutableStateOf<List<Boolean>>(emptyList()) }
-
-    LaunchedEffect(logsList, periodsToShow, habitRow) {
-        withContext(Dispatchers.Default) {
-            val shownItems = periodsToShow.amount * when (periodsToShow.type) {
-                logDisplayLength.DAYS -> 1
-                logDisplayLength.WEEKS -> 7
-                logDisplayLength.MONTHS -> now.month.length(now.toLocalDate().isLeapYear)
-                // Fix applied here (see note below)
-                logDisplayLength.YEARS -> if (now.toLocalDate().isLeapYear) 366 else 365
-            }
-
-            val computedIsDone = if (logsList.isNotEmpty()) {
-                getCompletedPeriods(
-                    beginingOfPeriods = beginingOfPeriods,
-                    shownItems = shownItems,
-                    habitRow = habitRow,
-                    logsList = logsList,
-                )
-            } else mutableListOf()
-
-            val computedGrace = computedIsDone.mapIndexed { index, _ ->
-                determineGrace(
-                    completionArrayIndex = index,
-                    completionArray = computedIsDone as MutableList<Boolean>,
-                    skipGrace = habitRow.checksSkipGrace,
-                )
-            }
-
-            isDone = computedIsDone
-            withinGrace = computedGrace
-        }
-    }
-
-    val todayChecks = logsList.let{
-        if(logsList.isEmpty()) return@let 0
-        val lastest = logsList[0]
-
-        if(isWithinPeriod(
-                habitRow = habitRow,
-                targetTimestamp = lastest.logTime,
-                periodsAgo = 0L,
-            )) {
-            return@let lastest.checks
-        }
-        return@let 0
-    }
     val todayDone = isDone.firstOrNull() ?: false
-    val todayOverDone = todayChecks == habitRow.checksAmount
+    val todayOverDone = todayChecks == habitCardUiState.habitRow.checksAmount
 
     val colorPrimary = MaterialTheme.colorScheme.primary
     val colorSecondary = MaterialTheme.colorScheme.secondary
@@ -151,7 +72,7 @@ fun BigLogDisplayCard(
             ChartData(colorPrimary, todayChecks.toFloat(), stringComplete),
             ChartData(
                 colorSurfaceVariant,
-                (habitRow.checksAmount.toFloat() - todayChecks.toFloat()),
+                (habitCardUiState.habitRow.checksAmount.toFloat() - todayChecks.toFloat()),
                 stringNotComplete
             )
         )
@@ -177,8 +98,7 @@ fun BigLogDisplayCard(
     }
 
     UICard() {
-        Row(
-        ) {
+        Row() {
             Column() {
                 Box(
                     contentAlignment = Alignment.Center
@@ -192,8 +112,8 @@ fun BigLogDisplayCard(
                         arcAngle = 130
                     )
                     HabitCheckIcon(
-                        icon = habitRow.icon,
-                        colour = habitRow.colour,
+                        icon = habitCardUiState.habitRow.icon,
+                        colour = habitCardUiState.habitRow.colour,
                         complete = todayDone,
                         filled = false,
                         onClick = {},
@@ -211,12 +131,12 @@ fun BigLogDisplayCard(
             }
             Column() {
                 Text(
-                    text = habitRow.name,
+                    text = habitCardUiState.habitRow.name,
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = stringResource(habitRow.resetType.descriptorString),
+                    text = stringResource(habitCardUiState.habitRow.resetType.descriptorString),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Normal
                 )

@@ -4,6 +4,8 @@ import com.averyvi.spiritfire.data.definitions.habits.HabitLogItem
 import com.averyvi.spiritfire.data.definitions.habits.HabitRow
 import com.averyvi.spiritfire.ui.basic.logDisplayLength
 import com.averyvi.spiritfire.ui.basic.periodsToShow
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 fun getCompletedPeriods(
     beginingOfPeriods: Int,
@@ -11,23 +13,30 @@ fun getCompletedPeriods(
     habitRow: HabitRow,
     logsList: List<HabitLogItem>
 ): MutableList<Boolean> {
-    var completedPeriods: MutableList<Boolean> = mutableListOf()
+    if (logsList.isEmpty()) return MutableList(shownItems) { false }
+
+    val completedPeriods = mutableListOf<Boolean>()
+    val localZone = ZoneId.systemDefault()
+    val now = ZonedDateTime.now(localZone)
+    val basePeriodStart = getStartingPeriod(now, habitRow.resetHour, habitRow.resetMinute)
 
     for (period in (beginingOfPeriods)..<(beginingOfPeriods + shownItems)) {
-        val logsInPeriod = logsList.filter { log ->
-            isWithinPeriod(
-                habitRow = habitRow,
-                targetTimestamp = log.logTime,
-                periodsAgo = period.toLong(),
-            )
+        val periodStart = getAdjustedPeriod(now, basePeriodStart, localZone, habitRow, period.toLong())
+        val periodEnd = getEndPeriod(periodStart, habitRow.resetType, habitRow.resetDays.toLong())
+
+        val startMillis = periodStart.toInstant().toEpochMilli()
+        val endMillis = periodEnd.toInstant().toEpochMilli()
+
+        var totalChecks = 0
+        for (log in logsList) {
+            if (log.logTime in startMillis until endMillis) {
+                totalChecks += log.checks
+            }
         }
-        val totalChecks = logsInPeriod.sumOf { it.checks }
 
-        val requiredChecks = if (habitRow.checksAmount > 0) habitRow.checksAmount else 1
-
-        completedPeriods.add(period, totalChecks >= requiredChecks)
+        val requiredChecks = if (habitRow.checksComplete > 0) habitRow.checksComplete else 1
+        completedPeriods.add(totalChecks >= requiredChecks)
     }
-
     return completedPeriods
 }
 
@@ -43,22 +52,24 @@ fun determineGrace(
 
     var newerPeriods = completionArrayIndex - 1
     while (newerPeriods >= 0) {
-        if (!completionArray[newerPeriods]) misses++
-        else {
+        if (!completionArray[newerPeriods]) {
+            misses++
+            if (misses > skipGrace) break
+        } else {
             foundFutureAnchor = true
             break
         }
-        newerPeriods--
     }
 
     var olderPeriods = completionArrayIndex + 1
     while (olderPeriods < completionArray.size) {
-        if (!completionArray[olderPeriods]) misses++
-        else {
+        if (!completionArray[olderPeriods]) {
+            misses++
+            if (misses > skipGrace) break
+        } else {
             foundPastAnchor = true
             break
         }
-        olderPeriods++
     }
     return (misses <= skipGrace) && foundPastAnchor && foundFutureAnchor
 }

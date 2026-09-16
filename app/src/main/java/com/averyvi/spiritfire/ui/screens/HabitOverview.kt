@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,14 +24,18 @@ import com.averyvi.spiritfire.data.sources.HabitRepository
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.averyvi.spiritfire.R
 import com.averyvi.spiritfire.data.definitions.sortingfiltering.LogSortingFiltering
 import com.averyvi.spiritfire.ui.appUI.top.GeneralAppBar
 import com.averyvi.spiritfire.ui.basic.SmallPill
+import com.averyvi.spiritfire.ui.basic.WidthFlexibleChip
 import com.averyvi.spiritfire.ui.basic.periodsToShow
 import com.averyvi.spiritfire.ui.components.BigLogDisplayCard
 import com.averyvi.spiritfire.ui.components.OldBigLogDisplayCard
+import com.averyvi.spiritfire.ui.components.UICard
 
 @Composable
 fun HabitOverview(
@@ -49,6 +54,7 @@ fun HabitOverview(
         }
     }
     val OverviewViewModel: OverviewViewModel = viewModel(factory = OverviewVMfactory)
+    val cardUIStates = OverviewViewModel.overviewUiState.collectAsState().value
     val displayedHabits = OverviewViewModel.displayedHabits.collectAsState().value
     val filtredLogs = OverviewViewModel.filtredLogs.collectAsState().value
 
@@ -63,7 +69,7 @@ fun HabitOverview(
             modifier = Modifier.padding(8.dp).padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            val showDays = remember { mutableStateOf(periodsToShow.MONTH) }
+            val showDays = OverviewViewModel.showDays.collectAsState().value
 
             val scrollState = rememberScrollState()
 
@@ -75,10 +81,10 @@ fun HabitOverview(
                     state = scrollState,
                 )
             ) {
-                periodsToShow.entries.forEachIndexed { index, pair ->
+                periodsToShow.entries.forEach { pair ->
                     SmallPill(
                         onClick = {
-                            showDays.value = pair
+                            OverviewViewModel.changeShownDays(pair)
                         }
                     ) {
                         val isPlural = pair.amount > 1
@@ -94,24 +100,27 @@ fun HabitOverview(
             }
 
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(displayedHabits.size) { viewPosition ->
-                    val habitRow = displayedHabits[viewPosition]
-                    val logsList = filtredLogs.filter { it.habit == habitRow.id }
+                items(
+                    count = cardUIStates.size,
+                    key = { index -> cardUIStates[index].habitRow.id }
+                ) { viewPosition ->
+                    val habitRow = cardUIStates[viewPosition].habitRow
+                    val logsList = remember(filtredLogs, habitRow.id) {
+                        filtredLogs.filter { it.habit == habitRow.id }
+                    }
 
                     BigLogDisplayCard(
-                        habitRow = habitRow,
-                        logsList = logsList,
-                        periodsToShow = showDays.value,
-                    )
+                        habitCardUiState = cardUIStates[viewPosition]
+                    )/*
                     OldBigLogDisplayCard(
                         habitRow = habitRow,
                         logsList = logsList,
                         periodsToShow = showDays.value
-                    )
+                    )*/
                 }
             }
             Text("bottom")
