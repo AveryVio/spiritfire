@@ -76,7 +76,7 @@ class OverviewViewModel(
             initialValue = emptyList()
         )
 
-    private val _showDays = MutableStateFlow(periodsToShow.MONTH)
+    private val _showDays = MutableStateFlow(periodsToShow.WEEK)
     val showDays: StateFlow<periodsToShow> = _showDays.asStateFlow()
     fun changeShownDays(newValue: periodsToShow) { _showDays.value = newValue }
 
@@ -126,15 +126,15 @@ class OverviewViewModel(
             }
 
             val computedTodayChecks = if (logsByHabit.isNotEmpty()) {
-                val latest= habitLogs.maxByOrNull { it.logTime }
-                if ((latest != null) && isWithinPeriod(
-                        habitRow = habit,
-                        targetTimestamp = latest.logTime,
-                        periodsAgo = 0L,
-                    )
-                ) {
-                    latest.checks
-                } else 0
+                val todayLogs = habitLogs
+                    .filter {
+                        isWithinPeriod(
+                            habitRow = habit,
+                            targetTimestamp = it.logTime,
+                            periodsAgo = 0L,
+                        )
+                    }
+                todayLogs.sumOf { it.checks }
             } else 0
 
             HabitCardUiState(

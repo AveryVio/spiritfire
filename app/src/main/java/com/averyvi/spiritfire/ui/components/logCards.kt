@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -57,6 +61,8 @@ fun BigLogDisplayCard(
 
     val todayDone = isDone.firstOrNull() ?: false
     val todayOverDone = todayChecks == habitCardUiState.habitRow.checksAmount
+
+    val todayCompletionPercentage = (todayChecks.toFloat() / habitCardUiState.habitRow.checksAmount.toFloat()) * 100f
 
     val colorPrimary = MaterialTheme.colorScheme.primary
     val colorSecondary = MaterialTheme.colorScheme.secondary
@@ -98,63 +104,90 @@ fun BigLogDisplayCard(
     }
 
     UICard() {
-        Row() {
-            Column() {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                ArcChart(
+                    data = doneChartData,
+                    size = 64f + 8f + 4f,
+                    strokeWith = 8.dp + 4.dp,
+                    strokeSpaces = 16f + 8f + 4f,
+                    startAngle = -140f,
+                    arcAngle = 130
+                )
+                HabitCheckIcon(
+                    icon = habitCardUiState.habitRow.icon,
+                    colour = habitCardUiState.habitRow.colour,
+                    complete = todayDone,
+                    filled = false,
+                    onClick = {},
+                    size = 32.dp + 16.dp + 8.dp
+                )
+                ArcChart(
+                    data = progressData,
+                    size = 64f + 8f + 4f,
+                    strokeWith = 8.dp + 4.dp,
+                    strokeSpaces = 16f + 8f + 4f,
+                    startAngle = 25f,
+                    arcAngle = 155
+                )
+            }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Box(
                     contentAlignment = Alignment.Center
                 ) {
-                    ArcChart(
-                        data = doneChartData,
-                        size = 64f + 8f + 4f,
-                        strokeWith = 8.dp + 4.dp,
-                        strokeSpaces = 16f + 8f + 4f,
-                        startAngle = -140f,
-                        arcAngle = 130
-                    )
-                    HabitCheckIcon(
-                        icon = habitCardUiState.habitRow.icon,
-                        colour = habitCardUiState.habitRow.colour,
-                        complete = todayDone,
-                        filled = false,
-                        onClick = {},
-                        size = 32.dp + 16.dp + 8.dp
-                    )
-                    ArcChart(
-                        data = progressData,
-                        size = 64f + 8f + 4f,
-                        strokeWith = 8.dp + 4.dp,
-                        strokeSpaces = 16f + 8f + 4f,
-                        startAngle = 25f,
-                        arcAngle = 155
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    ) {
+                        Text(
+                            text = habitCardUiState.habitRow.name,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            text = stringResource(habitCardUiState.habitRow.resetType.descriptorString),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
+                    // can add some other element on the right, should be conditional
+                }
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    ) {
+                        CompletionStreakUI(
+                            completion = isDone,
+                            grace = withinGrace,
+                            maxShownInputLength = 6,
+                            chipSize = 48.dp,
+                            spacesBetween = 4.dp,
+                            rowModifier = Modifier
+                                .weight(1f, fill = false)
+                        )
+                        Spacer(
+                            modifier = Modifier.width(60.dp)
+                        )
+                    }
+                    Text(
+                        text = todayCompletionPercentage.toInt().toString() + "%",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.align(Alignment.CenterEnd)
                     )
                 }
             }
-            Column() {
-                Text(
-                    text = habitCardUiState.habitRow.name,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = stringResource(habitCardUiState.habitRow.resetType.descriptorString),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Normal
-                )
-            }
-            CompletionStreakUI(
-                completion = isDone,
-                grace = withinGrace,
-                maxShownInputLength = 6,
-                chipSize = 48.dp,
-                spacesBetween = 4.dp,
-                rowModifier = Modifier
-                    .weight(1f, fill = false)
-            )
-            Text(
-                text = "69%", //completion within period
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.SemiBold
-            )
         }
     }
 }

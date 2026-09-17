@@ -69,36 +69,6 @@ fun HabitOverview(
             modifier = Modifier.padding(8.dp).padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            val showDays = OverviewViewModel.showDays.collectAsState().value
-
-            val scrollState = rememberScrollState()
-
-
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.horizontalScroll(
-                    state = scrollState,
-                )
-            ) {
-                periodsToShow.entries.forEach { pair ->
-                    SmallPill(
-                        onClick = {
-                            OverviewViewModel.changeShownDays(pair)
-                        }
-                    ) {
-                        val isPlural = pair.amount > 1
-                        Text(
-                            text = pair.amount.toString() + if (isPlural) {
-                                stringResource(pair.type.string2Plural)
-                            } else {
-                                stringResource(pair.type.string2Singular)
-                            }
-                        )
-                    }
-                }
-            }
-
             LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,10 +78,6 @@ fun HabitOverview(
                     count = cardUIStates.size,
                     key = { index -> cardUIStates[index].habitRow.id }
                 ) { viewPosition ->
-                    val habitRow = cardUIStates[viewPosition].habitRow
-                    val logsList = remember(filtredLogs, habitRow.id) {
-                        filtredLogs.filter { it.habit == habitRow.id }
-                    }
 
                     BigLogDisplayCard(
                         habitCardUiState = cardUIStates[viewPosition]

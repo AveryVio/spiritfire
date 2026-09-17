@@ -48,9 +48,6 @@ fun CompletionStreakUI(
     spacesBetween: Dp,
     rowModifier: Modifier = Modifier
 ) {
-    val completion = if(completion.size > maxShownInputLength) completion.subList(0,maxShownInputLength) else completion
-    val grace = if(grace.size > maxShownInputLength) grace.subList(0,maxShownInputLength) else grace
-
     Row(
         horizontalArrangement = Arrangement.spacedBy(spacesBetween),
         modifier = rowModifier
