@@ -157,20 +157,13 @@ fun HabitAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditingAppBar(
-
+    habitRow: HabitRow,
 ) {
     CenterAlignedTopAppBar(
         title = @Composable { Text(
-            text = stringResource(R.string.app_name),
-            style = MaterialTheme.typography.headlineSmall.copy(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.tertiary,
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.secondary,
-                    )
-                )
-            ),
+            text = habitRow.name,
+            style = MaterialTheme.typography.headlineSmall,
+            color = habitRow.colour,
             fontWeight = FontWeight.Black,
         ) },
         colors = TopAppBarDefaults.topAppBarColors(

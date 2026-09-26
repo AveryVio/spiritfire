@@ -23,7 +23,7 @@ fun FancyTextInput(
     placeholder: @Composable () -> Unit,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier.Companion,
+    modifier: Modifier = Modifier,
     brushColorList: List<Color> = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.tertiary ),
     gradientTextStyle: TextStyle = TextStyle(fontSize = TextUnit.Unspecified),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -53,7 +53,7 @@ fun FancyTextInput(
             unfocusedIndicatorColor = Color.Transparent,
         ),
         shape = RoundedCornerShape(24.dp),
-        textStyle = TextStyle().copy(
+        textStyle = gradientTextStyle.copy(
             fontSize = 20.sp,
             brush = Brush.linearGradient(
                 colors = brushColorList,

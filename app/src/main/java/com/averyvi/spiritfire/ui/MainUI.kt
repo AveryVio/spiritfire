@@ -155,6 +155,8 @@ fun MainUI(
 
                     composable(route = Routes.NewHabit.name) {
                         HabitChange(
+                            habitFilterViewModel = habitFilterViewModel,
+                            habitRepository = habitRepository,
                             outerPadding = outerPadding
                         )
                     }
