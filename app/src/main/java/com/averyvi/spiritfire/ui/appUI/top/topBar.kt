@@ -153,3 +153,50 @@ fun HabitAppBar(
         }
     )
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditingAppBar(
+
+) {
+    CenterAlignedTopAppBar(
+        title = @Composable { Text(
+            text = stringResource(R.string.app_name),
+            style = MaterialTheme.typography.headlineSmall.copy(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.tertiary,
+                        MaterialTheme.colorScheme.secondary,
+                        MaterialTheme.colorScheme.secondary,
+                    )
+                )
+            ),
+            fontWeight = FontWeight.Black,
+        ) },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+        ),
+        navigationIcon = @Composable {
+        },
+        actions = @Composable {
+            Row() {
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.u_hdr_strong_24dp_000000_fill0_wght400_grad0_opsz24),
+                        contentDescription = null // more apps ig
+                    )
+                }
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.u_settings_24dp_000000_fill0_wght400_grad0_opsz24),
+                        contentDescription = stringResource(R.string.settingsScreen)
+                    )
+                }
+            }
+        }
+    )
+}
